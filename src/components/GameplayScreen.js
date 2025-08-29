@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, SCENES } from '../context/GameContext';
 import Journal from './Journal';
-import Scene1DashashwamedhGhat from './scenes/Scene1DashashwamedhGhat';
-import Scene2LabyrinthGhats from './scenes/Scene2LabyrinthGhats';
-import Scene3NyayaTrial from './scenes/Scene3NyayaTrial';
-import Scene4VaisesikaTrial from './scenes/Scene4VaisesikaTrial';
-import Scene5TheWarden from './scenes/Scene5TheWarden';
+
+const Scene1DashashwamedhGhat = lazy(() => import('./scenes/Scene1DashashwamedhGhat'));
+const Scene2LabyrinthGhats = lazy(() => import('./scenes/Scene2LabyrinthGhats'));
+const Scene3NyayaTrial = lazy(() => import('./scenes/Scene3NyayaTrial'));
+const Scene4VaisesikaTrial = lazy(() => import('./scenes/Scene4VaisesikaTrial'));
+const Scene5TheWarden = lazy(() => import('./scenes/Scene5TheWarden'));
 
 // Breathing glow effect for UI elements
 const breathingGlow = keyframes`
@@ -71,6 +73,24 @@ const filigreeGlow = keyframes`
     background:
       linear-gradient(145deg, rgba(10, 10, 10, 0.85) 0%, rgba(20, 20, 20, 0.9) 100%);
   }
+`;
+
+const Overlay = styled(motion.div)`
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 999;
+  padding: var(--spacing-lg);
+  backdrop-filter: blur(10px);
+`;
+
+const OverlayContent = styled(motion.div)`
+  width: 100%;
+  max-width: 500px;
+  height: 80vh;
 `;
 
 const GameplayContainer = styled.div`
@@ -276,6 +296,8 @@ const TooltipBubble = styled.div`
   box-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 0 16px rgba(212,175,55,0.25);
   pointer-events: none;
   z-index: 2000;
+  left: ${p => p.$x}px;
+  top: ${p => p.$y}px;
 `;
 
 // HUD components
@@ -590,6 +612,11 @@ const SkillText = styled.p`
   text-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
 `;
 
+const LazyFallback = styled.div`
+  padding: var(--spacing-xl);
+  color: #d4af37;
+`;
+
 // Scene routing component
 function SceneRenderer({ currentScene }) {
   switch (currentScene) {
@@ -663,7 +690,9 @@ export default function GameplayScreen() {
           transition={{ duration: 1 }}
         >
           <NarrativeContent>
-            <SceneRenderer currentScene={currentScene} />
+            <Suspense fallback={<LazyFallback>Summoning scene…</LazyFallback>}>
+              <SceneRenderer currentScene={currentScene} />
+            </Suspense>
           </NarrativeContent>
         </NarrativeWindow>
 
@@ -714,7 +743,7 @@ export default function GameplayScreen() {
       </HotbarContainer>
 
       {tooltip.visible && (
-        <TooltipBubble style={{ left: tooltip.x, top: tooltip.y }}>
+        <TooltipBubble $x={tooltip.x} $y={tooltip.y}>
           {tooltip.text}
         </TooltipBubble>
       )}
@@ -750,36 +779,21 @@ export default function GameplayScreen() {
       {/* Mobile overlay for journal */}
       <AnimatePresence>
         {mobileJournalOpen && (
-          <motion.div
+          <Overlay
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              background: 'rgba(0, 0, 0, 0.95)',
-              zIndex: 999,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: 'var(--spacing-lg)',
-              backdropFilter: 'blur(10px)'
-            }}
             onClick={toggleMobileJournal}
           >
-            <motion.div
+            <OverlayContent
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
-              style={{ width: '100%', maxWidth: '500px', height: '80vh' }}
             >
               <Journal isVisible={true} />
-            </motion.div>
-          </motion.div>
+            </OverlayContent>
+          </Overlay>
         )}
       </AnimatePresence>
     </GameplayContainer>
