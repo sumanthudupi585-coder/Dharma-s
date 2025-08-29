@@ -44,12 +44,19 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       buffer.height = Math.floor(h);
       const bctx = buffer.getContext('2d');
 
+      // Offscreen sprite for soft puff (colored each frame once)
+      const sprite = document.createElement('canvas');
+      const SPR = 96; // base sprite size
+      sprite.width = SPR;
+      sprite.height = SPR;
+      const sctx = sprite.getContext('2d');
+
       const fontPrimary = 'Noto Serif Devanagari, Noto Sans Devanagari, serif';
       const englishFont = 'Crimson Text, serif';
 
       // Compute sizes and multi-line layout
       const maxBlockWidth = w * 0.84;
-      const baseSize = Math.min(128, Math.max(48, Math.floor(w / Math.max(4, (text || '').length) * 1.6)));
+      const baseSize = Math.min(128, Math.max(48, Math.floor((w / Math.max(4, (text || '').length)) * 1.6)));
       const smallSize = Math.max(18, Math.floor(baseSize * 0.36));
       const pairGap = Math.floor(baseSize * 0.38);
 
@@ -134,8 +141,8 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       const sampleRatio = Math.min(1, maxParticles / Math.max(1, allPoints.length));
       const targets = allPoints.filter(() => Math.random() < sampleRatio);
 
-      // Initialize layered particles
-      const particles = targets.map(t => {
+      // Initialize layered particles with persistent drift state
+      const particles = targets.map((t, i) => {
         const edge = Math.floor(Math.random() * 4);
         const margin = 60;
         let sx = 0, sy = 0;
@@ -152,60 +159,83 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
           life,
           size: (0.8 + Math.random() * 1.6) * (1.2 - (depth - 0.7) * 0.3),
           phase: Math.random() * Math.PI * 2,
+          phase2: Math.random() * Math.PI * 2,
+          seed: 0.5 + Math.random() * 0.5,
           depth
         };
       });
 
       let start = performance.now();
+      let last = start;
       const fadeOutMs = Math.max(900, Math.floor(durationMs * 0.3));
 
       function easeOutExpo(x) { return x === 1 ? 1 : 1 - Math.pow(2, -10 * x); }
       function easeInOutSine(x) { return -(Math.cos(Math.PI * x) - 1) / 2; }
       function lerp(a, b, t) { return a + (b - a) * t; }
 
+      // Draw colored sprite once per frame to avoid per-particle gradient cost
+      function paintSprite(r, g, b, a) {
+        sctx.clearRect(0, 0, SPR, SPR);
+        const cxS = SPR / 2, cyS = SPR / 2;
+        const grad = sctx.createRadialGradient(cxS, cyS, 0, cxS, cyS, SPR / 2);
+        grad.addColorStop(0, `rgba(${r},${g},${b},${a})`);
+        grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+        sctx.fillStyle = grad;
+        sctx.beginPath();
+        sctx.arc(cxS, cyS, SPR / 2, 0, Math.PI * 2);
+        sctx.fill();
+      }
+
       function tick(now) {
         if (disposed) return;
         const elapsed = now - start;
+        const dt = Math.min(64, now - last); // clamp to avoid large jumps
+        last = now;
+
         ctx.clearRect(0, 0, w, h);
 
-        // No background: text forms in space.
         const breath = 0.97 + 0.05 * Math.sin((now - start) / 1100);
 
+        // warm gold to bright gold transition
+        const blend = Math.min(1, (elapsed / (durationMs * 0.8)));
+        const goldR = Math.floor(lerp(212, 255, blend));
+        const goldG = Math.floor(lerp(175, 215, blend));
+        const goldB = Math.floor(lerp(55, 0, blend * 0.15));
+
+        paintSprite(goldR, goldG, goldB, 0.92);
+
         ctx.globalCompositeOperation = 'lighter';
+        ctx.filter = 'blur(0.4px)';
 
         for (let i = 0; i < particles.length; i++) {
           const p = particles[i];
           const t = Math.min(1, Math.max(0, (elapsed - (p.born - start)) / p.life));
           const e = Math.pow(easeOutExpo(t), 0.85 + (p.depth - 0.7) * 0.15);
+
+          // target interpolation
           const nx = p.x + (p.tx - p.x) * e;
           const ny = p.y + (p.ty - p.y) * e;
 
-          // gentle curl noise with persistent drift
-          const curl = 0.6 + Math.sin(p.phase + now * 0.0016 + i * 0.009) * 0.5;
-          const driftA = 6 * (1 - e) + 1.5; // residual drift when formed
-          const px = nx + Math.sin((now + i * 17) * 0.0018) * curl * driftA;
-          const py = ny + Math.cos((now + i * 11) * 0.0017) * curl * driftA;
-
-          // warm gold to bright gold transition
-          const blend = Math.min(1, (elapsed / (durationMs * 0.8)));
-          const goldR = Math.floor(lerp(212, 255, blend));
-          const goldG = Math.floor(lerp(175, 215, blend));
-          const goldB = Math.floor(lerp(55, 0, blend * 0.15));
+          // persistent low-frequency drift (dt-based for smoothness)
+          const baseFreq = 0.0015 * p.seed;
+          p.phase += dt * baseFreq * (0.9 + 0.2 * Math.sin(p.phase2));
+          p.phase2 += dt * baseFreq * 0.6;
+          const curl = 0.6 + Math.sin(p.phase + i * 0.007) * 0.5;
+          const driftA = 6 * (1 - e) + 1.4;
+          const px = nx + Math.sin(p.phase + i * 0.013) * curl * driftA;
+          const py = ny + Math.cos(p.phase2 + i * 0.011) * curl * driftA;
 
           const fade = 1 - Math.max(0, (elapsed - durationMs) / fadeOutMs);
-          const alpha = Math.min(0.92, (0.18 + e * 0.82) * fade) * (0.96 + 0.04 * breath);
+          const alpha = Math.min(0.9, (0.18 + e * 0.82) * fade) * (0.96 + 0.04 * breath);
 
-          // soft radial puff
-          const g = ctx.createRadialGradient(px, py, 0, px, py, 10 + e * 12 * (2 - p.depth));
-          g.addColorStop(0, `rgba(${goldR},${goldG},${goldB},${alpha})`);
-          g.addColorStop(1, `rgba(${goldR},${goldG},${goldB},0)`);
-          ctx.fillStyle = g;
-          ctx.shadowColor = `rgba(${goldR},${goldG},${goldB},0.55)`;
-          ctx.shadowBlur = (8 + e * 16) * (2 - p.depth) * (0.95 + 0.05 * breath);
-          ctx.beginPath();
-          ctx.arc(px, py, p.size * (1 + e * 1.25) + 6 * (2 - p.depth), 0, Math.PI * 2);
-          ctx.fill();
+          const radius = p.size * (1 + e * 1.25) + 6 * (2 - p.depth);
+          ctx.globalAlpha = alpha;
+          ctx.drawImage(sprite, px - radius, py - radius, radius * 2, radius * 2);
         }
+
+        // reset filter for crisp text overlay
+        ctx.filter = 'none';
+        ctx.globalCompositeOperation = 'source-over';
 
         // Crisp overlay to ensure legibility as particles converge (multi-line, centered)
         const rawAppear = Math.min(1, Math.max(0, (elapsed - durationMs * 0.5) / (durationMs * 0.5)));
@@ -252,8 +282,6 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
 
           ctx.restore();
         }
-
-        ctx.globalCompositeOperation = 'source-over';
 
         if (elapsed < durationMs + fadeOutMs + holdMs) {
           rafRef.current = requestAnimationFrame(tick);
