@@ -36,6 +36,9 @@
       "last 1 safari version"
     ]
   },
+  "devDependencies": {
+    "gh-pages": "^6.1.1"
+  },
   "keywords": ["philosophy", "adventure", "game", "dharma", "vedic", "interactive"],
   "author": "Fusion AI",
   "homepage": "https://sumanthudupi585-coder.github.io/Dharma-sCipher"
