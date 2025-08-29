@@ -1,0 +1,161 @@
+import React from 'react';
+import styled, { keyframes } from 'styled-components';
+import { motion } from 'framer-motion';
+import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
+
+// Subtle breathing glow for golden elements
+const breath = keyframes`
+  0%, 100% { text-shadow: 0 0 14px rgba(212,175,55,0.35), 0 2px 0 rgba(0,0,0,0.35); }
+  50%      { text-shadow: 0 0 24px rgba(255,215,0,0.55), 0 2px 0 rgba(0,0,0,0.35); }
+`;
+
+// Slow ambient motion for background aura
+const drift = keyframes`
+  0%   { transform: translate(-5%, -5%) scale(1); opacity: 0.35; }
+  50%  { transform: translate(5%, 5%) scale(1.05); opacity: 0.55; }
+  100% { transform: translate(-5%, -5%) scale(1); opacity: 0.35; }
+`;
+
+const ScreenRoot = styled.div`
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at center, #070707 0%, #0a0a0a 55%, #000 100%);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -20%;
+    background: radial-gradient(60% 60% at 50% 45%, rgba(212,175,55,0.10) 0%, rgba(0,0,0,0) 60%),
+                radial-gradient(40% 40% at 70% 60%, rgba(255,215,0,0.08) 0%, rgba(0,0,0,0) 70%);
+    filter: blur(26px);
+    animation: ${drift} 18s ease-in-out infinite;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 3px 3px;
+    opacity: 0.06;
+    pointer-events: none;
+  }
+`;
+
+const CenterStack = styled.div`
+  position: relative;
+  z-index: 1;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: var(--spacing-xxl) var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-xl);
+`;
+
+const TitleHalo = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(280px, 60vw, 720px);
+  height: clamp(120px, 22vw, 240px);
+  transform: translate(-50%, calc(-50% - 40px));
+  border-radius: 1000px;
+  background:
+    radial-gradient(65% 120% at 50% 50%, rgba(212,175,55,0.18), rgba(212,175,55,0) 70%),
+    radial-gradient(100% 220% at 50% 100%, rgba(255,215,0,0.10), rgba(0,0,0,0) 60%);
+  filter: blur(18px);
+  pointer-events: none;
+`;
+
+const TitleWordmark = styled.h1`
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 9vw, 6rem);
+  letter-spacing: 0.14em;
+  line-height: 1.05;
+  margin: 0;
+  background: linear-gradient(180deg, #fff4b0 0%, #ffd700 30%, #d4af37 60%, #9b7b19 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: ${breath} 4.2s ease-in-out infinite;
+`;
+
+const Whisper = styled.p`
+  font-family: var(--font-primary);
+  color: #b8941f;
+  opacity: 0.8;
+  margin-top: -6px;
+  text-align: center;
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+`;
+
+const Menu = styled(motion.div)`
+  display: grid;
+  gap: var(--spacing-md);
+  width: min(92vw, 520px);
+`;
+
+const ActionButton = styled(motion.button)`
+  appearance: none;
+  width: 100%;
+  padding: 14px 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(212,175,55,0.35);
+  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
+  color: #e8c86a;
+  font-family: var(--font-primary);
+  font-weight: 700;
+  font-size: 1.08rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.18s ease, color 0.25s ease, border-color 0.25s ease;
+  backdrop-filter: blur(8px);
+
+  &:hover {
+    color: #000;
+    background: linear-gradient(145deg, #ffd95e, #ffc82e);
+    border-color: #ffd95e;
+    transform: translateY(-2px);
+  }
+`;
+
+export default function TitleScreen() {
+  const { dispatch } = useGame();
+
+  const handleNewGame = () => {
+    dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.PROFILE_CREATION });
+  };
+
+  const handleLoadGame = () => {
+    dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.PROFILE_CREATION });
+  };
+
+  const handleSettings = () => {
+    alert('Settings will be added.');
+  };
+
+  return (
+    <ScreenRoot>
+      <CenterStack>
+        <TitleHalo />
+        <TitleWordmark>Dharma's Cipher</TitleWordmark>
+        <Whisper>Whisper the first vow.</Whisper>
+        <Menu initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
+          <ActionButton className="is-interactive" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleNewGame}>
+            Start New Journey
+          </ActionButton>
+          <ActionButton className="is-interactive" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleLoadGame}>
+            Continue Path
+          </ActionButton>
+          <ActionButton className="is-interactive" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleSettings}>
+            Sacred Settings
+          </ActionButton>
+        </Menu>
+      </CenterStack>
+    </ScreenRoot>
+  );
+}
