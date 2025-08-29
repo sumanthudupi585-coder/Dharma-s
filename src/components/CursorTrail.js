@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { CURSOR_CONFIG } from './cursorConfig';
 
@@ -105,7 +105,7 @@ export default function CursorTrail() {
       window.removeEventListener('resize', resize);
       if (canvasRef.current && canvasRef.current.parentNode) canvasRef.current.parentNode.removeChild(canvasRef.current);
     };
-  }, []);
+  }, [HOTSPOT_DX, HOTSPOT_DY]);
 
   return null;
 }

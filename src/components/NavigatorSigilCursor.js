@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CURSOR_CONFIG } from './cursorConfig';
 
 export default function NavigatorSigilCursor() {

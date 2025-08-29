@@ -51,7 +51,6 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       const maxBlockWidth = w * 0.84;
       const baseSize = Math.min(128, Math.max(48, Math.floor(w / Math.max(4, (text || '').length) * 1.6)));
       const smallSize = Math.max(18, Math.floor(baseSize * 0.36));
-      const lineGap = Math.floor(baseSize * 0.18);
       const pairGap = Math.floor(baseSize * 0.38);
 
       function wrapLines(str, font, size) {
