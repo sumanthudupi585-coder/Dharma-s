@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#1a1a2e" />
+    <title>Dharma's Cipher</title>
+    <style>
+      html, body { height: 100%; margin: 0; }
+      body { background: #0f1016; color: #f4f1de; font-family: 'Crimson Text', serif; }
+      #root { min-height: 100vh; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Serve the SPA even for 404s on GitHub Pages
+      (function() {
+        var canonical = '/Dharma-sCipher';
+        if (location.pathname.indexOf(canonical) !== 0) {
+          location.replace(canonical + '/');
+          return;
+        }
+      })();
+    </script>
+    <script>
+      // Load the app bundle if present (works when 404.html is used as SPA fallback)
+      // The build will replace %PUBLIC_URL% correctly when homepage is set in package.json
+    </script>
+  </body>
+</html>
