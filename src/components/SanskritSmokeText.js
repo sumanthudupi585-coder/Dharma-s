@@ -104,10 +104,17 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       const pointsSans = sample(sansLines, `600 ${baseSize}px ${fontPrimary}`, baseSize, lineHeightSans, yStartSans, 0.04);
       const pointsEng = engLines.length ? sample(engLines, `italic 500 ${smallSize}px ${englishFont}`, smallSize, lineHeightEng, yStartSans + sansLines.length * lineHeightSans + pairGap + lineHeightEng / 2, 0.055) : [];
 
-      const allPoints = pointsSans.concat(pointsEng);
+      let allPoints = pointsSans.concat(pointsEng);
       const maxParticles = 2000;
-      const ratio = Math.min(1, maxParticles / Math.max(1, allPoints.length));
-      const targets = allPoints.filter(() => Math.random() < ratio);
+      let ratio = Math.min(1, maxParticles / Math.max(1, allPoints.length));
+      let targets = allPoints.filter(() => Math.random() < ratio);
+      if (targets.length === 0 && (sansLines.length || engLines.length)) {
+        const pointsSansF = sample(sansLines, `600 ${baseSize}px ${fontPrimary}`, baseSize, lineHeightSans, yStartSans, 0.02);
+        const pointsEngF = engLines.length ? sample(engLines, `italic 500 ${smallSize}px ${englishFont}`, smallSize, lineHeightEng, yStartSans + sansLines.length * lineHeightSans + pairGap + lineHeightEng / 2, 0.03) : [];
+        allPoints = pointsSansF.concat(pointsEngF);
+        ratio = Math.min(1, maxParticles / Math.max(1, allPoints.length));
+        targets = allPoints.filter(() => Math.random() < ratio);
+      }
 
       function paintSprite(r, g, b, a) {
         sctx.clearRect(0, 0, SPR, SPR);
@@ -152,7 +159,7 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
         const goldB = Math.floor(lerp(55, 0, blend * 0.15));
         paintSprite(goldR, goldG, goldB, 0.9);
 
-        ctx.globalCompositeOperation = 'lighter';
+        ctx.globalCompositeOperation = 'screen';
         ctx.filter = 'blur(0.4px)';
 
         for (let i = 0; i < particles.length; i++) {
