@@ -131,7 +131,17 @@ export default function TitleScreen() {
   };
 
   const handleLoadGame = () => {
-    dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.PROFILE_CREATION });
+    try {
+      const raw = localStorage.getItem('dharmas-cipher-state-v1');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        dispatch({ type: ACTIONS.LOAD_STATE, payload: parsed });
+      } else {
+        dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.PROFILE_CREATION });
+      }
+    } catch (e) {
+      dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.PROFILE_CREATION });
+    }
   };
 
   const handleSettings = () => {
