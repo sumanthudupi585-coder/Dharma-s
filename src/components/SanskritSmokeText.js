@@ -6,6 +6,8 @@ const CanvasWrap = styled.div`
   height: min(46vh, 460px);
   display: grid;
   place-items: center;
+  /* Add a subtle background to enhance the glow effect */
+  background: radial-gradient(ellipse at center, #1c1a24 0%, #0d0c10 100%);
 `;
 
 const Canvas = styled.canvas`
@@ -14,7 +16,14 @@ const Canvas = styled.canvas`
   display: block;
 `;
 
-export default function SanskritSmokeText({ text, secondaryText = '', onComplete, durationMs = 6000, holdMs = 3000 }) {
+export default function SanskritSmokeText({
+  text,
+  secondaryText = '',
+  onComplete,
+  formationMs = 5000, // Renamed for clarity
+  holdMs = 3000,
+  dissipationMs = 4000 // New phase for particles drifting away
+}) {
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
 
@@ -23,8 +32,9 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
 
     function init() {
       const canvas = canvasRef.current;
-      if (!canvas || disposed) return () => {};
+      if (!canvas || disposed) return () => { };
 
+      // --- 1. SETUP & SIZING (Largely similar, minor tweaks) ---
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       const rect = canvas.getBoundingClientRect();
       canvas.width = Math.floor(rect.width * dpr);
@@ -38,15 +48,14 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       const h = rect.height;
       const cx = w / 2, cy = h / 2;
 
-      // Offscreen buffer for text rasterization
+      // Offscreen buffers
       const buffer = document.createElement('canvas');
       buffer.width = Math.floor(w);
       buffer.height = Math.floor(h);
       const bctx = buffer.getContext('2d');
 
-      // Offscreen sprite for soft puff (colored each frame once)
       const sprite = document.createElement('canvas');
-      const SPR = 96; // base sprite size
+      const SPR = 128; // Increased sprite resolution for more detail
       sprite.width = SPR;
       sprite.height = SPR;
       const sctx = sprite.getContext('2d');
@@ -54,11 +63,11 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       const fontPrimary = 'Noto Serif Devanagari, Noto Sans Devanagari, serif';
       const englishFont = 'Crimson Text, serif';
 
-      // Compute sizes and multi-line layout
-      const maxBlockWidth = w * 0.84;
-      const baseSize = Math.min(128, Math.max(48, Math.floor((w / Math.max(4, (text || '').length)) * 1.6)));
-      const smallSize = Math.max(18, Math.floor(baseSize * 0.36));
-      const pairGap = Math.floor(baseSize * 0.38);
+      // --- 2. TEXT LAYOUT & SAMPLING (Similar logic, slightly different sizing) ---
+      const maxBlockWidth = w * 0.88;
+      const baseSize = Math.min(132, Math.max(48, Math.floor((w / Math.max(5, (text || '').length)) * 1.5)));
+      const smallSize = Math.max(18, Math.floor(baseSize * 0.33));
+      const pairGap = Math.floor(baseSize * 0.4);
 
       function wrapLines(str, font, size) {
         bctx.font = `600 ${size}px ${font}`;
@@ -68,7 +77,8 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
         let current = '';
         for (let i = 0; i < words.length; i++) {
           const test = current ? current + ' ' + words[i] : words[i];
-          if (bctx.measureText(test).width <= maxBlockWidth) current = test; else {
+          if (bctx.measureText(test).width <= maxBlockWidth) current = test;
+          else {
             if (current) lines.push(current);
             current = words[i];
           }
@@ -84,206 +94,215 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       const blockHeight = (sansLines.length * lineHeightSans) + (engLines.length ? pairGap + engLines.length * lineHeightEng : 0);
       const yStartSans = cy - blockHeight / 2 + lineHeightSans / 2;
 
-      // Rasterize Sanskrit lines and sample points
-      bctx.clearRect(0, 0, w, h);
-      bctx.fillStyle = '#ffffff';
-      bctx.textAlign = 'center';
-      bctx.textBaseline = 'middle';
-      let y = yStartSans;
-      bctx.font = `600 ${baseSize}px ${fontPrimary}`;
-      for (let i = 0; i < sansLines.length; i++) {
-        bctx.fillText(sansLines[i], cx, y);
-        y += lineHeightSans;
-      }
-      const imgSans = bctx.getImageData(0, 0, w, h);
-      const dataSans = imgSans.data;
-      const stepSans = Math.max(1, Math.floor(baseSize / 26));
-      const pointsSans = [];
-      for (let py = 0; py < h; py += stepSans) {
-        for (let px = 0; px < w; px += stepSans) {
-          const idx = (py * w + px) * 4 + 3;
-          if (dataSans[idx] > 128) {
-            const jx = px + (Math.random() - 0.5) * stepSans * 0.6;
-            const jy = py + (Math.random() - 0.5) * stepSans * 0.6;
-            pointsSans.push({ x: jx, y: jy });
-          }
-        }
-      }
-
-      // Rasterize English lines and sample points
-      let pointsEng = [];
-      if (engLines.length) {
+      function samplePointsFromText(lines, font, size, lineHeight, yStart, stepScale) {
+        const points = [];
         bctx.clearRect(0, 0, w, h);
-        y = yStartSans + sansLines.length * lineHeightSans + pairGap + lineHeightEng / 2;
-        bctx.font = `italic 500 ${smallSize}px ${englishFont}`;
-        for (let i = 0; i < engLines.length; i++) {
-          bctx.fillText(engLines[i], cx, y);
-          y += lineHeightEng;
+        bctx.fillStyle = '#fff';
+        bctx.textAlign = 'center';
+        bctx.textBaseline = 'middle';
+        bctx.font = font;
+        let y = yStart;
+        for (const line of lines) {
+          bctx.fillText(line, cx, y);
+          y += lineHeight;
         }
-        const imgEng = bctx.getImageData(0, 0, w, h);
-        const dataEng = imgEng.data;
-        const stepEng = Math.max(1, Math.floor(smallSize / 20));
-        for (let py = 0; py < h; py += stepEng) {
-          for (let px = 0; px < w; px += stepEng) {
-            const idx = (py * w + px) * 4 + 3;
-            if (dataEng[idx] > 128) {
-              const jx = px + (Math.random() - 0.5) * stepEng * 0.6;
-              const jy = py + (Math.random() - 0.5) * stepEng * 0.6;
-              pointsEng.push({ x: jx, y: jy });
+        const imgData = bctx.getImageData(0, 0, w, h).data;
+        const step = Math.max(1, Math.floor(size * stepScale));
+        for (let py = 0; py < h; py += step) {
+          for (let px = 0; px < w; px += step) {
+            if (imgData[(py * w + px) * 4 + 3] > 128) {
+              points.push({
+                x: px + (Math.random() - 0.5) * step * 0.8,
+                y: py + (Math.random() - 0.5) * step * 0.8
+              });
             }
           }
         }
+        return points;
       }
 
-      // Combine and cap
+      const pointsSans = samplePointsFromText(sansLines, `600 ${baseSize}px ${fontPrimary}`, baseSize, lineHeightSans, yStartSans, 0.04);
+      let pointsEng = [];
+      if (engLines.length) {
+        const yStartEng = yStartSans + sansLines.length * lineHeightSans + pairGap + lineHeightEng / 2;
+        pointsEng = samplePointsFromText(engLines, `italic 500 ${smallSize}px ${englishFont}`, smallSize, lineHeightEng, yStartEng, 0.05);
+      }
+
       const allPoints = pointsSans.concat(pointsEng);
-      const maxParticles = 2600;
+      const maxParticles = 3000;
       const sampleRatio = Math.min(1, maxParticles / Math.max(1, allPoints.length));
       const targets = allPoints.filter(() => Math.random() < sampleRatio);
 
-      // Initialize layered particles with persistent drift state
-      const particles = targets.map((t, i) => {
-        const edge = Math.floor(Math.random() * 4);
-        const margin = 60;
-        let sx = 0, sy = 0;
-        if (edge === 0) { sx = Math.random() * w; sy = -margin; }
-        else if (edge === 1) { sx = w + margin; sy = Math.random() * h; }
-        else if (edge === 2) { sx = Math.random() * w; sy = h + margin; }
-        else { sx = -margin; sy = Math.random() * h; }
-        const depth = 0.7 + Math.random() * 0.8; // 0.7..1.5
-        const life = durationMs * (0.8 + Math.random() * 0.8) * (0.92 + (1.6 - depth) * 0.08);
+      // --- 3. IMPROVED PARTICLE INITIALIZATION ---
+      const particles = targets.map((t) => {
+        // Start from a central "ignition" point for a more magical feel
+        const angle = Math.random() * Math.PI * 2;
+        const radius = Math.sqrt(Math.random()) * 80;
+        const sx = cx + Math.cos(angle) * radius;
+        const sy = cy + Math.sin(angle) * radius;
+        const depth = 0.5 + Math.random() * 0.8; // Range 0.5 to 1.3
+
         return {
-          x: sx, y: sy,
-          tx: t.x, ty: t.y,
-          born: performance.now() + Math.random() * 300,
-          life,
-          size: (0.8 + Math.random() * 1.6) * (1.2 - (depth - 0.7) * 0.3),
-          phase: Math.random() * Math.PI * 2,
+          x: sx, y: sy, // Current position
+          px: sx, py: sy, // Previous position (for velocity)
+          tx: t.x, ty: t.y, // Target position
+          born: performance.now() + Math.random() * 400,
+          life: formationMs * (0.9 + Math.random() * 0.5),
+          depth,
+          // FBM-like noise parameters for more organic drift
+          phase1: Math.random() * Math.PI * 2,
           phase2: Math.random() * Math.PI * 2,
-          seed: 0.5 + Math.random() * 0.5,
-          depth
+          freq1: (0.0005 + Math.random() * 0.001),
+          freq2: (0.0002 + Math.random() * 0.0005),
+          amp1: 1.0 + Math.random() * 0.8,
+          amp2: 1.5 + Math.random(),
         };
       });
 
       let start = performance.now();
       let last = start;
-      const fadeOutMs = Math.max(900, Math.floor(durationMs * 0.3));
+      const totalDuration = formationMs + holdMs + dissipationMs;
 
-      function easeOutExpo(x) { return x === 1 ? 1 : 1 - Math.pow(2, -10 * x); }
-      function easeInOutSine(x) { return -(Math.cos(Math.PI * x) - 1) / 2; }
+      function easeInOutCubic(x) { return x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
       function lerp(a, b, t) { return a + (b - a) * t; }
 
-      // Draw colored sprite once per frame to avoid per-particle gradient cost
+      // --- 4. ENHANCED SPRITE & COLOR ---
       function paintSprite(r, g, b, a) {
         sctx.clearRect(0, 0, SPR, SPR);
         const cxS = SPR / 2, cyS = SPR / 2;
-        const grad = sctx.createRadialGradient(cxS, cyS, 0, cxS, cyS, SPR / 2);
-        grad.addColorStop(0, `rgba(${r},${g},${b},${a})`);
-        grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
-        sctx.fillStyle = grad;
-        sctx.beginPath();
-        sctx.arc(cxS, cyS, SPR / 2, 0, Math.PI * 2);
-        sctx.fill();
+
+        // Layered gradients for a more textured, "wispier" smoke puff
+        const grad1 = sctx.createRadialGradient(cxS, cyS, 0, cxS, cyS, SPR / 2);
+        grad1.addColorStop(0, `rgba(${r},${g},${b},${a * 0.8})`);
+        grad1.addColorStop(0.6, `rgba(${r},${g},${b},${a * 0.2})`);
+        grad1.addColorStop(1, `rgba(${r},${g},${b},0)`);
+        sctx.fillStyle = grad1;
+        sctx.fillRect(0, 0, SPR, SPR);
+
+        const grad2 = sctx.createRadialGradient(cxS * 1.2, cyS * 0.8, 0, cxS, cyS, SPR * 0.7);
+        grad2.addColorStop(0, `rgba(255,255,255,${a * 0.25})`);
+        grad2.addColorStop(1, `rgba(255,255,255,0)`);
+        sctx.fillStyle = grad2;
+        sctx.fillRect(0, 0, SPR, SPR);
       }
 
       function tick(now) {
         if (disposed) return;
         const elapsed = now - start;
-        const dt = Math.min(64, now - last); // clamp to avoid large jumps
+        const dt = Math.min(64, now - last);
         last = now;
 
         ctx.clearRect(0, 0, w, h);
 
-        const breath = 0.97 + 0.05 * Math.sin((now - start) / 1100);
+        const phase = elapsed / totalDuration;
+        const breath = 0.98 + 0.04 * Math.sin(now / 1200);
 
-        // warm gold to bright gold transition
-        const blend = Math.min(1, (elapsed / (durationMs * 0.8)));
-        const goldR = Math.floor(lerp(212, 255, blend));
-        const goldG = Math.floor(lerp(175, 215, blend));
-        const goldB = Math.floor(lerp(55, 0, blend * 0.15));
-
-        paintSprite(goldR, goldG, goldB, 0.92);
+        // More vibrant color transition
+        const blend = Math.min(1, elapsed / (formationMs * 0.9));
+        const goldR = Math.floor(lerp(255, 212, blend));
+        const goldG = Math.floor(lerp(245, 175, blend));
+        const goldB = Math.floor(lerp(200, 55, blend));
+        paintSprite(goldR, goldG, goldB, 0.9);
 
         ctx.globalCompositeOperation = 'lighter';
-        ctx.filter = 'blur(0.4px)';
+        // Dynamic blur: starts softer, gets sharper
+        ctx.filter = `blur(${Math.max(0.2, 1.5 - blend * 1.5)}px)`;
 
+        // --- 5. REFINED PARTICLE UPDATE & DRAW LOGIC ---
         for (let i = 0; i < particles.length; i++) {
           const p = particles[i];
           const t = Math.min(1, Math.max(0, (elapsed - (p.born - start)) / p.life));
-          const e = Math.pow(easeOutExpo(t), 0.85 + (p.depth - 0.7) * 0.15);
+          const e = easeInOutCubic(t);
 
-          // target interpolation
-          const nx = p.x + (p.tx - p.x) * e;
-          const ny = p.y + (p.ty - p.y) * e;
+          // Calculate current velocity based on position change
+          const vx = (p.x - p.px) * 0.95; // Damping
+          const vy = (p.y - p.py) * 0.95;
+          p.px = p.x;
+          p.py = p.y;
 
-          // persistent low-frequency drift (dt-based for smoothness)
-          const baseFreq = 0.0015 * p.seed;
-          p.phase += dt * baseFreq * (0.9 + 0.2 * Math.sin(p.phase2));
-          p.phase2 += dt * baseFreq * 0.6;
-          const curl = 0.6 + Math.sin(p.phase + i * 0.007) * 0.5;
-          const driftA = 6 * (1 - e) + 1.4;
-          const px = nx + Math.sin(p.phase + i * 0.013) * curl * driftA;
-          const py = ny + Math.cos(p.phase2 + i * 0.011) * curl * driftA;
+          let targetX = p.tx;
+          let targetY = p.ty;
+          let forceFactor = lerp(0.04, 0.008, e); // Stronger pull initially
 
-          const fade = 1 - Math.max(0, (elapsed - durationMs) / fadeOutMs);
-          const alpha = Math.min(0.9, (0.18 + e * 0.82) * fade) * (0.96 + 0.04 * breath);
+          // Dissipation phase: particles drift away upwards
+          if (elapsed > formationMs + holdMs) {
+            const dissipationT = (elapsed - formationMs - holdMs) / dissipationMs;
+            targetY -= dissipationT * 150 * p.depth;
+            forceFactor = 0.001; // Weaken the pull to let drift take over
+          }
 
-          const radius = p.size * (1 + e * 1.25) + 6 * (2 - p.depth);
-          ctx.globalAlpha = alpha;
-          ctx.drawImage(sprite, px - radius, py - radius, radius * 2, radius * 2);
+          // FBM-like drift using multiple sine waves
+          p.phase1 += dt * p.freq1 * (1 + 0.2 * Math.sin(p.phase2));
+          p.phase2 += dt * p.freq2;
+          const driftX = Math.sin(p.phase1) * p.amp1 * (1.5 - e);
+          const driftY = Math.cos(p.phase2) * p.amp2 * (1.5 - e);
+
+          // Steering behavior: accelerate towards the target
+          const ax = (targetX - p.x + driftX) * forceFactor;
+          const ay = (targetY - p.y + driftY) * forceFactor;
+
+          p.x += vx + ax;
+          p.y += vy + ay;
+
+          let finalAlpha, finalRadius;
+
+          if (elapsed < formationMs + holdMs) {
+            // Formation and Hold phase
+            const fade = 1 - Math.max(0, (elapsed - (formationMs + holdMs * 0.5)) / (holdMs * 0.5));
+            finalAlpha = (0.1 + e * 0.9) * Math.min(1, fade * 4) * breath;
+            finalRadius = (p.depth * 3) + (e * 18 * (2.1 - p.depth));
+          } else {
+            // Dissipation phase
+            const dissipationT = easeInOutCubic((elapsed - formationMs - holdMs) / dissipationMs);
+            finalAlpha = (1 - dissipationT) * (0.1 + e * 0.9) * breath;
+            finalRadius = (p.depth * 3) + (e * 18 * (2.1 - p.depth)) * (1 + dissipationT * 1.5);
+          }
+
+          ctx.globalAlpha = Math.max(0, finalAlpha / p.depth);
+          ctx.drawImage(sprite, p.x - finalRadius, p.y - finalRadius, finalRadius * 2, finalRadius * 2);
         }
 
-        // reset filter for crisp text overlay
+        // --- 6. OVERLAY TEXT (Largely similar, adjusted timing) ---
         ctx.filter = 'none';
         ctx.globalCompositeOperation = 'source-over';
 
-        // Crisp overlay to ensure legibility as particles converge (multi-line, centered)
-        const rawAppear = Math.min(1, Math.max(0, (elapsed - durationMs * 0.5) / (durationMs * 0.5)));
-        const appear = easeInOutSine(rawAppear);
-        if (appear > 0) {
+        const rawAppear = Math.min(1, Math.max(0, (elapsed - formationMs * 0.6) / (formationMs * 0.4)));
+        const appear = easeInOutCubic(rawAppear);
+        if (appear > 0 && elapsed < formationMs + holdMs) {
           ctx.save();
-          ctx.globalCompositeOperation = 'screen';
-          ctx.globalAlpha = Math.min(0.95, appear);
+          const fadeOut = 1 - Math.max(0, (elapsed - formationMs) / holdMs);
+          ctx.globalAlpha = Math.min(0.95, appear * fadeOut);
 
-          // Sanskrit lines
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.shadowBlur = 18 * (0.95 + 0.05 * breath);
+          ctx.shadowColor = 'rgba(255, 220, 150, 0.7)';
+          ctx.shadowBlur = 24 * breath;
+
           let yy = yStartSans;
-          for (let i = 0; i < sansLines.length; i++) {
+          for (const line of sansLines) {
             const grad = ctx.createLinearGradient(cx - 50, yy - 20, cx + 50, yy + 20);
-            grad.addColorStop(0, 'rgba(255, 234, 150, 0.95)');
+            grad.addColorStop(0, 'rgba(255, 240, 180, 0.95)');
             grad.addColorStop(1, 'rgba(212, 175, 55, 0.95)');
             ctx.fillStyle = grad;
             ctx.font = `600 ${baseSize}px ${fontPrimary}`;
-            ctx.fillText(sansLines[i], cx, yy);
+            ctx.fillText(line, cx, yy);
             yy += lineHeightSans;
           }
 
-          // English lines
           if (engLines.length) {
             yy = yStartSans + sansLines.length * lineHeightSans + pairGap + lineHeightEng / 2;
-            ctx.globalAlpha = Math.min(0.9, appear * 0.95);
             ctx.fillStyle = 'rgba(233, 214, 143, 0.92)';
-            ctx.shadowBlur = 12 * (0.95 + 0.05 * breath);
+            ctx.shadowBlur = 16 * breath;
             ctx.font = `italic 500 ${smallSize}px ${englishFont}`;
-            for (let i = 0; i < engLines.length; i++) {
-              ctx.fillText(engLines[i], cx, yy);
+            for (const line of engLines) {
+              ctx.fillText(line, cx, yy);
               yy += lineHeightEng;
             }
           }
-
-          // Subtle breathing halo
-          const halo = ctx.createRadialGradient(cx, cy, 8, cx, cy, Math.max(w, h) * 0.25);
-          halo.addColorStop(0, `rgba(212,175,55,${0.05 * appear})`);
-          halo.addColorStop(1, 'rgba(0,0,0,0)');
-          ctx.fillStyle = halo;
-          ctx.fillRect(0, 0, w, h);
-
           ctx.restore();
         }
 
-        if (elapsed < durationMs + fadeOutMs + holdMs) {
+        if (elapsed < totalDuration) {
           rafRef.current = requestAnimationFrame(tick);
         } else {
           if (onComplete) onComplete();
@@ -309,7 +328,7 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       disposed = true;
       if (cleanup) cleanup();
     };
-  }, [text, secondaryText, holdMs, onComplete, durationMs]);
+  }, [text, secondaryText, holdMs, onComplete, formationMs, dissipationMs]);
 
   return (
     <CanvasWrap>
