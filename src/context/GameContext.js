@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 // Game States
 export const GAME_STATES = {
@@ -125,7 +125,8 @@ export const ACTIONS = {
   TOGGLE_OBJECTIVES: 'TOGGLE_OBJECTIVES',
   
   // Settings actions
-  UPDATE_SETTINGS: 'UPDATE_SETTINGS'
+  UPDATE_SETTINGS: 'UPDATE_SETTINGS',
+  LOAD_STATE: 'LOAD_STATE'
 };
 
 // Reducer function
@@ -249,6 +250,9 @@ function gameReducer(state, action) {
         ...state,
         settings: { ...state.settings, ...action.payload }
       };
+
+    case ACTIONS.LOAD_STATE:
+      return { ...state, ...action.payload };
       
     default:
       return state;
@@ -260,8 +264,29 @@ const GameContext = createContext();
 
 // Provider component
 export function GameProvider({ children }) {
-  const [state, dispatch] = useReducer(gameReducer, initialState);
-  
+  const [state, dispatch] = useReducer(
+    gameReducer,
+    initialState,
+    (init) => {
+      try {
+        const raw = localStorage.getItem('dharmas-cipher-state-v1');
+        if (!raw) return init;
+        const parsed = JSON.parse(raw);
+        return { ...init, ...parsed };
+      } catch (e) {
+        return init;
+      }
+    }
+  );
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('dharmas-cipher-state-v1', JSON.stringify(state));
+    } catch (e) {
+      // ignore persistence errors
+    }
+  }, [state]);
+
   return (
     <GameContext.Provider value={{ state, dispatch }}>
       {children}
