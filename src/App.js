@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { GameProvider, useGame, GAME_STATES } from './context/GameContext';
 import CursorTrail from './components/CursorTrail';
 import NavigatorSigilCursor from './components/NavigatorSigilCursor';
-import TitleScreen from './components/TitleScreen';
-import ProfileCreation from './components/ProfileCreation';
-import ProfileResults from './components/ProfileResults';
-import GameplayScreen from './components/GameplayScreen';
 import GlobalStyles from './styles/GlobalStyles';
+import ErrorBoundary from './components/ErrorBoundary';
+
+const TitleScreen = lazy(() => import('./components/TitleScreen'));
+const ProfileCreation = lazy(() => import('./components/ProfileCreation'));
+const ProfileResults = lazy(() => import('./components/ProfileResults'));
+const GameplayScreen = lazy(() => import('./components/GameplayScreen'));
 
 function GameRouter() {
   const { state } = useGame();
@@ -29,9 +31,13 @@ function App() {
   return (
     <GameProvider>
       <GlobalStyles />
-      <div className="app">
-        <GameRouter />
-      </div>
+      <ErrorBoundary>
+        <Suspense fallback={<div style={{ padding: '2rem', color: '#d4af37' }}>Loading…</div>}>
+          <div className="app">
+            <GameRouter />
+          </div>
+        </Suspense>
+      </ErrorBoundary>
       <CursorTrail />
       <NavigatorSigilCursor />
     </GameProvider>
