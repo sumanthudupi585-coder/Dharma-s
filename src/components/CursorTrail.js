@@ -1,98 +1,157 @@
 import { useEffect, useRef } from 'react';
 
-import { CURSOR_CONFIG } from './cursorConfig';
+// --- Configuration for easy tweaking ---
+const CONFIG = {
+  // Performance
+  MAX_PARTICLES: 300,
+  // Physics
+  FRICTION: 0.96,
+  GRAVITY: 0.08,
+  // Emission
+  EMISSION_RATE: 4, // Higher = more particles per distance moved
+  // Appearance
+  PARTICLE_LIFE: 800, // in milliseconds
+  PARTICLE_SIZE: 1.2,
+  // Colors for the particles, picked randomly
+  PALETTE: ['#FFFFFF', '#F0E68C', '#FFD700', '#FFA500', '#FF8C00']
+};
 
 export default function CursorTrail() {
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
-  const pointsRef = useRef([]);
-  const mouseRef = useRef({ x: window.innerWidth / 2, y: window.innerHeight / 2, t: performance.now() });
-  const HOTSPOT_DX = CURSOR_CONFIG.HOTSPOT_DX;
-  const HOTSPOT_DY = CURSOR_CONFIG.HOTSPOT_DY
+  const particlesRef = useRef([]);
+  const mouseRef = useRef({ x: -999, y: -999, vx: 0, vy: 0 });
+  const emissionAccRef = useRef(0);
+
+  // --- 1. Pre-render Sprites for Performance ---
+  const moteSprite = useRef(null);
+  const shardSprite = useRef(null);
+
+  useEffect(() => {
+    // Helper to create a pre-rendered sprite canvas
+    const createSprite = (size, drawFn) => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = canvas.height = size;
+      drawFn(ctx, size);
+      return canvas;
+    };
+
+    moteSprite.current = createSprite(32, (ctx, size) => {
+      const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
+      grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, size, size);
+    });
+
+    shardSprite.current = createSprite(16, (ctx, size) => {
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.moveTo(size / 2, 0); ctx.lineTo(size, size / 2);
+      ctx.lineTo(size / 2, size); ctx.lineTo(0, size / 2);
+      ctx.closePath();
+      ctx.fill();
+    });
+  }, []);
+
 
   useEffect(() => {
     const canvas = document.createElement('canvas');
     canvas.style.position = 'fixed';
     canvas.style.inset = '0';
-    canvas.style.zIndex = '3998';
+    canvas.style.zIndex = '9999'; // High z-index to be on top
     canvas.style.pointerEvents = 'none';
-    canvas.style.mixBlendMode = 'screen';
+    canvas.style.mixBlendMode = 'lighter'; // 'lighter' is often better for glow effects
+    canvas.style.filter = 'blur(0.5px)';
     document.body.appendChild(canvas);
     canvasRef.current = canvas;
 
     const ctx = canvas.getContext('2d');
+
     function resize() {
       const dpr = Math.min(2, window.devicePixelRatio || 1);
-      canvas.width = Math.floor(window.innerWidth * dpr);
-      canvas.height = Math.floor(window.innerHeight * dpr);
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
       ctx.scale(dpr, dpr);
     }
     resize();
 
     const onMove = (e) => {
-      const x = e.clientX + HOTSPOT_DX, y = e.clientY + HOTSPOT_DY;
       const now = performance.now();
-      mouseRef.current = { x, y, t: now };
-      const prev = pointsRef.current[pointsRef.current.length - 1];
-      const speed = prev ? Math.hypot(x - prev.x, y - prev.y) : 0;
-      const count = Math.min(6, 2 + Math.floor(speed / 6));
-      for (let i = 0; i < count; i++) {
-        const type = Math.random() < 0.45 ? 'shard' : 'mote';
-        pointsRef.current.push({ x, y, vx: (Math.random()-0.5)*0.8, vy: (Math.random()-0.5)*0.8, life: 500 + Math.random()*450, born: now, size: 1 + Math.random()*1.4, rot: Math.random()*Math.PI*2, type });
+      const lastPos = mouseRef.current;
+      const x = e.clientX;
+      const y = e.clientY;
+
+      // --- 2. Calculate mouse velocity and handle smooth emission ---
+      const dx = x - lastPos.x;
+      const dy = y - lastPos.y;
+      const dist = Math.hypot(dx, dy);
+
+      mouseRef.current = { x, y, vx: dx, vy: dy };
+
+      emissionAccRef.current += dist * CONFIG.EMISSION_RATE;
+      const particlesToEmit = Math.floor(emissionAccRef.current);
+      if (particlesToEmit > 0) {
+        emissionAccRef.current -= particlesToEmit;
+        for (let i = 0; i < particlesToEmit; i++) {
+          if (particlesRef.current.length >= CONFIG.MAX_PARTICLES) return;
+
+          const type = Math.random() < 0.4 ? 'shard' : 'mote';
+          const color = CONFIG.PALETTE[Math.floor(Math.random() * CONFIG.PALETTE.length)];
+
+          particlesRef.current.push({
+            x, y,
+            // --- 3. Inherit velocity from the cursor for a "flick" effect ---
+            vx: -dx * (0.2 + Math.random() * 0.4) + (Math.random() - 0.5),
+            vy: -dy * (0.2 + Math.random() * 0.4) + (Math.random() - 0.5),
+            life: CONFIG.PARTICLE_LIFE * (0.8 + Math.random() * 0.4),
+            born: now,
+            size: CONFIG.PARTICLE_SIZE * (0.5 + Math.random() * 0.5),
+            rot: Math.random() * Math.PI * 2,
+            type,
+            color,
+          });
+        }
       }
-      if (pointsRef.current.length > 400) pointsRef.current.splice(0, pointsRef.current.length - 400);
     };
+
     window.addEventListener('mousemove', onMove);
     window.addEventListener('resize', resize);
 
-    function tick() {
-      const now = performance.now();
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function tick(now) {
+      if (!canvas) return;
+      ctx.clearRect(0, 0, canvas.width / (window.devicePixelRatio || 1), canvas.height / (window.devicePixelRatio || 1));
 
-      // emit a faint point periodically to keep alignment even without movement
-      if (!pointsRef.current.length || now - mouseRef.current.t > 16) {
-        const { x, y } = mouseRef.current;
-        pointsRef.current.push({ x, y, vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4, life: 600 + Math.random()*300, born: now, size: 1 + Math.random()*1.2 });
-      }
+      // Filter out dead particles
+      particlesRef.current = particlesRef.current.filter(p => now - p.born < p.life);
 
-      const pts = pointsRef.current;
-      for (let i = pts.length - 1; i >= 0; i--) {
-        const p = pts[i];
+      for (const p of particlesRef.current) {
+        // --- 4. Apply physics ---
+        p.vx *= CONFIG.FRICTION;
+        p.vy *= CONFIG.FRICTION;
+        p.vy += CONFIG.GRAVITY;
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // --- 5. Beautiful lifecycle fade ---
         const t = (now - p.born) / p.life;
-        if (t >= 1) { pts.splice(i, 1); continue; }
-        p.x += p.vx; p.y += p.vy;
-        const fade = Math.max(0, 1 - t);
-        const alpha = 0.25 * fade;
-        const r = Math.floor(212 + 30 * fade);
-        const g = Math.floor(175 + 30 * fade);
-        const b = 55;
+        // A sine curve makes a nice fade-in, fade-out
+        const alpha = Math.sin(t * Math.PI);
+        const size = p.size * (1 - t);
 
-        if (p.type === 'shard') {
-          const w = 5 * p.size * fade;
-          const h = 8 * p.size * fade;
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.rot);
-          ctx.globalAlpha = alpha;
-          ctx.fillStyle = `rgba(${r},${g},${b},${0.7*alpha})`;
-          ctx.beginPath();
-          ctx.moveTo(0, -h/2);
-          ctx.lineTo(w/2, 0);
-          ctx.lineTo(0, h/2);
-          ctx.lineTo(-w/2, 0);
-          ctx.closePath();
-          ctx.fill();
-          ctx.restore();
-        } else {
-          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 8);
-          grad.addColorStop(0, `rgba(${r},${g},${b},${alpha})`);
-          grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI*2);
-          ctx.fill();
-        }
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = p.color; // Set color for shards
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+
+        // --- 6. Draw the pre-rendered sprite ---
+        const sprite = p.type === 'shard' ? shardSprite.current : moteSprite.current;
+        const drawSize = size * (p.type === 'shard' ? 8 : 24);
+        ctx.drawImage(sprite, -drawSize / 2, -drawSize / 2, drawSize, drawSize);
+
+        ctx.restore();
       }
 
       rafRef.current = requestAnimationFrame(tick);
@@ -100,12 +159,12 @@ export default function CursorTrail() {
     rafRef.current = requestAnimationFrame(tick);
 
     return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      cancelAnimationFrame(rafRef.current);
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('resize', resize);
-      if (canvasRef.current && canvasRef.current.parentNode) canvasRef.current.parentNode.removeChild(canvasRef.current);
+      document.body.removeChild(canvas);
     };
-  }, [HOTSPOT_DX, HOTSPOT_DY]);
+  }, []); // Empty dependency array ensures this runs only once
 
-  return null;
+  return null; // This component doesn't render any DOM elements itself
 }
