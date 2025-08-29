@@ -14,7 +14,7 @@ const Canvas = styled.canvas`
   display: block;
 `;
 
-export default function SanskritSmokeText({ text, secondaryText = '', onComplete, durationMs = 5500, holdMs = 3000 }) {
+export default function SanskritSmokeText({ text, secondaryText = '', onComplete, durationMs = 6500, holdMs = 3200 }) {
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
 
@@ -32,23 +32,50 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       const ctx = canvas.getContext('2d');
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.scale(dpr, dpr);
+      ctx.imageSmoothingEnabled = true;
 
-      const w = rect.width, h = rect.height;
+      const w = rect.width;
+      const h = rect.height;
       const cx = w / 2, cy = h / 2;
 
+      // Offscreen buffers
       const buffer = document.createElement('canvas');
       buffer.width = Math.floor(w);
       buffer.height = Math.floor(h);
       const bctx = buffer.getContext('2d');
 
-      const sprite = document.createElement('canvas');
-      const SPR = 96;
-      sprite.width = SPR; sprite.height = SPR;
-      const sctx = sprite.getContext('2d');
+      // Sprites
+      const goldSprite = document.createElement('canvas');
+      const smokeSprite = document.createElement('canvas');
+      const SPR_G = 96, SPR_S = 120;
+      goldSprite.width = SPR_G; goldSprite.height = SPR_G;
+      smokeSprite.width = SPR_S; smokeSprite.height = SPR_S;
+      const gctx = goldSprite.getContext('2d');
+      const sctx = smokeSprite.getContext('2d');
 
+      function makeGoldSprite(a = 0.9) {
+        gctx.clearRect(0, 0, SPR_G, SPR_G);
+        const r = SPR_G / 2, c = r;
+        const grad = gctx.createRadialGradient(c, c, 0, c, c, r);
+        grad.addColorStop(0, `rgba(255, 236, 170, ${a})`);
+        grad.addColorStop(1, 'rgba(255, 236, 170, 0)');
+        gctx.fillStyle = grad; gctx.beginPath(); gctx.arc(c, c, r, 0, Math.PI * 2); gctx.fill();
+      }
+      function makeSmokeSprite() {
+        sctx.clearRect(0, 0, SPR_S, SPR_S);
+        const r = SPR_S / 2, c = r;
+        const grad = sctx.createRadialGradient(c, c, 0, c, c, r);
+        grad.addColorStop(0, 'rgba(10,10,14,0.35)');
+        grad.addColorStop(0.6, 'rgba(10,10,14,0.18)');
+        grad.addColorStop(1, 'rgba(10,10,14,0)');
+        sctx.fillStyle = grad; sctx.beginPath(); sctx.arc(c, c, r, 0, Math.PI * 2); sctx.fill();
+      }
+      makeGoldSprite();
+      makeSmokeSprite();
+
+      // Layout and sampling
       const fontPrimary = 'Noto Serif Devanagari, Noto Sans Devanagari, serif';
       const englishFont = 'Crimson Text, serif';
-
       const maxBlockWidth = w * 0.84;
       const baseSize = Math.min(128, Math.max(48, Math.floor((w / Math.max(4, (text || '').length)) * 1.6)));
       const smallSize = Math.max(18, Math.floor(baseSize * 0.36));
@@ -62,10 +89,7 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
         let cur = '';
         for (let i = 0; i < words.length; i++) {
           const test = cur ? cur + ' ' + words[i] : words[i];
-          if (bctx.measureText(test).width <= maxBlockWidth) cur = test; else {
-            if (cur) lines.push(cur);
-            cur = words[i];
-          }
+          if (bctx.measureText(test).width <= maxBlockWidth) cur = test; else { if (cur) lines.push(cur); cur = words[i]; }
         }
         if (cur) lines.push(cur);
         return lines;
@@ -92,8 +116,8 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
         for (let py = 0; py < h; py += step) {
           for (let px = 0; px < w; px += step) {
             if (img[(py * w + px) * 4 + 3] > 128) {
-              const jx = px + (Math.random() - 0.5) * step * 0.6;
-              const jy = py + (Math.random() - 0.5) * step * 0.6;
+              const jx = px + (Math.random() - 0.5) * step * 0.7;
+              const jy = py + (Math.random() - 0.5) * step * 0.7;
               pts.push({ x: jx, y: jy });
             }
           }
@@ -105,7 +129,7 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       const pointsEng = engLines.length ? sample(engLines, `italic 500 ${smallSize}px ${englishFont}`, smallSize, lineHeightEng, yStartSans + sansLines.length * lineHeightSans + pairGap + lineHeightEng / 2, 0.055) : [];
 
       let allPoints = pointsSans.concat(pointsEng);
-      const maxParticles = 2000;
+      const maxParticles = 2200;
       let ratio = Math.min(1, maxParticles / Math.max(1, allPoints.length));
       let targets = allPoints.filter(() => Math.random() < ratio);
       if (targets.length === 0 && (sansLines.length || engLines.length)) {
@@ -116,34 +140,68 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
         targets = allPoints.filter(() => Math.random() < ratio);
       }
 
-      function paintSprite(r, g, b, a) {
-        sctx.clearRect(0, 0, SPR, SPR);
-        const cxS = SPR / 2, cyS = SPR / 2;
-        const grad = sctx.createRadialGradient(cxS, cyS, 0, cxS, cyS, SPR / 2);
-        grad.addColorStop(0, `rgba(${r},${g},${b},${a})`);
-        grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
-        sctx.fillStyle = grad;
-        sctx.beginPath(); sctx.arc(cxS, cyS, SPR / 2, 0, Math.PI * 2); sctx.fill();
+      // Simple value-noise helpers for smoke advection
+      function hash(x, y) { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); }
+      function smoothstep(t) { return t * t * (3 - 2 * t); }
+      function noise2(x, y) {
+        const xi = Math.floor(x), yi = Math.floor(y);
+        const xf = x - xi, yf = y - yi;
+        const n00 = hash(xi, yi), n10 = hash(xi + 1, yi), n01 = hash(xi, yi + 1), n11 = hash(xi + 1, yi + 1);
+        const u = smoothstep(xf), v = smoothstep(yf);
+        return (n00 * (1 - u) + n10 * u) * (1 - v) + (n01 * (1 - u) + n11 * u) * v;
       }
 
-      const particles = targets.map((t) => {
-        const edge = Math.floor(Math.random() * 4);
-        const m = 80;
-        let sx = 0, sy = 0;
-        if (edge === 0) { sx = Math.random() * w; sy = -m; }
-        else if (edge === 1) { sx = w + m; sy = Math.random() * h; }
-        else if (edge === 2) { sx = Math.random() * w; sy = h + m; }
-        else { sx = -m; sy = Math.random() * h; }
-        return { x: sx, y: sy, vx: 0, vy: 0, tx: t.x, ty: t.y, depth: 0.7 + Math.random() * 0.8, seed: Math.random() * 1000 };
-      });
+      // Particles
+      const gold = targets.map(t => ({
+        x: cx + (Math.random() - 0.5) * Math.max(w, h) * 0.5,
+        y: cy + (Math.random() - 0.5) * Math.max(w, h) * 0.5,
+        vx: 0, vy: 0, tx: t.x, ty: t.y, depth: 0.7 + Math.random() * 0.8, seed: Math.random() * 1000
+      }));
+
+      // Volumetric smoke: back and front layers
+      const bounds = { x: cx - maxBlockWidth / 2, y: yStartSans - lineHeightSans, w: maxBlockWidth, h: blockHeight + lineHeightSans * 2 };
+      const SMOKE_COUNT = Math.floor(180 + Math.min(120, maxBlockWidth / 6));
+      const smokeBack = new Array(SMOKE_COUNT).fill(0).map(() => ({
+        x: bounds.x + Math.random() * bounds.w,
+        y: bounds.y + Math.random() * bounds.h,
+        vx: 0, vy: 0,
+        r: 16 + Math.random() * 40,
+        a: 0.12 + Math.random() * 0.12,
+        z: 0.6 + Math.random() * 0.5,
+        seed: Math.random() * 1000
+      }));
+      const smokeFront = smokeBack.slice(0, Math.floor(SMOKE_COUNT * 0.4)).map(p => ({ ...p, a: p.a * 0.7 }));
 
       let start = performance.now();
       let last = start;
-      const fadeOutMs = Math.max(900, Math.floor(durationMs * 0.35));
+      const dissipateMs = Math.max(1200, Math.floor(durationMs * 0.6));
 
-      function easeOutExpo(x) { return x === 1 ? 1 : 1 - Math.pow(2, -10 * x); }
       function easeInOutSine(x) { return -(Math.cos(Math.PI * x) - 1) / 2; }
+      function easeOutExpo(x) { return x === 1 ? 1 : 1 - Math.pow(2, -10 * x); }
       function lerp(a, b, t) { return a + (b - a) * t; }
+
+      function drawSmokeLayer(arr, alphaScale) {
+        ctx.globalCompositeOperation = 'source-over';
+        for (let i = 0; i < arr.length; i++) {
+          const p = arr[i];
+          ctx.globalAlpha = Math.max(0, p.a * alphaScale);
+          const r = p.r * p.z;
+          ctx.drawImage(smokeSprite, p.x - r, p.y - r, r * 2, r * 2);
+        }
+      }
+
+      function updateSmoke(arr, dt, t) {
+        const ns = 0.007;
+        for (let i = 0; i < arr.length; i++) {
+          const p = arr[i];
+          const ang = (noise2(p.x * ns + t * 0.0005, p.y * ns - t * 0.0004) - 0.5) * Math.PI * 2;
+          const speed = 12 * p.z;
+          p.vx += Math.cos(ang) * speed * dt;
+          p.vy += Math.sin(ang) * speed * dt - 6 * dt * p.z; // slight upward lift
+          p.vx *= Math.pow(0.9, dt * 60); p.vy *= Math.pow(0.9, dt * 60);
+          p.x += p.vx * dt; p.y += p.vy * dt;
+        }
+      }
 
       function tick(now) {
         if (disposed) return;
@@ -153,49 +211,49 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
 
         ctx.clearRect(0, 0, w, h);
 
-        const blend = Math.min(1, elapsed / (durationMs * 0.8));
+        // BACK SMOKE
+        updateSmoke(smokeBack, dt, now);
+        drawSmokeLayer(smokeBack, 1);
+
+        // GOLD PARTICLES (text)
+        const blend = Math.min(1, elapsed / (durationMs * 0.85));
         const goldR = Math.floor(lerp(212, 255, blend));
         const goldG = Math.floor(lerp(175, 215, blend));
         const goldB = Math.floor(lerp(55, 0, blend * 0.15));
-        paintSprite(goldR, goldG, goldB, 0.9);
+        makeGoldSprite(0.9);
 
         ctx.globalCompositeOperation = 'screen';
-        ctx.filter = 'blur(0.4px)';
+        ctx.filter = 'blur(0.5px)';
 
-        for (let i = 0; i < particles.length; i++) {
-          const p = particles[i];
-
+        for (let i = 0; i < gold.length; i++) {
+          const p = gold[i];
           const t = Math.min(1, elapsed / durationMs);
           const e = easeOutExpo(t);
-
-          const ax = (p.tx - p.x) * 6.0; // attraction
-          const ay = (p.ty - p.y) * 6.0;
-          // gentle curl using time-based sines
-          const curlA = (1 - e) * p.depth * 10;
-          const curlX = Math.sin(now * 0.0012 + p.seed + i * 0.01) * curlA;
-          const curlY = Math.cos(now * 0.0011 + p.seed + i * 0.013) * curlA;
-
-          p.vx = (p.vx + (ax + curlX) * dt) * Math.pow(0.6, dt * 60);
-          p.vy = (p.vy + (ay + curlY) * dt) * Math.pow(0.6, dt * 60);
+          const ax = (p.tx - p.x) * 5.5;
+          const ay = (p.ty - p.y) * 5.5;
+          const curl = 8 * (1 - e) * p.depth;
+          const fx = Math.sin(now * 0.0012 + p.seed + i * 0.01) * curl;
+          const fy = Math.cos(now * 0.0011 + p.seed + i * 0.013) * curl;
+          p.vx = (p.vx + (ax + fx) * dt) * Math.pow(0.62, dt * 60);
+          p.vy = (p.vy + (ay + fy) * dt) * Math.pow(0.62, dt * 60);
           p.x += p.vx * dt; p.y += p.vy * dt;
 
-          // alpha over lifetime + hold/dissipate
-          let alpha = 0.85 * (0.2 + e * 0.8);
+          let alpha = 0.9 * (0.2 + e * 0.8);
           if (elapsed > durationMs + holdMs) {
-            const tD = Math.min(1, (elapsed - durationMs - holdMs) / fadeOutMs);
+            const tD = Math.min(1, (elapsed - durationMs - holdMs) / dissipateMs);
             alpha *= (1 - tD);
-            p.y -= 12 * dt * p.depth; // float up
+            p.y -= 10 * dt * p.depth;
           }
-          const radius = 7 + 14 * (0.8 + 0.2 * p.depth);
-
+          const radius = 8 + 16 * p.depth;
           ctx.globalAlpha = Math.max(0, alpha);
-          ctx.drawImage(sprite, p.x - radius, p.y - radius, radius * 2, radius * 2);
+          ctx.drawImage(goldSprite, p.x - radius, p.y - radius, radius * 2, radius * 2);
         }
 
         ctx.filter = 'none';
         ctx.globalCompositeOperation = 'source-over';
 
-        const rawAppear = Math.min(1, Math.max(0, (elapsed - durationMs * 0.5) / (durationMs * 0.5)));
+        // TEXT OVERLAY
+        const rawAppear = Math.min(1, Math.max(0, (elapsed - durationMs * 0.45) / (durationMs * 0.55)));
         const appear = easeInOutSine(rawAppear);
         if (appear > 0) {
           ctx.save();
@@ -214,7 +272,6 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
             ctx.fillText(sansLines[i], cx, yy);
             yy += lineHeightSans;
           }
-
           if (engLines.length) {
             yy = yStartSans + sansLines.length * lineHeightSans + pairGap + lineHeightEng / 2;
             ctx.globalAlpha = Math.min(0.9, appear * 0.95);
@@ -223,11 +280,19 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
             ctx.font = `italic 500 ${smallSize}px ${englishFont}`;
             for (let i = 0; i < engLines.length; i++) { ctx.fillText(engLines[i], cx, yy); yy += lineHeightEng; }
           }
-
           ctx.restore();
         }
 
-        if (elapsed < durationMs + holdMs + fadeOutMs) {
+        // FRONT SMOKE over text for depth
+        let smokeAlpha = 1;
+        if (elapsed > durationMs + holdMs) {
+          const tD = Math.min(1, (elapsed - durationMs - holdMs) / dissipateMs);
+          smokeAlpha = 1 - tD;
+        }
+        updateSmoke(smokeFront, dt, now);
+        drawSmokeLayer(smokeFront, 0.8 * smokeAlpha);
+
+        if (elapsed < durationMs + holdMs + dissipateMs) {
           rafRef.current = requestAnimationFrame(tick);
         } else {
           if (onComplete) onComplete();
@@ -239,10 +304,7 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       function handleResize() { if (rafRef.current) cancelAnimationFrame(rafRef.current); init(); }
       window.addEventListener('resize', handleResize);
 
-      return () => {
-        window.removeEventListener('resize', handleResize);
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      };
+      return () => { window.removeEventListener('resize', handleResize); if (rafRef.current) cancelAnimationFrame(rafRef.current); };
     }
 
     const cleanup = init();
