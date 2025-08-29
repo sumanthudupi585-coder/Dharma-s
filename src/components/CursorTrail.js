@@ -22,6 +22,7 @@ export default function CursorTrail() {
   const particlesRef = useRef([]);
   const mouseRef = useRef({ x: -999, y: -999, vx: 0, vy: 0 });
   const emissionAccRef = useRef(0);
+  const dprRef = useRef(1);
 
   // --- 1. Pre-render Sprites for Performance ---
   const moteSprite = useRef(null);
@@ -60,7 +61,7 @@ export default function CursorTrail() {
     const canvas = document.createElement('canvas');
     canvas.style.position = 'fixed';
     canvas.style.inset = '0';
-    canvas.style.zIndex = '9999'; // High z-index to be on top
+    canvas.style.zIndex = '3998'; // just below custom cursor (3999)
     canvas.style.pointerEvents = 'none';
     canvas.style.mixBlendMode = 'lighter'; // 'lighter' is often better for glow effects
     canvas.style.filter = 'blur(0.5px)';
@@ -71,8 +72,10 @@ export default function CursorTrail() {
 
     function resize() {
       const dpr = Math.min(2, window.devicePixelRatio || 1);
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
+      dprRef.current = dpr;
+      canvas.width = Math.floor(window.innerWidth * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
+      ctx.setTransform(1, 0, 0, 1, 0, 0); // reset before scaling
       ctx.scale(dpr, dpr);
     }
     resize();
@@ -95,7 +98,7 @@ export default function CursorTrail() {
       if (particlesToEmit > 0) {
         emissionAccRef.current -= particlesToEmit;
         for (let i = 0; i < particlesToEmit; i++) {
-          if (particlesRef.current.length >= CONFIG.MAX_PARTICLES) return;
+          if (particlesRef.current.length >= CONFIG.MAX_PARTICLES) break;
 
           const type = Math.random() < 0.4 ? 'shard' : 'mote';
           const color = CONFIG.PALETTE[Math.floor(Math.random() * CONFIG.PALETTE.length)];
@@ -121,7 +124,7 @@ export default function CursorTrail() {
 
     function tick(now) {
       if (!canvas) return;
-      ctx.clearRect(0, 0, canvas.width / (window.devicePixelRatio || 1), canvas.height / (window.devicePixelRatio || 1));
+      ctx.clearRect(0, 0, canvas.width / dprRef.current, canvas.height / dprRef.current);
 
       // Filter out dead particles
       particlesRef.current = particlesRef.current.filter(p => now - p.born < p.life);
