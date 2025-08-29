@@ -3,17 +3,17 @@ import { useEffect, useRef } from 'react';
 // --- Configuration for easy tweaking ---
 const CONFIG = {
   // Performance
-  MAX_PARTICLES: 300,
-  // Physics
-  FRICTION: 0.96,
-  GRAVITY: 0.08,
-  // Emission
-  EMISSION_RATE: 4, // Higher = more particles per distance moved
+  MAX_PARTICLES: 160,
+  // Physics (more damping, lighter gravity)
+  FRICTION: 0.9,
+  GRAVITY: 0.02,
+  // Emission (softer)
+  EMISSION_RATE: 2,
   // Appearance
-  PARTICLE_LIFE: 800, // in milliseconds
-  PARTICLE_SIZE: 1.2,
-  // Colors for the particles, picked randomly
-  PALETTE: ['#FFFFFF', '#F0E68C', '#FFD700', '#FFA500', '#FF8C00']
+  PARTICLE_LIFE: 1000,
+  PARTICLE_SIZE: 1.1,
+  // Golden palette
+  PALETTE: ['#fff3a0', '#ffe27a', '#ffd24d', '#ffc107', '#d4af37']
 };
 
 export default function CursorTrail() {
@@ -39,14 +39,16 @@ export default function CursorTrail() {
 
     moteSprite.current = createSprite(32, (ctx, size) => {
       const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-      grad.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
-      grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      grad.addColorStop(0, 'rgba(255, 224, 128, 0.9)');
+      grad.addColorStop(1, 'rgba(255, 224, 128, 0)');
       ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, size, size);
+      ctx.beginPath();
+      ctx.arc(size/2, size/2, size/2, 0, Math.PI*2);
+      ctx.fill();
     });
 
     shardSprite.current = createSprite(16, (ctx, size) => {
-      ctx.fillStyle = 'white';
+      ctx.fillStyle = '#ffd24d';
       ctx.beginPath();
       ctx.moveTo(size / 2, 0); ctx.lineTo(size, size / 2);
       ctx.lineTo(size / 2, size); ctx.lineTo(0, size / 2);
@@ -62,8 +64,8 @@ export default function CursorTrail() {
     canvas.style.inset = '0';
     canvas.style.zIndex = '3998';
     canvas.style.pointerEvents = 'none';
-    canvas.style.mixBlendMode = 'lighter'; // 'lighter' is often better for glow effects
-    canvas.style.filter = 'blur(0.5px)';
+    canvas.style.mixBlendMode = 'screen';
+    canvas.style.filter = 'blur(1px)';
     document.body.appendChild(canvas);
     canvasRef.current = canvas;
 
@@ -101,12 +103,12 @@ export default function CursorTrail() {
 
           particlesRef.current.push({
             x, y,
-            // --- 3. Inherit velocity from the cursor for a "flick" effect ---
-            vx: -dx * (0.2 + Math.random() * 0.4) + (Math.random() - 0.5),
-            vy: -dy * (0.2 + Math.random() * 0.4) + (Math.random() - 0.5),
-            life: CONFIG.PARTICLE_LIFE * (0.8 + Math.random() * 0.4),
+            // gentler initial velocity
+            vx: -dx * (0.08 + Math.random() * 0.12) + (Math.random() - 0.5) * 0.4,
+            vy: -dy * (0.08 + Math.random() * 0.12) + (Math.random() - 0.5) * 0.4,
+            life: CONFIG.PARTICLE_LIFE * (0.9 + Math.random() * 0.3),
             born: now,
-            size: CONFIG.PARTICLE_SIZE * (0.5 + Math.random() * 0.5),
+            size: CONFIG.PARTICLE_SIZE * (0.6 + Math.random() * 0.5),
             rot: Math.random() * Math.PI * 2,
             type,
             color,
@@ -140,16 +142,14 @@ export default function CursorTrail() {
         const size = p.size * (1 - t);
 
         ctx.globalAlpha = alpha;
-        ctx.fillStyle = p.color; // Set color for shards
         ctx.save();
         ctx.translate(p.x, p.y);
         ctx.rotate(p.rot);
-
-        // --- 6. Draw the pre-rendered sprite ---
+        ctx.shadowColor = 'rgba(212,175,55,0.6)';
+        ctx.shadowBlur = 10;
         const sprite = p.type === 'shard' ? shardSprite.current : moteSprite.current;
-        const drawSize = size * (p.type === 'shard' ? 8 : 24);
+        const drawSize = size * (p.type === 'shard' ? 10 : 28);
         ctx.drawImage(sprite, -drawSize / 2, -drawSize / 2, drawSize, drawSize);
-
         ctx.restore();
       }
 
