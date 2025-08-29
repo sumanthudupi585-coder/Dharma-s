@@ -3,17 +3,17 @@ import { useEffect, useRef } from 'react';
 // --- Configuration for easy tweaking ---
 const CONFIG = {
   // Performance
-  MAX_PARTICLES: 160,
+  MAX_PARTICLES: 120,
   // Physics (more damping, lighter gravity)
-  FRICTION: 0.9,
-  GRAVITY: 0.02,
+  FRICTION: 0.92,
+  GRAVITY: 0.01,
   // Emission (softer)
-  EMISSION_RATE: 2,
+  EMISSION_RATE: 1.2,
   // Appearance
-  PARTICLE_LIFE: 1000,
-  PARTICLE_SIZE: 1.1,
+  PARTICLE_LIFE: 1200,
+  PARTICLE_SIZE: 1.0,
   // Golden palette
-  PALETTE: ['#fff3a0', '#ffe27a', '#ffd24d', '#ffc107', '#d4af37']
+  PALETTE: ['#fff3a0', '#ffe27a', '#ffd24d', '#d4af37']
 };
 
 export default function CursorTrail() {
@@ -65,7 +65,7 @@ export default function CursorTrail() {
     canvas.style.zIndex = '3998';
     canvas.style.pointerEvents = 'none';
     canvas.style.mixBlendMode = 'screen';
-    canvas.style.filter = 'blur(1px)';
+    canvas.style.filter = 'blur(0.8px)';
     document.body.appendChild(canvas);
     canvasRef.current = canvas;
 
@@ -98,7 +98,7 @@ export default function CursorTrail() {
         for (let i = 0; i < particlesToEmit; i++) {
           if (particlesRef.current.length >= CONFIG.MAX_PARTICLES) break;
 
-          const type = Math.random() < 0.4 ? 'shard' : 'mote';
+          const type = 'mote';
           const color = CONFIG.PALETTE[Math.floor(Math.random() * CONFIG.PALETTE.length)];
 
           particlesRef.current.push({
@@ -147,8 +147,8 @@ export default function CursorTrail() {
         ctx.rotate(p.rot);
         ctx.shadowColor = 'rgba(212,175,55,0.6)';
         ctx.shadowBlur = 10;
-        const sprite = p.type === 'shard' ? shardSprite.current : moteSprite.current;
-        const drawSize = size * (p.type === 'shard' ? 10 : 28);
+        const sprite = moteSprite.current;
+        const drawSize = size * 26;
         ctx.drawImage(sprite, -drawSize / 2, -drawSize / 2, drawSize, drawSize);
         ctx.restore();
       }
