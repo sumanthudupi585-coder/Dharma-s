@@ -185,7 +185,7 @@ const FooterHint = styled.p`
 const ContentRow = styled.div`
   width: min(96vw, 1240px);
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   justify-content: center;
   gap: var(--spacing-lg);
   padding: var(--spacing-md);
