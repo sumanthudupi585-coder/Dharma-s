@@ -209,6 +209,7 @@ export default function ProfileCreation() {
   const [answers, setAnswers] = useState([]);
   const [inputLocked, setInputLocked] = useState(false);
   const [discovered, setDiscovered] = useState({});
+  const [flight, setFlight] = useState(null);
 
   const total = SURVEY_QUESTIONS.length;
   const progress = useMemo(() => Math.round(((index) / total) * 100), [index, total]);
