@@ -34,6 +34,11 @@ const ScreenRoot = styled.div`
   }
 `;
 
+const FlyingWord = styled(motion.div)`
+  position: fixed; z-index: 4000; pointer-events: none; font-family: var(--font-devanagari);
+  color: #f6e1a0; text-shadow: 0 0 12px rgba(246,225,160,0.75);
+`;
+
 const SurveyShell = styled(motion.div)`
   width: min(92vw, 980px);
   display: grid;
