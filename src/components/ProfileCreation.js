@@ -243,6 +243,14 @@ export default function ProfileCreation() {
     if (choice.seed) {
       const id = `${current.id}-${choice.id}`;
       setDiscovered((prev) => ({ ...prev, [id]: true }));
+      try {
+        const start = evt?.currentTarget?.getBoundingClientRect();
+        const panel = document.querySelector('[aria-label="Tattva Sūtras panel"]');
+        const header = panel ? panel.getBoundingClientRect() : null;
+        if (start && header) {
+          setFlight({ text: choice.seed, x: start.left + start.width/2, y: start.top + start.height/2, tx: header.left + header.width - 40, ty: header.top + 20 });
+        }
+      } catch (_) {}
     }
     proceed();
   };
@@ -308,7 +316,7 @@ export default function ProfileCreation() {
                 <Choice
                   key={choice.id}
                   className="is-interactive"
-                  onClick={() => handleSelect(choice)}
+                  onClick={(e) => handleSelect(choice, e)}
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
                   aria-label={`Choice ${i + 1}: ${choice.text}`}
