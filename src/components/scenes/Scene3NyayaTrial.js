@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import GlossaryTerm from '../GlossaryTerm';
 
 const SceneContainer = styled.div`
   height: 100%;
@@ -58,11 +59,11 @@ export default function Scene3NyayaTrial() {
         </p>
         
         <p>
-          The <span className="highlight-mystical">Four Pramāṇas</span> await your understanding: 
-          <span className="highlight-mystical">Pratyakṣa</span> (Perception), 
-          <span className="highlight-mystical">Anumāṇa</span> (Inference), 
-          <span className="highlight-mystical">Upamāna</span> (Comparison), and 
-          <span className="highlight-mystical">Śabda</span> (Testimony). Each must be proven before the way forward opens.
+          The <span className="highlight-mystical">Four Pramāṇas</span> await your understanding:
+          <GlossaryTerm className="highlight-mystical" term="Pratyakṣa" /> (Perception),
+          <GlossaryTerm className="highlight-mystical" term="Anumāṇa" /> (Inference),
+          <GlossaryTerm className="highlight-mystical" term="Upamāna" /> (Comparison), and
+          <GlossaryTerm className="highlight-mystical" term="Śabda" /> (Testimony). Each must be proven before the way forward opens.
         </p>
       </NarrativeText>
     </SceneContainer>
