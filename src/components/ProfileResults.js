@@ -1,738 +1,335 @@
-import React, { useState, useEffect } from 'react';
-import styled, { keyframes } from 'styled-components';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
 
-// Breathing glow effect for golden elements
-const breathingGlow = keyframes`
-  0%, 100% {
-    box-shadow:
-      0 0 20px rgba(212, 175, 55, 0.4),
-      0 0 40px rgba(212, 175, 55, 0.2),
-      inset 0 0 20px rgba(212, 175, 55, 0.1);
-    text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-  }
-  50% {
-    box-shadow:
-      0 0 30px rgba(212, 175, 55, 0.7),
-      0 0 60px rgba(212, 175, 55, 0.4),
-      inset 0 0 30px rgba(212, 175, 55, 0.2);
-    text-shadow: 0 0 25px rgba(212, 175, 55, 0.9);
-  }
-`;
-
-// Enhanced ink bleed animation for the astrological chart
-const inkBleed = keyframes`
-  0% {
-    opacity: 0;
-    transform: scale(0.3) rotate(-15deg);
-    filter: blur(4px) drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
-  }
-  25% {
-    opacity: 0.4;
-    transform: scale(0.6) rotate(-8deg);
-    filter: blur(2px) drop-shadow(0 0 20px rgba(212, 175, 55, 0.5));
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(0.8) rotate(-3deg);
-    filter: blur(1px) drop-shadow(0 0 30px rgba(212, 175, 55, 0.7));
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
-    filter: blur(0px) drop-shadow(0 0 25px rgba(212, 175, 55, 0.6));
-  }
-`;
-
-// Constellation sparkle effect with enhanced golden glow
-const sparkle = keyframes`
-  0%, 100% {
-    opacity: 0.4;
-    transform: scale(1);
-    filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5));
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.3);
-    filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.9));
-  }
-`;
-
-// Intricate golden filigree animation
-const filigreeGlow = keyframes`
-  0%, 100% {
-    border-color: rgba(212, 175, 55, 0.6);
-    background: linear-gradient(145deg,
-      rgba(0, 0, 0, 0.9) 0%,
-      rgba(15, 15, 15, 0.95) 50%,
-      rgba(0, 0, 0, 0.9) 100%
-    );
-  }
-  50% {
-    border-color: rgba(212, 175, 55, 0.9);
-    background: linear-gradient(145deg,
-      rgba(10, 10, 10, 0.85) 0%,
-      rgba(20, 20, 20, 0.9) 50%,
-      rgba(10, 10, 10, 0.85) 100%
-    );
-  }
-`;
-
-const ResultsContainer = styled.div`
+const Screen = styled.div`
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse at center, rgba(5, 5, 5, 0.9) 0%, rgba(0, 0, 0, 1) 70%),
-    linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: var(--spacing-lg);
+  width: 100%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at center, #070707 0%, #0a0a0a 55%, #000 100%);
   position: relative;
   overflow: hidden;
 
   &::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background:
-      radial-gradient(circle at 25% 25%, rgba(212, 175, 55, 0.03) 1px, transparent 2px),
-      radial-gradient(circle at 75% 75%, rgba(212, 175, 55, 0.02) 1px, transparent 2px);
-    background-size: 120px 120px, 180px 180px;
-    animation: ${breathingGlow} 10s ease-in-out infinite;
+    inset: -20%;
+    background: radial-gradient(60% 60% at 35% 40%, rgba(212,175,55,0.10) 0%, rgba(0,0,0,0) 60%),
+                radial-gradient(45% 45% at 70% 65%, rgba(255,215,0,0.08) 0%, rgba(0,0,0,0) 70%);
+    filter: blur(28px);
     pointer-events: none;
   }
 `;
 
-const ScrollContainer = styled(motion.div)`
-  width: 100%;
-  max-width: 1000px;
-  height: 90vh;
-  background:
-    linear-gradient(145deg, rgba(10, 10, 10, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
-  border: 3px solid #d4af37;
-  border-radius: 15px;
-  box-shadow:
-    0 25px 70px rgba(0, 0, 0, 0.8),
-    0 0 50px rgba(212, 175, 55, 0.4),
-    inset 0 1px 0 rgba(212, 175, 55, 0.2);
-  position: relative;
+const Shell = styled(motion.div)`
+  width: min(96vw, 1100px);
+  border: 1px solid rgba(212,175,55,0.28);
+  background: linear-gradient(145deg, rgba(0,0,0,0.9), rgba(10,10,10,0.96));
+  border-radius: 24px;
+  box-shadow: 0 26px 80px rgba(0,0,0,0.75);
   overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+`;
+
+const Header = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-xl);
+  border-bottom: 1px solid rgba(212,175,55,0.25);
+`;
+
+const TitleWrap = styled.div`
   display: flex;
   flex-direction: column;
-  animation: ${breathingGlow} 8s ease-in-out infinite;
+  gap: 6px;
 `;
 
-const ScrollHeader = styled.div`
-  text-align: center;
-  padding: var(--spacing-xl) var(--spacing-xl) var(--spacing-lg);
-  border-bottom: 2px solid #d4af37;
-  position: relative;
-  background:
-    linear-gradient(145deg, rgba(15, 15, 15, 0.9) 0%, rgba(5, 5, 5, 0.95) 100%);
-
-  /* Ornamental corner decorations */
-  &::before, &::after {
-    content: '❦';
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1.5rem;
-    color: #d4af37;
-    text-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
-    animation: ${sparkle} 4s ease-in-out infinite;
-  }
-
-  &::before {
-    left: var(--spacing-lg);
-    animation-delay: 0s;
-  }
-  &::after {
-    right: var(--spacing-lg);
-    animation-delay: 2s;
-  }
-`;
-
-const ScrollTitle = styled(motion.h1)`
+const Title = styled.h1`
   font-family: var(--font-display);
-  font-size: 2.8rem;
-  color: #d4af37;
-  margin-bottom: var(--spacing-sm);
-  animation: ${breathingGlow} 4s ease-in-out infinite;
-  text-shadow:
-    0 0 20px rgba(212, 175, 55, 0.8),
-    0 0 40px rgba(212, 175, 55, 0.4);
-  filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.6));
+  color: #e6c76a;
+  letter-spacing: 0.06em;
+  margin: 0;
+  font-size: clamp(1.8rem, 3.8vw, 2.6rem);
 `;
 
-const VakyaBanner = styled(motion.div)`
-  margin: 0 auto var(--spacing-md);
-  max-width: 90%;
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid rgba(212,175,55,0.4);
+const Subtitle = styled.p`
+  margin: 0;
+  font-family: var(--font-primary);
+  color: #b8941f;
+  opacity: 0.9;
+  font-size: 1.05rem;
+`;
+
+const SutraBanner = styled.div`
+  align-self: center;
+  justify-self: end;
+  max-width: min(48vw, 520px);
+  border: 1px solid rgba(212,175,55,0.28);
   border-radius: 999px;
-  background: linear-gradient(145deg, rgba(212,175,55,0.08), rgba(255,215,0,0.06));
+  padding: 10px 14px;
+  background: linear-gradient(145deg, rgba(212,175,55,0.10), rgba(255,215,0,0.08));
   text-align: center;
 `;
 
-const VakyaLine = styled.div`
+const SutraPrimary = styled.div`
   font-family: var(--font-devanagari);
-  color: #d4af37;
-  text-shadow: 0 0 10px rgba(212,175,55,0.5);
+  color: #e8c86a;
 `;
 
-const VakyaRoman = styled.div`
+const SutraSecondary = styled.div`
   font-family: var(--font-primary);
   color: #b8941f;
   font-style: italic;
   font-size: 0.95rem;
 `;
 
-const ScrollSubtitle = styled(motion.p)`
-  font-family: var(--font-primary);
-  font-style: italic;
-  color: #b8941f;
-  font-size: 1.3rem;
-  text-shadow: 0 0 10px rgba(184, 148, 31, 0.5);
-`;
-
-const ChartBackground = styled(motion.div)`
-  position: absolute;
-  top: 8%;
-  right: 3%;
-  width: 350px;
-  height: 350px;
-  background:
-    radial-gradient(circle at center,
-      rgba(212, 175, 55, 0.15) 0%,
-      rgba(255, 107, 53, 0.1) 25%,
-      rgba(107, 142, 35, 0.08) 50%,
-      rgba(212, 175, 55, 0.05) 75%,
-      transparent 90%
-    );
-  border: 3px solid #d4af37;
-  border-radius: 50%;
-  animation: ${inkBleed} 3s ease-out;
-  opacity: 0.8;
-  z-index: 1;
-  box-shadow:
-    0 0 40px rgba(212, 175, 55, 0.3),
-    inset 0 0 30px rgba(212, 175, 55, 0.1);
-
-  /* Concentric circles with breathing glow */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 70%;
-    height: 70%;
-    transform: translate(-50%, -50%);
-    border: 2px solid #d4af37;
-    border-radius: 50%;
-    opacity: 0.7;
-    animation: ${breathingGlow} 6s ease-in-out infinite;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 40%;
-    height: 40%;
-    transform: translate(-50%, -50%);
-    border: 1px solid #ffd700;
-    border-radius: 50%;
-    opacity: 0.5;
-    animation: ${breathingGlow} 4s ease-in-out infinite 1s;
-  }
-`;
-
-const ConstellationDots = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-
-  &::before, &::after {
-    content: '✦';
-    position: absolute;
-    color: #d4af37;
-    font-size: 1.5rem;
-    animation: ${sparkle} 3s ease-in-out infinite;
-    text-shadow: 0 0 10px rgba(212, 175, 55, 0.8);
-  }
-
-  &::before {
-    top: 25%;
-    left: 20%;
-    animation-delay: 1s;
-  }
-
-  &::after {
-    bottom: 30%;
-    right: 25%;
-    animation-delay: 2.5s;
-  }
-`;
-
-const ProfileContent = styled.div`
-  flex: 1;
+const Body = styled.div`
   padding: var(--spacing-xl);
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.2fr 1fr;
   gap: var(--spacing-xl);
-  position: relative;
-  z-index: 10;
-  overflow: hidden;
+
+  @media (max-width: 980px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
-const IconBadge = styled.div`
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #d4af37 0%, #ffd700 60%, #d4af37 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.4rem;
-  box-shadow: 0 0 25px rgba(212,175,55,0.6), inset 0 2px 4px rgba(255,255,255,0.3);
-  animation: ${breathingGlow} 5s ease-in-out infinite;
-`;
-
-const PrimarySection = styled(motion.div)`
-  grid-column: 1 / -1;
-  text-align: center;
-  margin-bottom: var(--spacing-lg);
-  padding: var(--spacing-lg);
-  background:
-    linear-gradient(145deg, rgba(0, 0, 0, 0.7) 0%, rgba(10, 10, 10, 0.9) 100%);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  border-radius: 10px;
-  backdrop-filter: blur(5px);
-`;
-
-const IntroParagraph = styled.p`
-  font-family: var(--font-primary);
-  font-size: 1.2rem;
-  color: #d4af37;
-  font-style: italic;
-  line-height: 1.8;
-  text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
-  margin: 0;
-`;
-
-const TraitCard = styled(motion.div)`
-  background:
-    linear-gradient(145deg, rgba(5, 5, 5, 0.95) 0%, rgba(15, 15, 15, 0.9) 100%);
-  border: 2px solid #d4af37;
-  border-radius: 12px;
+const Section = styled(motion.section)`
+  border: 1px solid rgba(212,175,55,0.22);
+  border-radius: 16px;
+  background: linear-gradient(145deg, rgba(0,0,0,0.88), rgba(12,12,12,0.96));
   padding: var(--spacing-xl);
-  position: relative;
-  overflow: hidden;
-  animation: ${filigreeGlow} 8s ease-in-out infinite;
-
-  /* Intricate golden filigree border */
-  &::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: -1px;
-    right: -1px;
-    bottom: -1px;
-    background:
-      linear-gradient(45deg,
-        #d4af37 0%,
-        transparent 25%,
-        #ffd700 50%,
-        transparent 75%,
-        #d4af37 100%
-      );
-    background-size: 40px 40px;
-    border-radius: 12px;
-    z-index: -1;
-    opacity: 0.3;
-    animation: ${breathingGlow} 6s ease-in-out infinite;
-  }
-
-  /* Golden accent line */
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg,
-      transparent 0%,
-      #d4af37 25%,
-      #ffd700 50%,
-      #d4af37 75%,
-      transparent 100%
-    );
-    border-radius: 12px 12px 0 0;
-  }
 `;
 
-const TraitHeader = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--spacing-lg);
-  gap: var(--spacing-md);
-`;
-
-
-const TraitTitle = styled.h2`
+const SectionTitle = styled.h2`
+  margin: 0 0 var(--spacing-md);
   font-family: var(--font-display);
-  color: #d4af37;
-  font-size: 2rem;
-  margin: 0;
-  text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+  font-size: 1.4rem;
+  color: #e6c76a;
+  letter-spacing: 0.04em;
 `;
 
-const TraitSubtitle = styled.h3`
+const PillRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+`;
+
+const Pill = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(212,175,55,0.35);
+  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
+  color: #e8c86a;
+  font-family: var(--font-primary);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  font-size: 0.95rem;
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+
+  @media (max-width: 680px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const Card = styled.div`
+  border: 1px solid rgba(212,175,55,0.22);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(0,0,0,0.88), rgba(12,12,12,0.96));
+  padding: var(--spacing-lg);
+`;
+
+const CardTitle = styled.h3`
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  color: #e6c76a;
+  font-size: 1.2rem;
+`;
+
+const CardSub = styled.p`
+  margin: 0 0 var(--spacing-sm);
   font-family: var(--font-primary);
   color: #b8941f;
-  font-size: 1.3rem;
-  font-weight: 600;
+  opacity: 0.9;
+`;
+
+const CardText = styled.p`
   margin: 0;
-  opacity: 0.9;
-  text-shadow: 0 0 8px rgba(184, 148, 31, 0.4);
-`;
-
-const TraitDescription = styled.p`
   font-family: var(--font-primary);
-  color: #d4af37;
-  line-height: 1.8;
-  margin-bottom: var(--spacing-lg);
-  font-size: 1.05rem;
-  opacity: 0.9;
-  text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
-`;
-
-const SkillSection = styled.div`
-  background:
-    linear-gradient(145deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
-  padding: var(--spacing-lg);
-  border-radius: 8px;
-  border: 1px solid rgba(212, 175, 55, 0.4);
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg,
-      transparent 0%,
-      #d4af37 50%,
-      transparent 100%
-    );
-  }
-`;
-
-const SkillTitle = styled.h4`
-  font-family: var(--font-display);
-  color: #ffd700;
-  font-size: 1.4rem;
-  margin-bottom: var(--spacing-sm);
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
-`;
-
-const SkillDescription = styled.p`
-  font-family: var(--font-primary);
-  color: #d4af37;
-  font-size: 1rem;
+  color: #d7be73;
   line-height: 1.6;
-  font-style: italic;
-  margin: 0;
-  opacity: 0.9;
-  text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
 `;
 
-const ContinueButton = styled(motion.button)`
-  position: absolute;
-  bottom: var(--spacing-xl);
-  right: var(--spacing-xl);
-  background:
-    linear-gradient(145deg, rgba(0, 0, 0, 0.9) 0%, rgba(15, 15, 15, 0.95) 100%);
-  color: #d4af37;
-  border: 3px solid #d4af37;
-  padding: var(--spacing-lg) var(--spacing-xxl);
-  border-radius: 10px;
+const SutrasWrap = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--spacing-sm);
+`;
+
+const SutraChip = styled.div`
+  border: 1px solid rgba(212,175,55,0.28);
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(20,20,20,0.88), rgba(14,14,14,0.96));
+  padding: 10px 12px;
+`;
+
+const SutraSk = styled.div`
+  font-family: var(--font-devanagari);
+  color: #e8c86a;
+  margin: 0 0 2px;
+`;
+
+const SutraEn = styled.div`
   font-family: var(--font-primary);
-  font-size: 1.3rem;
-  font-weight: 600;
+  color: #b8941f;
+  font-size: 0.9rem;
+  font-style: italic;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--spacing-lg);
+  border-top: 1px solid rgba(212,175,55,0.25);
+`;
+
+const CTA = styled(motion.button)`
+  appearance: none;
+  padding: 14px 22px;
+  border-radius: 12px;
+  border: 1px solid rgba(212,175,55,0.35);
+  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
+  color: #e8c86a;
+  font-family: var(--font-primary);
+  font-weight: 700;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-
-  /* Golden energy effect */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg,
-      transparent,
-      rgba(212, 175, 55, 0.3),
-      transparent
-    );
-    transition: left 0.5s ease;
-  }
-
-  &::after {
-    content: '⟶';
-    margin-left: var(--spacing-sm);
-    font-size: 1.1rem;
-    transition: transform 0.3s ease;
-  }
+  transition: background 0.25s ease, transform 0.18s ease, color 0.25s ease, border-color 0.25s ease;
 
   &:hover {
-    background:
-      linear-gradient(145deg, rgba(212, 175, 55, 0.2) 0%, rgba(255, 215, 0, 0.3) 100%);
-    border-color: #ffd700;
-    color: #ffd700;
-    transform: translateY(-4px);
-    animation: ${breathingGlow} 2s ease-in-out infinite;
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
-
-    &::before {
-      left: 100%;
-    }
-
-    &::after {
-      transform: translateX(5px);
-    }
-  }
-
-  &:active {
-    transform: translateY(-2px);
+    color: #000;
+    background: linear-gradient(145deg, #ffd95e, #ffc82e);
+    border-color: #ffd95e;
+    transform: translateY(-1px);
   }
 `;
-
 
 export default function ProfileResults() {
   const { state, dispatch } = useGame();
-  const [showContent, setShowContent] = useState(false);
   const { playerProfile } = state;
-  const romanVakya = (playerProfile.atmanVakya || []).map(s => s.transliteration).join(' · ');
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowContent(true);
-    }, 2000);
-
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setShow(true), 300);
+    return () => clearTimeout(t);
   }, []);
+
+  if (!playerProfile?.primaryGuna || !playerProfile?.primaryGana) {
+    return null;
+  }
+
+  const romanVakya = (playerProfile.atmanVakya || []).map(s => s.transliteration).join(' · ');
+
+  const gunaName = playerProfile.primaryGuna === 'SATTVA' ? 'Sattva' : playerProfile.primaryGuna === 'RAJAS' ? 'Rajas' : 'Tamas';
+  const gunaArchetype = playerProfile.primaryGuna === 'SATTVA' ? 'The Sage' : playerProfile.primaryGuna === 'RAJAS' ? 'The Scion' : 'The Shadow';
+  const ganaName = playerProfile.primaryGana === 'DEVA' ? 'Deva' : playerProfile.primaryGana === 'MANUSHYA' ? 'Manushya' : 'Rakshasa';
+  const ganaArchetype = playerProfile.primaryGana === 'DEVA' ? 'The Divine' : playerProfile.primaryGana === 'MANUSHYA' ? 'The Human' : 'The Fierce';
 
   const handleContinue = () => {
     dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.GAMEPLAY });
   };
 
-  if (!playerProfile.primaryGuna || !playerProfile.primaryGana) {
-    return <div>Loading profile...</div>;
-  }
-
   return (
-    <ResultsContainer>
-      <ScrollContainer
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 1.5 }}
-      >
-        <ChartBackground>
-          <ConstellationDots />
-        </ChartBackground>
-
-        <ScrollHeader>
-          <ScrollTitle
-            initial={{ y: -30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 1, delay: 0.5 }}
-          >
-            Ātman Vivara��a
-          </ScrollTitle>
-          {playerProfile.atmanVakyaText && (
-            <VakyaBanner
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <VakyaLine>{playerProfile.atmanVakyaText}</VakyaLine>
-              {romanVakya && <VakyaRoman>{romanVakya}</VakyaRoman>}
-            </VakyaBanner>
+    <Screen>
+      <Shell initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <Header>
+          <TitleWrap>
+            <Title>Ātman Spanda</Title>
+            <Subtitle>Revelation of your inner vibration</Subtitle>
+          </TitleWrap>
+          {(playerProfile.atmanVakyaText || romanVakya) && (
+            <SutraBanner>
+              {playerProfile.atmanVakyaText && <SutraPrimary>{playerProfile.atmanVakyaText}</SutraPrimary>}
+              {romanVakya && <SutraSecondary>{romanVakya}</SutraSecondary>}
+            </SutraBanner>
           )}
-          <ScrollSubtitle
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 1, delay: 0.7 }}
-          >
-            Revelation of the Self
-          </ScrollSubtitle>
-        </ScrollHeader>
+        </Header>
 
-        {showContent && (
-          <ProfileContent>
-            <PrimarySection
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1, delay: 0.3 }}
-            >
-              <IntroParagraph>
-                Your choices have illuminated the celestial blueprint of your soul.
-                The ancient wisdom recognizes your essence, and your path through the sacred mysteries is now revealed.
-              </IntroParagraph>
-            </PrimarySection>
+        {show && (
+          <Body>
+            <Section initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+              <SectionTitle>Your Essence</SectionTitle>
+              <PillRow>
+                <Pill title="Primary Guna">
+                  <strong>{gunaName}</strong>
+                  <span>• {gunaArchetype}</span>
+                </Pill>
+                <Pill title="Primary Gana">
+                  <strong>{ganaName}</strong>
+                  <span>• {ganaArchetype}</span>
+                </Pill>
+              </PillRow>
 
-            <TraitCard
-              initial={{ x: -50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
-            >
-              <TraitHeader>
-                <IconBadge>{playerProfile.primaryGuna === 'SATTVA' ? 'S' : playerProfile.primaryGuna === 'RAJAS' ? 'R' : 'T'}</IconBadge>
-                <div>
-                  <TraitTitle>
-                    {playerProfile.primaryGuna === 'SATTVA' ? 'Sattva' :
-                     playerProfile.primaryGuna === 'RAJAS' ? 'Rajas' : 'Tamas'}
-                  </TraitTitle>
-                  <TraitSubtitle>
-                    {playerProfile.primaryGuna === 'SATTVA' ? 'The Sage' :
-                     playerProfile.primaryGuna === 'RAJAS' ? 'The Scion' : 'The Shadow'}
-                  </TraitSubtitle>
-                </div>
-              </TraitHeader>
+              <Grid style={{ marginTop: '16px' }}>
+                <Card>
+                  <CardTitle>Nakshatra</CardTitle>
+                  <CardSub>{playerProfile.nakshatra?.name}</CardSub>
+                  <CardText>{playerProfile.nakshatra?.description}</CardText>
+                </Card>
+                <Card>
+                  <CardTitle>Rāśi & Element</CardTitle>
+                  <CardSub>{playerProfile.rashi} • {playerProfile.nakshatra?.element}</CardSub>
+                  <CardText>Your soul resonates with {playerProfile.nakshatra?.element.toLowerCase()} and the sign of {playerProfile.rashi}.</CardText>
+                </Card>
+              </Grid>
+            </Section>
 
-              <TraitDescription>
-                {playerProfile.primaryGuna === 'SATTVA' &&
-                  'Your nature inclines towards harmony, wisdom, and balance. You seek to understand the world, not just act upon it. The light of knowledge guides your path through the darkness.'}
-                {playerProfile.primaryGuna === 'RAJAS' &&
-                  'Your nature drives you toward action, passion, and transformation. You are the force that moves the world, the fire that burns away illusion.'}
-                {playerProfile.primaryGuna === 'TAMAS' &&
-                  'Your nature embodies patience, endurance, and deep contemplation. You understand the power of stillness and the wisdom hidden in shadow.'}
-              </TraitDescription>
+            <Section initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }}>
+              <SectionTitle>Innate Gifts</SectionTitle>
+              <Grid>
+                <Card>
+                  <CardTitle>{playerProfile.skills[0]?.name}</CardTitle>
+                  <CardText>{playerProfile.skills[0]?.description}</CardText>
+                </Card>
+                <Card>
+                  <CardTitle>{playerProfile.skills[1]?.name}</CardTitle>
+                  <CardText>{playerProfile.skills[1]?.description}</CardText>
+                </Card>
+              </Grid>
+            </Section>
 
-              <SkillSection>
-                <SkillTitle>{playerProfile.skills[0]?.name}</SkillTitle>
-                <SkillDescription>{playerProfile.skills[0]?.description}</SkillDescription>
-              </SkillSection>
-            </TraitCard>
-
-            <TraitCard
-              initial={{ x: 50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ duration: 1, delay: 0.7 }}
-            >
-              <TraitHeader>
-                <IconBadge>{playerProfile.primaryGana === 'DEVA' ? 'D' : playerProfile.primaryGana === 'MANUSHYA' ? 'M' : 'R'}</IconBadge>
-                <div>
-                  <TraitTitle>
-                    {playerProfile.primaryGana === 'DEVA' ? 'Deva' :
-                     playerProfile.primaryGana === 'MANUSHYA' ? 'Manushya' : 'Rakshasa'}
-                  </TraitTitle>
-                  <TraitSubtitle>
-                    {playerProfile.primaryGana === 'DEVA' ? 'The Divine' :
-                     playerProfile.primaryGana === 'MANUSHYA' ? 'The Human' : 'The Fierce'}
-                  </TraitSubtitle>
-                </div>
-              </TraitHeader>
-
-              <TraitDescription>
-                {playerProfile.primaryGana === 'DEVA' &&
-                  'Your temperament flows with compassion and benevolence. You are naturally aligned with cosmic harmony and righteous action, a beacon of divine light.'}
-                {playerProfile.primaryGana === 'MANUSHYA' &&
-                  'Your temperament balances divine and worldly concerns. You are grounded in practical wisdom and human understanding, bridging heaven and earth.'}
-                {playerProfile.primaryGana === 'RAKSHASA' &&
-                  'Your temperament burns with fierce determination and unconventional power. You possess the strength to shatter illusions and forge new realities.'}
-              </TraitDescription>
-
-              <SkillSection>
-                <SkillTitle>{playerProfile.skills[1]?.name}</SkillTitle>
-                <SkillDescription>{playerProfile.skills[1]?.description}</SkillDescription>
-              </SkillSection>
-            </TraitCard>
-
-            <TraitCard
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1, delay: 0.9 }}
-            >
-              <TraitHeader>
-                <IconBadge>★</IconBadge>
-                <div>
-                  <TraitTitle>{playerProfile.nakshatra?.name}</TraitTitle>
-                  <TraitSubtitle>Janma Nakshatra</TraitSubtitle>
-                </div>
-              </TraitHeader>
-
-              <TraitDescription>
-                {playerProfile.nakshatra?.description} The stars whispered your destiny at the moment of creation,
-                blessing you with unique gifts to navigate the sacred mysteries.
-              </TraitDescription>
-
-              <SkillSection>
-                <SkillTitle>{playerProfile.nakshatra?.skill}</SkillTitle>
-                <SkillDescription>{playerProfile.nakshatra?.skillDescription}</SkillDescription>
-              </SkillSection>
-            </TraitCard>
-
-            <TraitCard
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1, delay: 1.1 }}
-            >
-              <TraitHeader>
-                <IconBadge>{(playerProfile.nakshatra?.element || ' ').slice(0,1)}</IconBadge>
-                <div>
-                  <TraitTitle>{playerProfile.rashi}</TraitTitle>
-                  <TraitSubtitle>Rashi • {playerProfile.nakshatra?.element}</TraitSubtitle>
-                </div>
-              </TraitHeader>
-
-              <TraitDescription>
-                Your soul resonates with the primal element of {playerProfile.nakshatra?.element},
-                granting you intuitive mastery over its sacred properties and the ability to channel
-                its power through the ancient arts.
-              </TraitDescription>
-
-              <SkillSection>
-                <SkillTitle>Elemental Mastery</SkillTitle>
-                <SkillDescription>
-                  Your deep connection to {playerProfile.nakshatra?.element} allows you to perceive
-                  hidden currents and manipulate the fundamental forces that shape reality itself.
-                </SkillDescription>
-              </SkillSection>
-            </TraitCard>
-          </ProfileContent>
+            {(playerProfile.atmanVakya || []).length > 0 && (
+              <Section initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+                <SectionTitle>Tattva Sūtras Discovered</SectionTitle>
+                <SutrasWrap>
+                  {(playerProfile.atmanVakya || []).map((s, i) => (
+                    <SutraChip key={i}>
+                      <SutraSk>{s.seed}</SutraSk>
+                      <SutraEn>{s.transliteration || s.annotation}</SutraEn>
+                    </SutraChip>
+                  ))}
+                </SutrasWrap>
+              </Section>
+            )}
+          </Body>
         )}
 
-        <ContinueButton
-          className="is-interactive"
-          onClick={handleContinue}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.8, delay: 2.5 }}
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          Begin Your Sacred Journey
-        </ContinueButton>
-      </ScrollContainer>
-    </ResultsContainer>
+        <Footer>
+          <CTA className="is-interactive" onClick={handleContinue} whileTap={{ scale: 0.98 }}>Begin Your Sacred Journey</CTA>
+        </Footer>
+      </Shell>
+    </Screen>
   );
 }
