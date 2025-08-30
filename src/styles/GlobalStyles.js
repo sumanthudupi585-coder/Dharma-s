@@ -100,7 +100,7 @@ const GlobalStyle = createGlobalStyle`
     min-height: 100vh;
     line-height: 1.6;
     overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-y: auto;
   }
 
   body:not(.custom-cursor-active) {
