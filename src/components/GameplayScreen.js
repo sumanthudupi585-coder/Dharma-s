@@ -267,7 +267,7 @@ const TooltipBubble = styled.div`
   border: 1px solid rgba(212,175,55,0.6);
   color: #d4af37;
   font-family: var(--font-primary);
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
   padding: 6px 10px;
   border-radius: 8px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 0 16px rgba(212,175,55,0.25);
@@ -330,7 +330,7 @@ const GaugeLabel = styled.span`
   background: linear-gradient(145deg, #d4af37, #ffd700);
   padding: 2px 8px;
   border-radius: 8px;
-  font-size: 0.8rem;
+  font-size: var(--fs-sm);
 `;
 
 const ObjectivesBanner = styled(motion.div)`
@@ -377,8 +377,8 @@ const ObjectiveText = styled.h3`
   color: #d4af37;
   margin: 0;
   margin-left: 45px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: var(--fs-lg);
+  font-weight: 700;
   text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
 `;
 
@@ -420,7 +420,7 @@ const ChoicesPanel = styled(motion.div)`
 const ChoicesTitle = styled.h3`
   font-family: var(--font-display);
   color: #d4af37;
-  font-size: 1.3rem;
+  font-size: var(--fs-xl);
   margin-bottom: var(--spacing-md);
   text-align: center;
   text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
@@ -674,7 +674,7 @@ export default function GameplayScreen() {
       <MainContentArea>
         <HeaderBar>
           {state.gameProgress?.currentObjectives && state.gameProgress.currentObjectives[0] && (
-            <ObjectivesBanner initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
+            <ObjectivesBanner role="status" aria-live="polite" initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
               <ObjectiveText>{state.gameProgress.currentObjectives[0].text}</ObjectiveText>
             </ObjectivesBanner>
           )}
