@@ -217,9 +217,6 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
 
         // GOLD PARTICLES (text)
         const blend = Math.min(1, elapsed / (durationMs * 0.85));
-        const goldR = Math.floor(lerp(212, 255, blend));
-        const goldG = Math.floor(lerp(175, 215, blend));
-        const goldB = Math.floor(lerp(55, 0, blend * 0.15));
         makeGoldSprite(0.9);
 
         ctx.globalCompositeOperation = 'screen';
