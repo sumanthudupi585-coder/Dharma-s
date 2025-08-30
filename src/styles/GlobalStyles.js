@@ -108,10 +108,24 @@ const GlobalStyle = createGlobalStyle`
     background: linear-gradient(135deg, var(--ink-black) 0%, var(--deep-blue) 50%, var(--royal-blue) 100%);
     color: var(--parchment);
     min-height: 100vh;
-    line-height: 1.6;
+    line-height: var(--lh-normal);
     overflow-x: hidden;
     overflow-y: auto;
+    font-size: var(--fs-md);
   }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    color: var(--gold);
+    letter-spacing: 0.02em;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.35);
+    line-height: var(--lh-tight);
+  }
+  h1 { font-size: var(--fs-xxl); }
+  h2 { font-size: var(--fs-xl); }
+  h3 { font-size: var(--fs-lg); }
+
+  .emoji-icon { filter: drop-shadow(0 0 8px rgba(212,175,55,0.4)); }
 
   body:not(.custom-cursor-active) {
     cursor: var(--cursor-default);
