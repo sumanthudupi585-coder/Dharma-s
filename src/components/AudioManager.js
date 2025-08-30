@@ -272,6 +272,81 @@ class SoundEngine {
     this.ambientNodes.push({ stop: () => clearInterval(id) });
   }
 
+  _resonantHum() {
+    // Two close oscillators with slow beating, filtered for a cold chamber hum
+    const { osc: o1, g: g1 } = this._makeOsc(110, 'sine');
+    const { osc: o2, g: g2 } = this._makeOsc(110.8, 'sine');
+    const lpf = this.ctx.createBiquadFilter();
+    lpf.type = 'lowpass';
+    lpf.frequency.value = 240;
+    g1.disconnect();
+    g2.disconnect();
+    const mix = this.ctx.createGain();
+    mix.gain.value = 0.08;
+    g1.connect(mix);
+    g2.connect(mix);
+    mix.connect(lpf).connect(this.ambientGain);
+    this.ambientNodes.push(lpf, mix);
+
+    const wobble = () => {
+      if (!this.currentAmbient) return;
+      const t = this.ctx.currentTime;
+      lpf.frequency.setTargetAtTime(200 + Math.random() * 80, t, 2.0);
+    };
+    const id = setInterval(wobble, 3000);
+    this.ambientNodes.push({ stop: () => clearInterval(id) });
+  }
+
+  _subtleAir() {
+    // Very gentle filtered noise with slow amplitude modulation
+    const src = this.ctx.createBufferSource();
+    const len = 2 * this.ctx.sampleRate;
+    const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+    const ch = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) ch[i] = (Math.random() * 2 - 1) * 0.25;
+    src.buffer = buf; src.loop = true;
+    const hp = this.ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 200;
+    const bp = this.ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = 0.7;
+    const g = this.ctx.createGain(); g.gain.value = 0.012;
+    src.connect(hp).connect(bp).connect(g).connect(this.ambientGain);
+    src.start();
+    this.ambientNodes.push(src, hp, bp, g);
+    const mod = () => {
+      const t = this.ctx.currentTime;
+      g.gain.setTargetAtTime(0.008 + Math.random() * 0.012, t, 1.2);
+      bp.frequency.setTargetAtTime(700 + Math.random() * 500, t, 2.0);
+    };
+    const id = setInterval(mod, 3500);
+    this.ambientNodes.push({ stop: () => clearInterval(id) });
+  }
+
+  _echoPulse(avg = 9) {
+    // Sparse, high, glassy pings feeding a gentle feedback delay to emulate chamber echoes
+    const ping = () => {
+      if (!this.currentAmbient) return;
+      const o = this.ctx.createOscillator();
+      o.type = 'triangle';
+      const g = this.ctx.createGain(); g.gain.value = 0;
+      const delay = this.ctx.createDelay(); delay.delayTime.value = 0.28 + Math.random() * 0.12;
+      const fb = this.ctx.createGain(); fb.gain.value = 0.25;
+      const hpf = this.ctx.createBiquadFilter(); hpf.type = 'highpass'; hpf.frequency.value = 600;
+      g.connect(delay).connect(fb).connect(delay); // feedback loop
+      delay.connect(hpf).connect(this.ambientGain);
+      o.connect(g);
+      const base = 1200 + Math.random() * 500;
+      const t = this.ctx.currentTime;
+      o.frequency.setValueAtTime(base, t);
+      o.frequency.exponentialRampToValueAtTime(base * 0.6, t + 0.25);
+      g.gain.linearRampToValueAtTime(0.06, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.8);
+      o.start();
+      setTimeout(() => { try { o.stop(); } catch (_) {} }, 900);
+      this.ambientNodes.push(o, g, delay, fb, hpf);
+    };
+    const id = setInterval(ping, avg * 1000 + Math.random() * 2000);
+    this.ambientNodes.push({ stop: () => clearInterval(id) });
+  }
+
   playSfx(type = 'click') {
     if (!this.enabled) return;
     this.ensureContext();
