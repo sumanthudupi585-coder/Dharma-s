@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useGame } from '../context/GameContext';
 
 // Simple synthesized audio engine using WebAudio. No external assets required.
@@ -102,7 +102,7 @@ class SoundEngine {
 
   _padChord(freqs, speed = 0.6) {
     freqs.forEach((f, i) => {
-      const { osc, g } = this._makeOsc(f, 'sine');
+      const { g } = this._makeOsc(f, 'sine');
       const loop = () => {
         this._env(g, 1.2, 0.12);
         if (this.currentAmbient) setTimeout(loop, (2000 + i * 400) / speed);
@@ -155,7 +155,7 @@ class SoundEngine {
   }
 
   _lowDrone() {
-    const { osc, g } = this._makeOsc(98, 'sawtooth');
+    const { g } = this._makeOsc(98, 'sawtooth');
     const lpf = this.ctx.createBiquadFilter();
     lpf.type = 'lowpass';
     lpf.frequency.value = 300;
