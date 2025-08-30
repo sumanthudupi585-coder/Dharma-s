@@ -300,9 +300,9 @@ export default function FloatingWordsPanel({ pool, discovered }) {
   }, [words, discovered, hoverWord]);
 
   return (
-    <PanelWrap aria-label="Floating words panel" $min={minimized}>
+    <PanelWrap aria-label="Tattva Sūtras panel" $min={minimized}>
       <HeaderBar>
-        <span>Unfolding Lexicon</span>
+        <span>Tattva Sūtras</span>
         <ToggleBtn type="button" onClick={() => setMinimized(v => !v)} aria-pressed={minimized} aria-label={minimized ? 'Expand panel' : 'Collapse panel'}>
           {minimized ? 'Show' : 'Hide'}
         </ToggleBtn>
