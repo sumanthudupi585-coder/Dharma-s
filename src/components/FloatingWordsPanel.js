@@ -2,17 +2,13 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 const PanelWrap = styled.div`
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: min(38vw, 420px);
-  height: min(42vh, 360px);
+  width: min(32vw, 360px);
+  height: 360px;
   border: 1px solid rgba(212,175,55,0.28);
   border-radius: 14px;
   background: linear-gradient(145deg, rgba(0,0,0,0.78), rgba(10,10,10,0.92));
   box-shadow: 0 16px 40px rgba(0,0,0,0.5);
   overflow: hidden;
-  z-index: 2;
 `;
 
 const HeaderBar = styled.div`
@@ -71,9 +67,7 @@ export default function FloatingWordsPanel({ pool, discovered }) {
 
   const words = useMemo(() => {
     const list = pool && pool.length ? pool.slice(0) : [];
-    // Ensure at least 22 entries by repeating if pool is small
-    while (list.length < 22 && pool && pool.length) list.push(pool[list.length % pool.length]);
-    return list.slice(0, 26); // cap for perf
+    return list;
   }, [pool]);
 
   useEffect(() => {
