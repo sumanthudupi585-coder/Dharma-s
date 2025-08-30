@@ -217,29 +217,32 @@ class SoundEngine {
 
     if (type === 'hover') {
       o.type = 'triangle';
+      const now = Date.now();
+      if (now - this.lastHoverAt < this.hoverCooldownMs) return;
+      this.lastHoverAt = now;
       o.frequency.setValueAtTime(660, t);
       o.frequency.exponentialRampToValueAtTime(880, t + 0.08);
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.18, t + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+      g.gain.linearRampToValueAtTime(0.08, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
     } else if (type === 'journal') {
       o.type = 'sine';
       o.frequency.setValueAtTime(520, t);
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.2, t + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+      g.gain.linearRampToValueAtTime(0.12, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
     } else if (type === 'objective') {
       o.type = 'sine';
       o.frequency.setValueAtTime(440, t);
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.22, t + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+      g.gain.linearRampToValueAtTime(0.14, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
     } else { // click
-      o.type = 'square';
-      o.frequency.setValueAtTime(320, t);
+      o.type = 'sine';
+      o.frequency.setValueAtTime(360, t);
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.25, t + 0.005);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+      g.gain.linearRampToValueAtTime(0.12, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
     }
 
     o.start();
