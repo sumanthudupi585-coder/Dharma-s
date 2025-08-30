@@ -205,7 +205,6 @@ export default function FloatingWordsPanel({ pool, discovered }) {
 
         // Background pill
         ctx.fillStyle = 'rgba(20,20,20,0.65)';
-        ctx.strokeStyle = `rgba(212,175,55,${0.25 + it.glow * 0.5 + (it.discovered ? 0.25 : 0)})`;
         ctx.lineWidth = 1;
         ctx.beginPath();
         const bw = b.width, bh = b.height;
@@ -221,11 +220,37 @@ export default function FloatingWordsPanel({ pool, discovered }) {
         ctx.quadraticCurveTo(-bw/2, -bh/2, -bw/2 + r, -bh/2);
         ctx.closePath();
         ctx.fill();
+
+        // Base outline
+        ctx.strokeStyle = `rgba(212,175,55,${0.28 + it.glow * 0.5})`;
         ctx.stroke();
+
+        // Highlighted outline for discovered words
+        if (it.discovered) {
+          const pulse = 0.6 + 0.4 * Math.sin(now * 0.006 + i);
+          // Outer soft glow stroke
+          ctx.save();
+          ctx.lineWidth = 4;
+          ctx.strokeStyle = `rgba(255, 220, 140, ${0.18 + 0.12 * pulse})`;
+          ctx.stroke();
+          ctx.restore();
+
+          // Bright dashed stroke on top
+          ctx.save();
+          ctx.lineWidth = 2;
+          ctx.setLineDash([8, 5]);
+          ctx.lineDashOffset = -now * 0.02;
+          const grad = ctx.createLinearGradient(-bw/2, 0, bw/2, 0);
+          grad.addColorStop(0, 'rgba(255, 233, 160, 0.95)');
+          grad.addColorStop(1, 'rgba(212, 175, 55, 0.95)');
+          ctx.strokeStyle = grad;
+          ctx.stroke();
+          ctx.restore();
+        }
 
         // Text
         ctx.shadowColor = 'rgba(255, 230, 140, 0.55)';
-        ctx.shadowBlur = 8 * (0.5 + it.glow);
+        ctx.shadowBlur = 8 * (0.5 + it.glow + (it.discovered ? 0.6 : 0));
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = '#f6e1a0';
