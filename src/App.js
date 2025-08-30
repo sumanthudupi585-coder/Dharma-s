@@ -34,6 +34,18 @@ function GameRouter() {
   );
 }
 
+function ClassSync() {
+  const { state } = useGame();
+  React.useEffect(() => {
+    const b = document.body;
+    if (!b) return;
+    b.classList.toggle('large-text', !!state.settings.accessibility.largeText);
+    b.classList.toggle('force-reduced-motion', !!state.settings.accessibility.reducedMotion);
+    b.classList.toggle('high-contrast', !!state.settings.accessibility.highContrast);
+  }, [state.settings.accessibility.largeText, state.settings.accessibility.reducedMotion, state.settings.accessibility.highContrast]);
+  return null;
+}
+
 function App() {
   return (
     <GameProvider>
