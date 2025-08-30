@@ -275,7 +275,7 @@ export default function FloatingWordsPanel({ pool, discovered }) {
   }, [words, discovered, hoverWord]);
 
   return (
-    <PanelWrap aria-label="Floating words panel">
+    <PanelWrap aria-label="Floating words panel" $min={minimized}>
       <HeaderBar>
         <span>Unfolding Lexicon</span>
         <ToggleBtn type="button" onClick={() => setMinimized(v => !v)} aria-pressed={minimized} aria-label={minimized ? 'Expand panel' : 'Collapse panel'}>
