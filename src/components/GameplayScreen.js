@@ -3,6 +3,7 @@ import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, SCENES } from '../context/GameContext';
 import Journal from './Journal';
+import { engine } from './AudioManager';
 
 const Scene1DashashwamedhGhat = lazy(() => import('./scenes/Scene1DashashwamedhGhat'));
 const Scene2LabyrinthGhats = lazy(() => import('./scenes/Scene2LabyrinthGhats'));
@@ -295,6 +296,7 @@ const Fill = styled.div`
   background-size: 200% 100%;
   animation: ${energyFlow} 3s linear infinite;
   border-radius: 10px;
+  transition: width 500ms ease;
 `;
 
 const GaugeLabel = styled.span`
@@ -603,6 +605,21 @@ export default function GameplayScreen() {
 
   const { currentScene, sceneData, playerProfile, inventory } = state;
 
+  const prevClues = React.useRef(inventory.clues.length);
+  const prevObjectives = React.useRef(state.gameProgress.currentObjectives.length);
+  useEffect(() => {
+    if (inventory.clues.length > prevClues.current) {
+      engine.playSfx('journal');
+      prevClues.current = inventory.clues.length;
+    }
+  }, [inventory.clues.length]);
+  useEffect(() => {
+    if (state.gameProgress.currentObjectives.length > prevObjectives.current) {
+      engine.playSfx('objective');
+      prevObjectives.current = state.gameProgress.currentObjectives.length;
+    }
+  }, [state.gameProgress.currentObjectives.length]);
+
   // Show skill indicator when skill is triggered
   useEffect(() => {
     if (playerProfile.skills && playerProfile.skills.length > 0) {
@@ -647,6 +664,11 @@ export default function GameplayScreen() {
       </DecoHUD>
 
       <MainContentArea>
+        {state.gameProgress?.currentObjectives && state.gameProgress.currentObjectives[0] && (
+          <ObjectivesBanner initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
+            <ObjectiveText>{state.gameProgress.currentObjectives[0].text}</ObjectiveText>
+          </ObjectivesBanner>
+        )}
         <NarrativeWindow
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

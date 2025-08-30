@@ -24,8 +24,8 @@ export default class ErrorBoundary extends React.Component {
           color: '#d4af37', padding: '2rem', textAlign: 'center'
         }}>
           <div>
-            <h1 style={{ fontFamily: 'var(--font-display)', marginBottom: '1rem' }}>A veil has fallen</h1>
-            <p style={{ fontFamily: 'var(--font-primary)' }}>An error disrupted this scene. Try refreshing or returning to the title.</p>
+            <h1 style={{ fontFamily: 'var(--font-display)', marginBottom: '1rem' }}>Threads of fate tangled</h1>
+            <p style={{ fontFamily: 'var(--font-primary)' }}>The weave faltered in this moment. Please refresh to restore order.</p>
           </div>
         </div>
       );

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
+import SettingsModal from './SettingsModal';
 import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
 
 // Subtle breathing glow for golden elements
@@ -44,6 +45,21 @@ const ScreenRoot = styled.div`
   }
 `;
 
+const ParallaxLayer = styled.div`
+  position: absolute; inset: 0; pointer-events: none;
+  transform: translate(calc(var(--mx, 0) * -2%), calc(var(--my, 0) * -2%));
+`;
+
+const Particle = styled.div`
+  position: absolute; width: 3px; height: 3px; border-radius: 50%; background: rgba(212,175,55,0.6);
+  filter: blur(0.3px);
+`;
+
+const Sanskrit = styled.span`
+  position: absolute; font-family: var(--font-devanagari); font-size: 18px; color: rgba(230, 199, 106, 0.6);
+  opacity: 0.8;
+`;
+
 const CenterStack = styled.div`
   position: relative;
   z-index: 1;
@@ -81,7 +97,7 @@ const TitleWordmark = styled.h1`
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: ${breath} 4.2s ease-in-out infinite;
+  animation: ${breath} 4.2s ease-in-out infinite; position: relative;
 `;
 
 const Whisper = styled.p`
@@ -125,6 +141,24 @@ const ActionButton = styled(motion.button)`
 
 export default function TitleScreen() {
   const { dispatch } = useGame();
+  const [openSettings, setOpenSettings] = useState(false);
+  const rootRef = useRef(null);
+  const particles = useMemo(() => Array.from({ length: 36 }, () => ({ x: Math.random() * 100, y: Math.random() * 100 })), []);
+  const glyphs = useMemo(() => ['ॐ','अ','इ','उ','क','थ','ध','ज्ञ','श','ष','ह','ग','य','र','ल','व'].map((g) => ({ g, x: Math.random()*100, y: Math.random()*100 })), []);
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const onMove = (e) => {
+      const r = el.getBoundingClientRect();
+      const mx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+      const my = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      el.style.setProperty('--mx', String(mx));
+      el.style.setProperty('--my', String(my));
+    };
+    el.addEventListener('mousemove', onMove);
+    return () => el.removeEventListener('mousemove', onMove);
+  }, []);
 
   const handleNewGame = () => {
     dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.PROFILE_CREATION });
@@ -144,15 +178,21 @@ export default function TitleScreen() {
     }
   };
 
-  const handleSettings = () => {
-    alert('Settings will be added.');
-  };
+  const handleSettings = () => { setOpenSettings(true); };
 
   return (
-    <ScreenRoot>
+    <ScreenRoot ref={rootRef}>
+      <ParallaxLayer aria-hidden="true">
+        {particles.map((p, i) => (
+          <Particle key={i} style={{ left: `${p.x}%`, top: `${p.y}%`, opacity: 0.6 }} />
+        ))}
+        {glyphs.map((s, i) => (
+          <Sanskrit key={i} style={{ left: `${s.x}%`, top: `${s.y}%` }}>{s.g}</Sanskrit>
+        ))}
+      </ParallaxLayer>
       <CenterStack>
         <TitleHalo />
-        <TitleWordmark>Dharma's Cipher</TitleWordmark>
+        <TitleWordmark className="shimmer">Dharma's Cipher</TitleWordmark>
         <Whisper>Whisper the first vow.</Whisper>
         <Menu initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
           <ActionButton className="is-interactive" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleNewGame}>
@@ -166,6 +206,7 @@ export default function TitleScreen() {
           </ActionButton>
         </Menu>
       </CenterStack>
+      <SettingsModal open={openSettings} onClose={() => setOpenSettings(false)} />
     </ScreenRoot>
   );
 }

@@ -125,6 +125,20 @@ const GlobalStyle = createGlobalStyle`
     cursor: var(--cursor-examine);
   }
 
+  body.large-text { font-size: 18px; }
+  body.force-reduced-motion *, body.force-reduced-motion *::before, body.force-reduced-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  body.high-contrast {
+    --parchment: #ffffff;
+    --ink-black: #000000;
+    --gold: #ffff00;
+    --copper: #ff8800;
+    --dark-parchment: #e5e5e5;
+  }
+
   .app {
     min-height: 100vh;
     height: 100vh;

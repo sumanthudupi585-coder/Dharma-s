@@ -34,6 +34,11 @@ const ScreenRoot = styled.div`
   }
 `;
 
+const FlyingWord = styled(motion.div)`
+  position: fixed; z-index: 4000; pointer-events: none; font-family: var(--font-devanagari);
+  color: #f6e1a0; text-shadow: 0 0 12px rgba(246,225,160,0.75);
+`;
+
 const SurveyShell = styled(motion.div)`
   width: min(92vw, 980px);
   display: grid;
@@ -204,6 +209,7 @@ export default function ProfileCreation() {
   const [answers, setAnswers] = useState([]);
   const [inputLocked, setInputLocked] = useState(false);
   const [discovered, setDiscovered] = useState({});
+  const [flight, setFlight] = useState(null);
 
   const total = SURVEY_QUESTIONS.length;
   const progress = useMemo(() => Math.round(((index) / total) * 100), [index, total]);
@@ -227,7 +233,7 @@ export default function ProfileCreation() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current, inputLocked, index]);
 
-  const handleSelect = (choice) => {
+  const handleSelect = (choice, evt) => {
     if (inputLocked) return;
     setInputLocked(true);
 
@@ -237,6 +243,14 @@ export default function ProfileCreation() {
     if (choice.seed) {
       const id = `${current.id}-${choice.id}`;
       setDiscovered((prev) => ({ ...prev, [id]: true }));
+      try {
+        const start = evt?.currentTarget?.getBoundingClientRect();
+        const panel = document.querySelector('[aria-label="Tattva Sūtras panel"]');
+        const header = panel ? panel.getBoundingClientRect() : null;
+        if (start && header) {
+          setFlight({ text: choice.seed, x: start.left + start.width/2, y: start.top + start.height/2, tx: header.left + header.width - 40, ty: header.top + 20 });
+        }
+      } catch (_) {}
     }
     proceed();
   };
@@ -302,7 +316,7 @@ export default function ProfileCreation() {
                 <Choice
                   key={choice.id}
                   className="is-interactive"
-                  onClick={() => handleSelect(choice)}
+                  onClick={(e) => handleSelect(choice, e)}
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.99 }}
                   aria-label={`Choice ${i + 1}: ${choice.text}`}
@@ -343,6 +357,16 @@ export default function ProfileCreation() {
           return list;
         }, [answers])} discovered={discovered} />
       </ContentRow>
+      {flight && (
+        <FlyingWord
+          initial={{ x: flight.x, y: flight.y, opacity: 1, scale: 1 }}
+          animate={{ x: flight.tx, y: flight.ty, opacity: 0.2, scale: 0.8 }}
+          transition={{ duration: 0.5, ease: 'easeInOut' }}
+          onAnimationComplete={() => { setFlight(null); setTimeout(() => setInputLocked(false), 50); }}
+        >
+          {flight.text}
+        </FlyingWord>
+      )}
     </ScreenRoot>
   );
 }
