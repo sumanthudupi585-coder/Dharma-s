@@ -93,7 +93,8 @@ const GameplayContainer = styled.div`
   padding: var(--spacing-lg);
   padding-bottom: calc(var(--spacing-lg) + 160px); /* safe area for hotbar */
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 
   /* Mystical background pattern */
   &::before {
@@ -158,6 +159,7 @@ const NarrativeContent = styled.div`
   z-index: 10;
   height: 100%;
   overflow-y: auto;
+  padding-bottom: calc(var(--spacing-xl) + 200px);
 
   &::-webkit-scrollbar { width: 6px; }
   &::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #d4af37, #ffd700); border-radius: 3px; }
