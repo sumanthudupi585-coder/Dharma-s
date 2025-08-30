@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
