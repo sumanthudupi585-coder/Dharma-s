@@ -6,24 +6,48 @@ import { termByText } from '../data/glossary';
 const TermWrap = styled.span`
   position: relative;
   text-decoration: underline dotted rgba(212,175,55,0.7);
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
   cursor: help;
+  color: #ffd95e;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  &:hover, &:focus {
+    color: #ffd700;
+    text-decoration-color: #ffd700;
+  }
 `;
 
 const Tip = styled.div`
   position: absolute;
   left: 0;
   bottom: 125%;
-  min-width: 220px;
-  max-width: 320px;
-  background: rgba(0,0,0,0.92);
+  min-width: 240px;
+  max-width: 360px;
+  background: linear-gradient(145deg, rgba(0,0,0,0.95), rgba(10,10,10,0.98));
   color: #e8c86a;
-  border: 1px solid rgba(212,175,55,0.45);
-  border-radius: 8px;
-  padding: 10px 12px;
-  box-shadow: 0 12px 28px rgba(0,0,0,0.6);
-  z-index: 50;
+  border: 1px solid rgba(212,175,55,0.55);
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.7), 0 0 18px rgba(212,175,55,0.2);
+  z-index: 2000;
   will-change: transform, opacity;
+  transform: translateY(-6px);
+  animation: tooltipIn 160ms ease-out;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 18px;
+    top: 100%;
+    border-width: 8px;
+    border-style: solid;
+    border-color: rgba(10,10,10,0.98) transparent transparent transparent;
+    filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
+  }
+
+  @keyframes tooltipIn {
+    from { opacity: 0; transform: translateY(0); }
+    to { opacity: 1; transform: translateY(-6px); }
+  }
 `;
 
 const TipTitle = styled.div`
@@ -63,24 +87,31 @@ export default function GlossaryTerm({ term, className }) {
 
   if (!def) return <span className={className}>{term}</span>;
 
+  const onKey = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(v => !v); }
+    if (e.key === 'Escape') { e.preventDefault(); setOpen(false); }
+  };
+
   return (
     <TermWrap
-      className={className}
+      className={`is-interactive ${className || ''}`}
       role="button"
-      aria-haspopup="dialog"
+      aria-haspopup="tooltip"
       aria-expanded={open}
       aria-describedby={open ? `${id}-desc` : undefined}
+      aria-controls={open ? `${id}-tip` : undefined}
       tabIndex={0}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
       onFocus={() => setOpen(true)}
       onBlur={() => setOpen(false)}
       onClick={(e) => { e.stopPropagation(); setOpen(v => !v); }}
+      onKeyDown={onKey}
       ref={ref}
     >
       {def.term}
       {open && (
-        <Tip role="dialog" aria-modal="false">
+        <Tip id={`${id}-tip`} role="tooltip">
           <TipTitle id={`${id}-title`}>{def.term}</TipTitle>
           <TipBody id={`${id}-desc`}>{def.brief}</TipBody>
         </Tip>
