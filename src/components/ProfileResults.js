@@ -332,7 +332,7 @@ export default function ProfileResults() {
         )}
 
         <Footer>
-          <CTA className="is-interactive" onClick={handleContinue} whileTap={{ scale: 0.98 }}>Begin Your Sacred Journey</CTA>
+          <CTA className="is-interactive" type="button" aria-label="Begin Your Sacred Journey" onClick={handleContinue} whileTap={{ scale: 0.98 }}>Begin Your Sacred Journey</CTA>
         </Footer>
       </Shell>
     </Screen>
