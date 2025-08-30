@@ -88,13 +88,20 @@ const SutraSecondary = styled.div`
 `;
 
 const Body = styled.div`
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg);
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: var(--spacing-xl);
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    'essence gifts'
+    'sutras sutras';
+  gap: var(--spacing-lg);
 
   @media (max-width: 980px) {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      'essence'
+      'gifts'
+      'sutras';
   }
 `;
 
@@ -102,7 +109,8 @@ const Section = styled(motion.section)`
   border: 1px solid rgba(212,175,55,0.22);
   border-radius: 16px;
   background: linear-gradient(145deg, rgba(0,0,0,0.88), rgba(12,12,12,0.96));
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg);
+  grid-area: ${p => p.$area || 'auto'};
 `;
 
 const SectionTitle = styled.h2`
@@ -274,7 +282,7 @@ export default function ProfileResults() {
 
         {show && (
           <Body>
-            <Section initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <Section $area="essence" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
               <SectionTitle>Your Essence</SectionTitle>
               <PillRow>
                 <Pill title="Primary Guna">
@@ -287,7 +295,7 @@ export default function ProfileResults() {
                 </Pill>
               </PillRow>
 
-              <Grid style={{ marginTop: '16px' }}>
+              <Grid style={{ marginTop: '12px' }}>
                 <Card>
                   <CardTitle>Nakshatra</CardTitle>
                   <CardSub>{playerProfile.nakshatra?.name}</CardSub>
@@ -301,7 +309,7 @@ export default function ProfileResults() {
               </Grid>
             </Section>
 
-            <Section initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }}>
+            <Section $area="gifts" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }}>
               <SectionTitle>Innate Gifts</SectionTitle>
               <Grid>
                 <Card>
@@ -316,7 +324,7 @@ export default function ProfileResults() {
             </Section>
 
             {(playerProfile.atmanVakya || []).length > 0 && (
-              <Section initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+              <Section $area="sutras" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
                 <SectionTitle>Tattva Sūtras Discovered</SectionTitle>
                 <SutrasWrap>
                   {(playerProfile.atmanVakya || []).map((s, i) => (
