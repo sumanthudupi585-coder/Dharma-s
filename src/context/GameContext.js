@@ -81,7 +81,9 @@ const initialState = {
   // Audio/Visual Settings
   settings: {
     soundEnabled: true,
+    masterVolume: 0.9,
     musicVolume: 0.7,
+    ambientVolume: 0.6,
     sfxVolume: 0.8,
     textSpeed: 'normal',
     accessibility: {
