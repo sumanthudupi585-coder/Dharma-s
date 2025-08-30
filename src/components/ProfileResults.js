@@ -203,6 +203,11 @@ const Footer = styled.div`
   justify-content: flex-end;
   padding: var(--spacing-lg);
   border-top: 1px solid rgba(212,175,55,0.25);
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(145deg, rgba(0,0,0,0.92), rgba(12,12,12,0.96));
+  backdrop-filter: blur(6px);
+  z-index: 5;
 `;
 
 const CTA = styled(motion.button)`
