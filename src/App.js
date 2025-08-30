@@ -50,6 +50,7 @@ function App() {
   return (
     <GameProvider>
       <GlobalStyles />
+      <ClassSync />
       <ErrorBoundary>
         <Suspense fallback={<LoadingScreen />}>
           <div className="app">
