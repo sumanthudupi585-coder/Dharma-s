@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, SCENES } from '../context/GameContext';
 import Journal from './Journal';
@@ -205,7 +205,10 @@ const NarrativeContent = styled.div`
   position: relative;
   z-index: 10;
   height: 100%;
-  overflow-y: hidden;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #d4af37, #ffd700); border-radius: 3px; }
 `;
 
 // Mini-map panel
@@ -221,6 +224,10 @@ const MiniMapPanel = styled.div`
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 24px rgba(212,175,55,0.25);
   z-index: 150;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
 
   &::before {
     content: '';
@@ -266,7 +273,7 @@ const HotbarSlot = styled.div`
   font-size: 1.4rem;
   position: relative;
   overflow: hidden;
-  ${p => p.$active && `animation: ${breathingGlow} 6s ease-in-out infinite;`}
+  ${p => p.$active && css`animation: ${breathingGlow} 6s ease-in-out infinite;`}
 `;
 
 const SlotIndex = styled.span`
