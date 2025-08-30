@@ -28,10 +28,39 @@ const SceneContainer = styled.div`
   position: relative;
 `;
 
+// Subtle atmosphere layers
+const motesDrift = keyframes`
+  0% { transform: translateY(0) translateX(0); opacity: 0.2; }
+  50% { opacity: 0.4; }
+  100% { transform: translateY(-40px) translateX(20px); opacity: 0.2; }
+`;
+const AtmosphereLayer = styled.div`
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background-image:
+    radial-gradient(2px 2px at 20% 80%, rgba(212,175,55,0.18) 0, transparent 60%),
+    radial-gradient(2px 2px at 60% 70%, rgba(255,215,0,0.12) 0, transparent 60%),
+    radial-gradient(2px 2px at 80% 40%, rgba(212,175,55,0.15) 0, transparent 60%);
+  animation: ${motesDrift} 16s linear infinite;
+  will-change: transform, opacity;
+`;
+
+const waterGlint = keyframes`
+  from { background-position: 0 0; }
+  to { background-position: 200% 0; }
+`;
+const WaterSheen = styled.div`
+  position: absolute; left: 0; right: 0; bottom: 6%; height: 8%;
+  background: linear-gradient(90deg, rgba(255,215,0,0.08), rgba(255,215,0,0.02), rgba(255,215,0,0.08));
+  background-size: 200% 100%;
+  filter: blur(6px); opacity: 0.25; pointer-events: none; z-index: 1;
+  animation: ${waterGlint} 12s linear infinite;
+  will-change: background-position, opacity;
+`;
+
 const SceneTitle = styled(motion.h1)`
   font-family: var(--font-display);
   color: var(--gold);
-  font-size: 2rem;
+  font-size: var(--fs-xxl);
   margin-bottom: var(--spacing-lg);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   text-align: center;
@@ -42,8 +71,8 @@ const SceneTitle = styled(motion.h1)`
 const NarrativeText = styled(motion.div)`
   font-family: var(--font-primary);
   color: var(--parchment);
-  font-size: 1.1rem;
-  line-height: 1.8;
+  font-size: var(--fs-lg);
+  line-height: var(--lh-loose);
 
   .highlight-place { color: #f0a8a8; font-weight: 700; }
   .highlight-character { color: #a8e0b0; font-weight: 700; }
@@ -64,7 +93,7 @@ const ObjectiveTitle = styled.h3`
   font-family: var(--font-display);
   color: var(--gold);
   margin-bottom: var(--spacing-sm);
-  font-size: 1.3rem;
+  font-size: var(--fs-xl);
 `;
 
 const ObjectiveText = styled.p`
@@ -87,7 +116,7 @@ const PuzzleTitle = styled.h3`
   color: var(--gold);
   text-align: center;
   margin-bottom: var(--spacing-lg);
-  font-size: 1.5rem;
+  font-size: var(--fs-xl);
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 `;
 
@@ -149,12 +178,13 @@ const MovementNumber = styled.div`
 const MovementIcon = styled.div`
   font-size: 1.5rem;
   margin-bottom: var(--spacing-xs);
+  filter: drop-shadow(0 0 8px rgba(212,175,55,0.4));
 `;
 
 const MovementLabel = styled.div`
   font-family: var(--font-primary);
   color: var(--parchment);
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   font-weight: 700;
 `;
 
@@ -221,10 +251,17 @@ const Petal = styled(motion.div)`
   border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
   position: absolute;
   cursor: pointer;
-  
+
   &:hover {
     transform: scale(1.2);
   }
+`;
+
+const PositionedPetal = styled(Petal)`
+  ${p => p.$top !== undefined ? `top:${p.$top};` : ''}
+  ${p => p.$left !== undefined ? `left:${p.$left};` : ''}
+  ${p => p.$right !== undefined ? `right:${p.$right};` : ''}
+  ${p => p.$bottom !== undefined ? `bottom:${p.$bottom};` : ''}
 `;
 
 const WaterRipple = styled(motion.div)`
@@ -234,6 +271,11 @@ const WaterRipple = styled(motion.div)`
   border: 2px solid rgba(212, 175, 55, 0.6);
   border-radius: 50%;
   pointer-events: none;
+`;
+
+const PositionedRipple = styled(WaterRipple)`
+  left: ${p => `${p.$x}px`};
+  top: ${p => `${p.$y}px`};
 `;
 
 const ChoiceSection = styled(motion.div)`
@@ -246,6 +288,7 @@ const ChoiceHeading = styled.h3`
   color: var(--gold);
   margin-bottom: var(--spacing-lg);
   text-align: center;
+  font-size: var(--fs-xl);
 `;
 
 const ChoiceButton = styled(motion.button)`
@@ -255,23 +298,23 @@ const ChoiceButton = styled(motion.button)`
   padding: var(--spacing-lg) var(--spacing-xl);
   color: var(--parchment);
   font-family: var(--font-primary);
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: var(--fs-lg);
+  font-weight: 700;
   cursor: pointer;
   margin: var(--spacing-sm);
   transition: all 0.3s ease;
-  
+
   &:hover {
     background: linear-gradient(145deg, rgba(244, 241, 222, 0.2), rgba(230, 220, 198, 0.2));
     border-color: var(--gold);
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(212, 175, 55, 0.3);
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    
+
     &:hover {
       transform: none;
       border-color: var(--copper);
@@ -291,15 +334,15 @@ const CenteredText = styled.p`
 const NarrativePara = styled.p`
   font-family: var(--font-primary);
   color: var(--parchment);
-  font-size: 1.1rem;
-  line-height: 1.6;
+  font-size: var(--fs-lg);
+  line-height: var(--lh-loose);
   margin-bottom: var(--spacing-lg);
 `;
 
 const EmphasisHeading = styled.p`
   font-family: var(--font-display);
   color: var(--gold);
-  font-size: 1.2rem;
+  font-size: var(--fs-xl);
   margin-bottom: var(--spacing-lg);
   text-align: center;
 `;
@@ -308,7 +351,7 @@ const HintText = styled.p`
   font-family: var(--font-primary);
   color: #ffd95e;
   font-style: italic;
-  font-size: 0.95rem;
+  font-size: var(--fs-sm);
   text-align: center;
 `;
 
@@ -490,6 +533,8 @@ export default function Scene1DashashwamedhGhat() {
 
   return (
     <SceneContainer>
+      <AtmosphereLayer />
+      <WaterSheen />
       <SceneTitle
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -560,8 +605,8 @@ export default function Scene1DashashwamedhGhat() {
               onClick={() => handleChoiceFocus('ritual')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-            >
-              🔥 Focus on the Ritual
+>
+              <span className="emoji-icon" aria-hidden>🔥</span> Focus on the Ritual
             </ChoiceButton>
             
             <ChoiceButton
@@ -569,8 +614,8 @@ export default function Scene1DashashwamedhGhat() {
               onClick={() => handleChoiceFocus('crowd')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-            >
-              👥 Focus on the Crowd
+>
+              <span className="emoji-icon" aria-hidden>👥</span> Focus on the Crowd
             </ChoiceButton>
             
             <ChoiceButton
@@ -578,8 +623,8 @@ export default function Scene1DashashwamedhGhat() {
               onClick={() => handleChoiceFocus('river')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-            >
-              🌊 Focus on the River
+>
+              <span className="emoji-icon" aria-hidden>🌊</span> Focus on the River
             </ChoiceButton>
           </div>
         </ChoiceSection>
@@ -617,8 +662,12 @@ export default function Scene1DashashwamedhGhat() {
             {RITUAL_MOVEMENTS.map((movement) => (
               <RitualMovement
                 key={movement.id}
+                role="button"
+                tabIndex={0}
+                aria-label={`${movement.id} ${movement.label}`}
                 $highlighted={highlightedMovements.includes(movement.id)}
                 onClick={() => handleMovementClick(movement.id)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleMovementClick(movement.id); }}
                 onMouseEnter={() => document.body.classList.add('cursor-examine')}
                 onMouseLeave={() => document.body.classList.remove('cursor-examine')}
                 whileHover={{ scale: 1.05 }}
@@ -635,7 +684,7 @@ export default function Scene1DashashwamedhGhat() {
           </RitualDisplay>
           
           {playerSequence.length > 0 && (
-            <CenteredText>
+            <CenteredText aria-live="polite">
               Your sequence: {playerSequence.join(' → ')}
               {puzzleSolved && ' ✅ Correct!'}
             </CenteredText>
@@ -667,21 +716,24 @@ export default function Scene1DashashwamedhGhat() {
             whileHover={{ scale: 1.05 }}
           >
             <Water>
-              <Petal
-                style={{ top: '30%', left: '40%' }}
+              <PositionedPetal
+                $top={'30%'}
+                $left={'40%'}
                 animate={{ rotate: 360 }}
                 transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
               />
-              <Petal
-                style={{ bottom: '30%', right: '35%' }}
+              <PositionedPetal
+                $bottom={'30%'}
+                $right={'35%'}
                 animate={{ rotate: -360 }}
                 transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
               />
-              
+
               {ripples.map((ripple) => (
-                <WaterRipple
+                <PositionedRipple
                   key={ripple.id}
-                  style={{ left: ripple.x, top: ripple.y }}
+                  $x={ripple.x}
+                  $y={ripple.y}
                   initial={{ scale: 0, opacity: 0.8 }}
                   animate={{ scale: 3, opacity: 0 }}
                   exit={{ opacity: 0 }}

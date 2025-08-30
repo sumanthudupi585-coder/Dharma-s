@@ -93,7 +93,10 @@ const GameplayContainer = styled.div`
   padding: var(--spacing-lg);
   padding-bottom: calc(var(--spacing-lg) + 160px); /* safe area for hotbar */
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-width: 1280px;
+  margin: 0 auto;
 
   /* Mystical background pattern */
   &::before {
@@ -158,6 +161,7 @@ const NarrativeContent = styled.div`
   z-index: 10;
   height: 100%;
   overflow-y: auto;
+  padding-bottom: calc(var(--spacing-xl) + 200px);
 
   &::-webkit-scrollbar { width: 6px; }
   &::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #d4af37, #ffd700); border-radius: 3px; }
@@ -165,9 +169,9 @@ const NarrativeContent = styled.div`
 
 // Mini-map panel
 const MiniMapPanel = styled.div`
-  position: fixed;
+  position: sticky;
   top: calc(var(--spacing-lg) + 70px);
-  right: var(--spacing-lg);
+  right: auto;
   width: 180px;
   height: 140px;
   background: linear-gradient(145deg, rgba(0,0,0,0.85), rgba(15,15,15,0.95));
@@ -197,10 +201,8 @@ const MiniMapPanel = styled.div`
 
 // Hotbar / quick slots
 const HotbarContainer = styled.div`
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
+  position: sticky;
+  bottom: 0;
   display: grid;
   grid-template-columns: repeat(6, 56px);
   gap: 10px;
@@ -209,7 +211,8 @@ const HotbarContainer = styled.div`
   border-radius: 14px;
   padding: 10px 12px;
   box-shadow: 0 10px 28px rgba(0,0,0,0.7), 0 0 20px rgba(212,175,55,0.25);
-  z-index: 180;
+  z-index: 20;
+  margin: var(--spacing-lg) auto 0;
 `;
 
 const HotbarSlot = styled.div`
@@ -240,6 +243,22 @@ const SlotIndex = styled.span`
   border-radius: 6px;
 `;
 
+// Sticky page header containing objective and HUD
+const HeaderBar = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--spacing-md);
+  align-items: center;
+  position: sticky;
+  top: var(--spacing-lg);
+  z-index: 30;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+`;
+
 // Tooltip
 const TooltipBubble = styled.div`
   position: fixed;
@@ -248,7 +267,7 @@ const TooltipBubble = styled.div`
   border: 1px solid rgba(212,175,55,0.6);
   color: #d4af37;
   font-family: var(--font-primary);
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
   padding: 6px 10px;
   border-radius: 8px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 0 16px rgba(212,175,55,0.25);
@@ -260,17 +279,19 @@ const TooltipBubble = styled.div`
 
 // HUD components
 const DecoHUD = styled.div`
-  position: fixed;
-  top: var(--spacing-lg);
-  left: var(--spacing-lg);
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-auto-flow: column;
   gap: var(--spacing-sm);
-  z-index: 200;
+  justify-content: end;
+  align-items: center;
+  @media (max-width: 1024px) {
+    grid-auto-flow: row;
+    justify-content: stretch;
+  }
 `;
 
 const Gauge = styled.div`
-  width: 260px;
+  width: 220px;
   height: 22px;
   background: linear-gradient(145deg, rgba(0,0,0,0.85), rgba(20,20,20,0.95));
   border: 2px solid #d4af37;
@@ -309,7 +330,7 @@ const GaugeLabel = styled.span`
   background: linear-gradient(145deg, #d4af37, #ffd700);
   padding: 2px 8px;
   border-radius: 8px;
-  font-size: 0.8rem;
+  font-size: var(--fs-sm);
 `;
 
 const ObjectivesBanner = styled(motion.div)`
@@ -356,8 +377,8 @@ const ObjectiveText = styled.h3`
   color: #d4af37;
   margin: 0;
   margin-left: 45px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: var(--fs-lg);
+  font-weight: 700;
   text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
 `;
 
@@ -399,7 +420,7 @@ const ChoicesPanel = styled(motion.div)`
 const ChoicesTitle = styled.h3`
   font-family: var(--font-display);
   color: #d4af37;
-  font-size: 1.3rem;
+  font-size: var(--fs-xl);
   margin-bottom: var(--spacing-md);
   text-align: center;
   text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
@@ -650,25 +671,24 @@ export default function GameplayScreen() {
 
   return (
     <GameplayContainer>
-      <MiniMapPanel />
-
-      <DecoHUD>
-        <Gauge>
-          <Fill $value={82} />
-          <GaugeLabel>VITAL</GaugeLabel>
-        </Gauge>
-        <Gauge>
-          <Fill $value={65} />
-          <GaugeLabel>AETHER</GaugeLabel>
-        </Gauge>
-      </DecoHUD>
-
       <MainContentArea>
-        {state.gameProgress?.currentObjectives && state.gameProgress.currentObjectives[0] && (
-          <ObjectivesBanner initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
-            <ObjectiveText>{state.gameProgress.currentObjectives[0].text}</ObjectiveText>
-          </ObjectivesBanner>
-        )}
+        <HeaderBar>
+          {state.gameProgress?.currentObjectives && state.gameProgress.currentObjectives[0] && (
+            <ObjectivesBanner role="status" aria-live="polite" initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
+              <ObjectiveText>{state.gameProgress.currentObjectives[0].text}</ObjectiveText>
+            </ObjectivesBanner>
+          )}
+          <DecoHUD>
+            <Gauge>
+              <Fill $value={82} />
+              <GaugeLabel>VITAL</GaugeLabel>
+            </Gauge>
+            <Gauge>
+              <Fill $value={65} />
+              <GaugeLabel>AETHER</GaugeLabel>
+            </Gauge>
+          </DecoHUD>
+        </HeaderBar>
         <NarrativeWindow
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -680,6 +700,30 @@ export default function GameplayScreen() {
             </Suspense>
           </NarrativeContent>
         </NarrativeWindow>
+
+        <HotbarContainer>
+          {Array.from({ length: 6 }, (_, i) => {
+            const item = inventory.items[i];
+            const label = item ? `Hotbar slot ${i + 1}: ${item.name}` : `Hotbar slot ${i + 1}: empty`;
+            const onActivate = () => { /* reserved for future item use */ };
+            return (
+              <HotbarSlot
+                key={i}
+                $active={!!item}
+                className={item ? 'is-interactive' : ''}
+                role={item ? 'button' : undefined}
+                tabIndex={item ? 0 : -1}
+                aria-label={label}
+                onKeyDown={(e) => { if (item && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onActivate(); } }}
+                onMouseEnter={(e) => item && showTooltip(item.name, e)}
+                onMouseLeave={hideTooltip}
+              >
+                {item ? item.icon : '∅'}
+                <SlotIndex>{i + 1}</SlotIndex>
+              </HotbarSlot>
+            );
+          })}
+        </HotbarContainer>
 
         {sceneData.choices.length > 0 && (
           <ChoicesPanel
@@ -712,20 +756,6 @@ export default function GameplayScreen() {
         )}
       </MainContentArea>
 
-      <HotbarContainer>
-        {Array.from({ length: 6 }, (_, i) => {
-          const item = inventory.items[i];
-          return (
-            <HotbarSlot key={i} $active={!!item} className={item ? 'is-interactive' : ''}
-              onMouseEnter={(e) => item && showTooltip(item.name, e)}
-              onMouseLeave={hideTooltip}
-            >
-              {item ? item.icon : '∅'}
-              <SlotIndex>{i + 1}</SlotIndex>
-            </HotbarSlot>
-          );
-        })}
-      </HotbarContainer>
 
       {tooltip.visible && (
         <TooltipBubble $x={tooltip.x} $y={tooltip.y}>
@@ -735,6 +765,7 @@ export default function GameplayScreen() {
 
       <JournalSidebar>
         <Journal isVisible={!mobileJournalOpen} />
+        <MiniMapPanel />
       </JournalSidebar>
 
       <JournalToggle

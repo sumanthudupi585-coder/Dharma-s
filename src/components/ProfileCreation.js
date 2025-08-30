@@ -80,7 +80,7 @@ const Subtitle = styled.p`
   color: #b8941f;
   opacity: 0.85;
   margin: 0;
-  font-size: 0.95rem;
+  font-size: var(--fs-sm);
 `;
 
 const Progress = styled.div`
@@ -118,6 +118,7 @@ const QDesc = styled.p`
   color: #b8941f;
   opacity: 0.9;
   margin: 0 0 var(--spacing-lg);
+  font-size: var(--fs-sm);
 `;
 
 const Choices = styled.div`
@@ -135,7 +136,7 @@ const Choice = styled(motion.button)`
   color: #e8c86a;
   font-family: var(--font-primary);
   font-weight: 700;
-  font-size: 1.02rem;
+  font-size: var(--fs-lg);
   letter-spacing: 0.02em;
   text-align: left;
   cursor: pointer;
@@ -182,7 +183,7 @@ const FooterHint = styled.p`
   margin: 0;
   text-align: center;
   font-family: var(--font-primary);
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   color: #9f8120;
   opacity: 0.8;
 `;
@@ -295,7 +296,7 @@ export default function ProfileCreation() {
               <Title id="survey-title">Ātman Spanda</Title>
               <Subtitle>Question {index + 1} of {total}</Subtitle>
             </TitleWrap>
-            <Progress aria-label={`Progress ${progress}%`}>
+            <Progress role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} aria-label={`Progress ${progress}%`}>
               <ProgressFill $value={progress} />
             </Progress>
           </Header>

@@ -106,7 +106,7 @@ const Whisper = styled.p`
   opacity: 0.8;
   margin-top: -6px;
   text-align: center;
-  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  font-size: var(--fs-sm);
 `;
 
 const Menu = styled(motion.div)`
@@ -125,7 +125,7 @@ const ActionButton = styled(motion.button)`
   color: #e8c86a;
   font-family: var(--font-primary);
   font-weight: 700;
-  font-size: 1.08rem;
+  font-size: var(--fs-lg);
   letter-spacing: 0.04em;
   cursor: pointer;
   transition: background 0.25s ease, transform 0.18s ease, color 0.25s ease, border-color 0.25s ease;
@@ -195,13 +195,13 @@ export default function TitleScreen() {
         <TitleWordmark className="shimmer">Dharma's Cipher</TitleWordmark>
         <Whisper>Whisper the first vow.</Whisper>
         <Menu initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-          <ActionButton className="is-interactive" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleNewGame}>
+          <ActionButton className="is-interactive" type="button" aria-label="Start New Journey" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleNewGame}>
             Start New Journey
           </ActionButton>
-          <ActionButton className="is-interactive" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleLoadGame}>
+          <ActionButton className="is-interactive" type="button" aria-label="Continue Path" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleLoadGame}>
             Continue Path
           </ActionButton>
-          <ActionButton className="is-interactive" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleSettings}>
+          <ActionButton className="is-interactive" type="button" aria-label="Open Sacred Settings" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleSettings}>
             Sacred Settings
           </ActionButton>
         </Menu>

@@ -61,7 +61,7 @@ const Subtitle = styled.p`
   font-family: var(--font-primary);
   color: #b8941f;
   opacity: 0.9;
-  font-size: 1.05rem;
+  font-size: var(--fs-lg);
 `;
 
 const SutraBanner = styled.div`
@@ -123,7 +123,7 @@ const Section = styled(motion.section)`
 const SectionTitle = styled.h2`
   margin: 0 0 var(--spacing-md);
   font-family: var(--font-display);
-  font-size: 1.4rem;
+  font-size: var(--fs-xl);
   color: #e6c76a;
   letter-spacing: 0.04em;
 `;
@@ -146,7 +146,7 @@ const Pill = styled.span`
   font-family: var(--font-primary);
   font-weight: 700;
   letter-spacing: 0.02em;
-  font-size: 0.95rem;
+  font-size: var(--fs-sm);
 `;
 
 const Grid = styled.div`
@@ -170,7 +170,7 @@ const CardTitle = styled.h3`
   margin: 0 0 6px;
   font-family: var(--font-display);
   color: #e6c76a;
-  font-size: 1.2rem;
+  font-size: var(--fs-lg);
 `;
 
 const CardSub = styled.p`
@@ -178,6 +178,7 @@ const CardSub = styled.p`
   font-family: var(--font-primary);
   color: #b8941f;
   opacity: 0.9;
+  font-size: var(--fs-sm);
 `;
 
 const CardText = styled.p`
@@ -209,7 +210,7 @@ const SutraSk = styled.div`
 const SutraEn = styled.div`
   font-family: var(--font-primary);
   color: #b8941f;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   font-style: italic;
 `;
 

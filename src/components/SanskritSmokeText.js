@@ -12,6 +12,7 @@ const Canvas = styled.canvas`
   width: 100%;
   height: 100%;
   display: block;
+  will-change: opacity, transform;
 `;
 
 export default function SanskritSmokeText({ text, secondaryText = '', onComplete, durationMs = 6500, holdMs = 3200, quality = 'auto' }) {

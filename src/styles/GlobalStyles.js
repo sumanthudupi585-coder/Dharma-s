@@ -39,7 +39,7 @@ const glowPulse = keyframes`
 `;
 
 const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:wght@400;600;700&family=Noto+Serif+Devanagari:wght@400;600&display=swap');
   * {
     box-sizing: border-box;
     margin: 0;
@@ -64,6 +64,16 @@ const GlobalStyle = createGlobalStyle`
     --font-primary: 'Crimson Text', serif;
     --font-display: 'Cinzel', serif;
     --font-devanagari: 'Noto Serif Devanagari', 'Noto Sans Devanagari', serif;
+    /* Modular scale */
+    --fs-xs: 0.85rem;
+    --fs-sm: 0.95rem;
+    --fs-md: 1rem;
+    --fs-lg: 1.125rem;
+    --fs-xl: 1.5rem;
+    --fs-xxl: 2rem;
+    --lh-tight: 1.3;
+    --lh-normal: 1.6;
+    --lh-loose: 1.85;
 
     /* Spacing */
     --spacing-xs: 0.25rem;
@@ -98,10 +108,24 @@ const GlobalStyle = createGlobalStyle`
     background: linear-gradient(135deg, var(--ink-black) 0%, var(--deep-blue) 50%, var(--royal-blue) 100%);
     color: var(--parchment);
     min-height: 100vh;
-    line-height: 1.6;
+    line-height: var(--lh-normal);
     overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-y: auto;
+    font-size: var(--fs-md);
   }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    color: var(--gold);
+    letter-spacing: 0.02em;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.35);
+    line-height: var(--lh-tight);
+  }
+  h1 { font-size: var(--fs-xxl); }
+  h2 { font-size: var(--fs-xl); }
+  h3 { font-size: var(--fs-lg); }
+
+  .emoji-icon { filter: drop-shadow(0 0 8px rgba(212,175,55,0.4)); }
 
   body:not(.custom-cursor-active) {
     cursor: var(--cursor-default);
@@ -141,10 +165,9 @@ const GlobalStyle = createGlobalStyle`
 
   .app {
     min-height: 100vh;
-    height: 100vh;
     width: 100%;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
   }
 
   /* Typography Classes */
@@ -184,6 +207,19 @@ const GlobalStyle = createGlobalStyle`
   .is-disabled,
   .is-interactive[aria-disabled='true'] {
     cursor: var(--cursor-inactive) !important;
+  }
+
+  /* Keyboard focus visibility */
+  :focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  /* Hint GPU acceleration for frequently animated elements */
+  .is-interactive,
+  .btn-manuscript,
+  .btn-choice {
+    will-change: transform, opacity;
   }
 
   /* Interactive Elements */

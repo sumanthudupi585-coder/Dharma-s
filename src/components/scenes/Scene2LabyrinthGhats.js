@@ -1,10 +1,40 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 
 const SceneContainer = styled.div`
   height: 100%;
   padding: var(--spacing-lg);
+  position: relative;
+`;
+
+const fogDrift = keyframes`
+  0% { transform: translateX(-10%) translateY(0); opacity: 0.12; }
+  50% { opacity: 0.2; }
+  100% { transform: translateX(10%) translateY(-6%); opacity: 0.12; }
+`;
+const FogLayer = styled.div`
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background:
+    radial-gradient(60% 40% at 20% 80%, rgba(255,215,0,0.04), transparent 60%),
+    radial-gradient(50% 35% at 70% 20%, rgba(255,165,0,0.03), transparent 60%),
+    linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0));
+  filter: blur(8px);
+  animation: ${fogDrift} 24s linear infinite;
+  will-change: transform, opacity;
+`;
+
+const flicker = keyframes`
+  0%, 100% { opacity: 0.25; }
+  40% { opacity: 0.35; }
+  60% { opacity: 0.22; }
+`;
+const TorchGlow = styled.div`
+  position: absolute; top: 10%; left: 8%; width: 180px; height: 180px; z-index: 1; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255, 140, 0, 0.25), rgba(255,140,0,0.08), transparent 70%);
+  filter: blur(10px);
+  animation: ${flicker} 2.6s ease-in-out infinite;
+  will-change: opacity;
 `;
 
 const SceneTitle = styled(motion.h1)`
@@ -20,7 +50,7 @@ const SceneTitle = styled(motion.h1)`
 
 const NarrativeText = styled(motion.div)`
   font-family: var(--font-primary);
-  color: var(--ink-black);
+  color: var(--parchment);
   font-size: 1.1rem;
   line-height: 1.8;
 `;
@@ -28,6 +58,8 @@ const NarrativeText = styled(motion.div)`
 export default function Scene2LabyrinthGhats() {
   return (
     <SceneContainer>
+      <FogLayer />
+      <TorchGlow />
       <SceneTitle
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}

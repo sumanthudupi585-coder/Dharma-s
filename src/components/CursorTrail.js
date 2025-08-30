@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { useGame } from '../context/GameContext';
 
 // --- Configuration for easy tweaking ---
 const CONFIG = {
@@ -17,6 +18,8 @@ const CONFIG = {
 };
 
 export default function CursorTrail() {
+  const { state } = useGame();
+  const enabled = state.settings?.effects?.cursorTrail !== false && !state.settings?.accessibility?.reducedMotion;
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
   const particlesRef = useRef([]);
@@ -59,6 +62,7 @@ export default function CursorTrail() {
 
 
   useEffect(() => {
+    if (!enabled) return;
     const canvas = document.createElement('canvas');
     canvas.style.position = 'fixed';
     canvas.style.inset = '0';
@@ -66,6 +70,7 @@ export default function CursorTrail() {
     canvas.style.pointerEvents = 'none';
     canvas.style.mixBlendMode = 'screen';
     canvas.style.filter = 'blur(0.8px)';
+    canvas.style.willChange = 'opacity, transform';
     document.body.appendChild(canvas);
     canvasRef.current = canvas;
 
@@ -77,6 +82,9 @@ export default function CursorTrail() {
       ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
     resize();
+
+    let paused = document.hidden;
+    const onVis = () => { paused = document.hidden; };
 
     const onMove = (e) => {
       const now = performance.now();
@@ -119,9 +127,11 @@ export default function CursorTrail() {
 
     window.addEventListener('mousemove', onMove);
     window.addEventListener('resize', resize);
+    document.addEventListener('visibilitychange', onVis);
 
     function tick(now) {
       if (!canvas) return;
+      if (paused) { rafRef.current = requestAnimationFrame(tick); return; }
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Filter out dead particles
@@ -161,9 +171,10 @@ export default function CursorTrail() {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener('mousemove', onMove);
       window.removeEventListener('resize', resize);
+      document.removeEventListener('visibilitychange', onVis);
       document.body.removeChild(canvas);
     };
-  }, []);
+  }, [enabled]);
 
   return null; // This component doesn't render any DOM elements itself
 }
