@@ -89,7 +89,6 @@ class SoundEngine {
       this._padChord([220, 277.18, 329.63], 0.6);
     } else if (kind === 'DASHASHWAMEDH_GHAT') {
       this._riverNoise();
-      this._randomBell(5);
     } else if (kind === 'LABYRINTH_GHATS') {
       this._lowDrone();
       this._drip(7);
