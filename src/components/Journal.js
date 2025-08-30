@@ -777,6 +777,9 @@ export default function Journal({ isVisible = true }) {
       
       <TabContent
         key={activeTab}
+        id={`tab-panel-${activeTab}`}
+        role="tabpanel"
+        aria-labelledby={`tab-${activeTab}`}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
