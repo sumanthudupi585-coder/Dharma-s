@@ -104,6 +104,10 @@ class SoundEngine {
       this._lowDrone();
       this._drip(7);
       this._windGusts();
+    } else if (kind === 'NYAYA_TRIAL') {
+      this._resonantHum();
+      this._subtleAir();
+      this._echoPulse(10);
     } else {
       this._padChord([196, 246.94, 293.66], 0.5);
     }
