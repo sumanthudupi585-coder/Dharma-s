@@ -66,6 +66,7 @@ export default function CursorTrail() {
     canvas.style.pointerEvents = 'none';
     canvas.style.mixBlendMode = 'screen';
     canvas.style.filter = 'blur(0.8px)';
+    canvas.style.willChange = 'opacity, transform';
     document.body.appendChild(canvas);
     canvasRef.current = canvas;
 
