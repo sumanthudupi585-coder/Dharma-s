@@ -60,19 +60,7 @@ const trailEffect = keyframes`
   }
 `;
 
-// Golden filigree animation
-const filigreeGlow = keyframes`
-  0%, 100% {
-    border-color: rgba(212, 175, 55, 0.4);
-    background:
-      linear-gradient(145deg, rgba(0, 0, 0, 0.9) 0%, rgba(15, 15, 15, 0.95) 100%);
-  }
-  50% {
-    border-color: rgba(212, 175, 55, 0.7);
-    background:
-      linear-gradient(145deg, rgba(10, 10, 10, 0.85) 0%, rgba(20, 20, 20, 0.9) 100%);
-  }
-`;
+// (removed filigreeGlow animation to simplify UI)
 
 const Overlay = styled(motion.div)`
   position: fixed;
