@@ -40,8 +40,16 @@ const ToggleBtn = styled.button`
 
 const Canvas = styled.canvas`
   width: 100%;
-  height: calc(100% - 42px);
+  height: 100%;
   display: block;
+`;
+
+const InnerArea = styled.div`
+  position: relative;
+  width: 100%;
+  height: ${p => (p.$min ? '0px' : 'calc(100% - 42px)')};
+  overflow: hidden;
+  transition: height 200ms ease;
 `;
 
 const Tooltip = styled.div`
@@ -142,16 +150,23 @@ export default function FloatingWordsPanel({ pool, discovered }) {
       last = now;
       ctx.clearRect(0, 0, w, h);
 
-      // Interaction: hover - find nearest under cursor
+      // Interaction: hover over full transformed word area (inverse transform)
       let hoveredIndex = -1;
       if (hoverRef.current.active) {
         const mx = hoverRef.current.x;
         const my = hoverRef.current.y - 42; // account for header height
         for (let i = 0; i < items.length; i++) {
+          const it = items[i];
           const b = bounds[i];
-          const ix = items[i].x - b.width / 2;
-          const iy = items[i].y - b.height / 2;
-          if (mx >= ix && mx <= ix + b.width && my >= iy && my <= iy + b.height) { hoveredIndex = i; break; }
+          const osc = 0.92 + Math.sin(now * 0.0015 + i) * 0.06;
+          const s = it.scale * osc;
+          const dx = mx - it.x;
+          const dy = my - it.y;
+          const cos = Math.cos(it.rot);
+          const sin = Math.sin(it.rot);
+          const lx = (cos * dx + sin * dy) / s;
+          const ly = (-sin * dx + cos * dy) / s;
+          if (Math.abs(lx) <= b.width / 2 && Math.abs(ly) <= b.height / 2) { hoveredIndex = i; break; }
         }
       }
 
@@ -262,20 +277,18 @@ export default function FloatingWordsPanel({ pool, discovered }) {
     <PanelWrap aria-label="Floating words panel">
       <HeaderBar>
         <span>Unfolding Lexicon</span>
-        <ToggleBtn type="button" onClick={() => setMinimized(v => !v)} aria-pressed={minimized} aria-label={minimized ? 'Maximize panel' : 'Minimize panel'}>
+        <ToggleBtn type="button" onClick={() => setMinimized(v => !v)} aria-pressed={minimized} aria-label={minimized ? 'Expand panel' : 'Collapse panel'}>
           {minimized ? 'Show' : 'Hide'}
         </ToggleBtn>
       </HeaderBar>
-      {!minimized && (
-        <div style={{ position: 'relative', width: '100%', height: 'calc(100% - 42px)' }}>
-          <Canvas ref={canvasRef} />
-          {hoverWord && (
-            <Tooltip style={{ left: hoverWord.x, top: hoverWord.y }}>
-              {hoverWord.tr || ''}{hoverWord.tr && hoverWord.ann ? ' — ' : ''}{hoverWord.ann || ''}
-            </Tooltip>
-          )}
-        </div>
-      )}
+      <InnerArea $min={minimized} aria-hidden={minimized}>
+        <Canvas ref={canvasRef} />
+        {hoverWord && (
+          <Tooltip style={{ left: hoverWord.x, top: hoverWord.y }}>
+            {hoverWord.tr || ''}{hoverWord.tr && hoverWord.ann ? ' — ' : ''}{hoverWord.ann || ''}
+          </Tooltip>
+        )}
+      </InnerArea>
     </PanelWrap>
   );
 }
