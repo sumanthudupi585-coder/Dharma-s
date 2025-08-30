@@ -44,6 +44,21 @@ const ScreenRoot = styled.div`
   }
 `;
 
+const ParallaxLayer = styled.div`
+  position: absolute; inset: 0; pointer-events: none;
+  transform: translate(calc(var(--mx, 0) * -2%), calc(var(--my, 0) * -2%));
+`;
+
+const Particle = styled.div`
+  position: absolute; width: 3px; height: 3px; border-radius: 50%; background: rgba(212,175,55,0.6);
+  filter: blur(0.3px);
+`;
+
+const Sanskrit = styled.span`
+  position: absolute; font-family: var(--font-devanagari); font-size: 18px; color: rgba(230, 199, 106, 0.6);
+  opacity: 0.8;
+`;
+
 const CenterStack = styled.div`
   position: relative;
   z-index: 1;
