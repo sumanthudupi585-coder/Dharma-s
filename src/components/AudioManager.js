@@ -277,8 +277,8 @@ export default function AudioManager() {
       const t = e.target;
       if (t && t.classList && t.classList.contains('is-interactive')) engine.playSfx('click');
     };
-    document.addEventListener('mouseover', onOver);
-    document.addEventListener('click', onClick);
+    document.addEventListener('mouseover', onOver, { passive: true });
+    document.addEventListener('click', onClick, { passive: true });
     return () => {
       document.removeEventListener('mouseover', onOver);
       document.removeEventListener('click', onClick);
