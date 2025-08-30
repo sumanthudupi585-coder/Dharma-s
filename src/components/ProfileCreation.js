@@ -326,12 +326,11 @@ export default function ProfileCreation() {
 
       <AnimatePresence>
         {showSmoke && (
-          <motion.div
+          <FullscreenOverlay
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            style={{ position: 'fixed', inset: 0, background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 3000 }}
           >
             <SanskritSmokeText
               text={smokeText}
@@ -340,7 +339,7 @@ export default function ProfileCreation() {
               holdMs={1800}
               onComplete={proceed}
             />
-          </motion.div>
+          </FullscreenOverlay>
         )}
       </AnimatePresence>
     </ScreenRoot>
