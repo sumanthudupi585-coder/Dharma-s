@@ -181,10 +181,18 @@ export default function TitleScreen() {
   const handleSettings = () => { setOpenSettings(true); };
 
   return (
-    <ScreenRoot>
+    <ScreenRoot ref={rootRef}>
+      <ParallaxLayer aria-hidden="true">
+        {particles.map((p, i) => (
+          <Particle key={i} style={{ left: `${p.x}%`, top: `${p.y}%`, opacity: 0.6 }} />
+        ))}
+        {glyphs.map((s, i) => (
+          <Sanskrit key={i} style={{ left: `${s.x}%`, top: `${s.y}%` }}>{s.g}</Sanskrit>
+        ))}
+      </ParallaxLayer>
       <CenterStack>
         <TitleHalo />
-        <TitleWordmark>Dharma's Cipher</TitleWordmark>
+        <TitleWordmark className="shimmer">Dharma's Cipher</TitleWordmark>
         <Whisper>Whisper the first vow.</Whisper>
         <Menu initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
           <ActionButton className="is-interactive" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleNewGame}>
@@ -198,6 +206,7 @@ export default function TitleScreen() {
           </ActionButton>
         </Menu>
       </CenterStack>
+      <SettingsModal open={openSettings} onClose={() => setOpenSettings(false)} />
     </ScreenRoot>
   );
 }
