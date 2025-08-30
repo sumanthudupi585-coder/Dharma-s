@@ -61,17 +61,17 @@ const InnerArea = styled.div`
 const Tooltip = styled.div`
   position: absolute;
   transform: translate(-50%, -120%);
-  padding: 10px 12px;
+  padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid rgba(212,175,55,0.5);
   background: linear-gradient(145deg, rgba(0,0,0,0.94), rgba(12,12,12,0.99));
   color: #f3dfa0;
   font-family: var(--font-primary);
-  font-size: 0.92rem;
-  line-height: 1.28;
+  font-size: 0.94rem;
+  line-height: 1.32;
   pointer-events: none;
   white-space: normal;
-  max-width: 360px;
+  max-width: 420px;
   box-shadow: 0 10px 28px rgba(0,0,0,0.55);
   opacity: 0;
   transition: opacity 160ms ease;
@@ -180,11 +180,12 @@ export default function FloatingWordsPanel({ pool, discovered }) {
       last = now;
       ctx.clearRect(0, 0, w, h);
 
-      // Interaction: hover over full transformed word area (inverse transform) with padding
+      // Interaction: enlarged hover area with proximity fallback
       let hoveredIndex = -1;
       if (hoverRef.current.active) {
         const mx = hoverRef.current.x;
         const my = hoverRef.current.y - 42; // account for header height
+        let best = -1; let bestD2 = Infinity;
         for (let i = 0; i < items.length; i++) {
           const it = items[i];
           const b = bounds[i];
@@ -196,9 +197,12 @@ export default function FloatingWordsPanel({ pool, discovered }) {
           const sin = Math.sin(it.rot);
           const lx = (cos * dx + sin * dy) / s;
           const ly = (-sin * dx + cos * dy) / s;
-          const padX = 12, padY = 10; // forgiving hitbox
+          const padX = 26, padY = 18; // larger forgiving hitbox
           if (Math.abs(lx) <= b.width / 2 + padX && Math.abs(ly) <= b.height / 2 + padY) { hoveredIndex = i; break; }
+          const d2 = dx * dx + dy * dy;
+          if (d2 < bestD2) { bestD2 = d2; best = i; }
         }
+        if (hoveredIndex === -1 && best >= 0 && bestD2 <= 75 * 75) hoveredIndex = best; // proximity snap
       }
 
       // Separation force (simple collision avoidance)
