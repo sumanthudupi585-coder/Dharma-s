@@ -261,10 +261,15 @@ export default function AudioManager() {
   }, [state.settings.musicVolume, state.settings.sfxVolume, state.settings.soundEnabled]);
 
   useEffect(() => {
-    const scene = state.gameState === 'TITLE_SCREEN' ? 'title' : state.currentScene;
+    let scene = null;
+    if (state.gameState === 'TITLE_SCREEN') scene = 'title';
+    else if (state.gameState === 'GAMEPLAY') scene = state.currentScene;
+    else scene = null; // silence on profile creation/results and other menus
+
     if (prevScene.current !== scene) {
       prevScene.current = scene;
-      engine.startAmbient(scene);
+      if (scene) engine.startAmbient(scene);
+      else engine.stopAmbient(true);
     }
   }, [state.gameState, state.currentScene]);
 
