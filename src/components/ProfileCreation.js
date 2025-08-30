@@ -278,7 +278,7 @@ export default function ProfileCreation() {
         >
           <Header>
             <TitleWrap>
-              <Title id="survey-title">Ātman Resonance Survey</Title>
+              <Title id="survey-title">Ātman Spanda</Title>
               <Subtitle>Question {index + 1} of {total}</Subtitle>
             </TitleWrap>
             <Progress aria-label={`Progress ${progress}%`}>
