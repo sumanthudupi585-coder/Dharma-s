@@ -50,7 +50,9 @@ export default function SettingsModal({ open, onClose }) {
     if (on) body.classList.add(cls); else body.classList.remove(cls);
   };
 
+  const onMaster = (e) => dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { masterVolume: parseFloat(e.target.value) } });
   const onMusic = (e) => dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { musicVolume: parseFloat(e.target.value) } });
+  const onAmbient = (e) => dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { ambientVolume: parseFloat(e.target.value) } });
   const onSfx = (e) => dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { sfxVolume: parseFloat(e.target.value) } });
   const onLarge = (e) => { setBodyClass('large-text', e.target.checked); dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { accessibility: { ...state.settings.accessibility, largeText: e.target.checked } } }); };
   const onReduced = (e) => { setBodyClass('force-reduced-motion', e.target.checked); dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { accessibility: { ...state.settings.accessibility, reducedMotion: e.target.checked } } }); };
@@ -94,11 +96,19 @@ export default function SettingsModal({ open, onClose }) {
             <Title id="settings-title">Sacred Settings</Title>
 
             <Row>
+              <Label htmlFor="master">Master Volume</Label>
+              <Slider id="master" type="range" min="0" max="1" step="0.01" value={state.settings.masterVolume ?? 0.9} onChange={onMaster} />
+            </Row>
+            <Row>
               <Label htmlFor="music">Music Volume</Label>
               <Slider id="music" type="range" min="0" max="1" step="0.01" value={state.settings.musicVolume} onChange={onMusic} />
             </Row>
             <Row>
-              <Label htmlFor="sfx">SFX Volume</Label>
+              <Label htmlFor="ambient">Ambient Volume</Label>
+              <Slider id="ambient" type="range" min="0" max="1" step="0.01" value={state.settings.ambientVolume ?? 0.6} onChange={onAmbient} />
+            </Row>
+            <Row>
+              <Label htmlFor="sfx">UI SFX Volume</Label>
               <Slider id="sfx" type="range" min="0" max="1" step="0.01" value={state.settings.sfxVolume} onChange={onSfx} />
             </Row>
             <Row>
