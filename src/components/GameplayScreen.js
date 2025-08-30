@@ -3,6 +3,7 @@ import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, SCENES } from '../context/GameContext';
 import Journal from './Journal';
+import { engine } from './AudioManager';
 
 const Scene1DashashwamedhGhat = lazy(() => import('./scenes/Scene1DashashwamedhGhat'));
 const Scene2LabyrinthGhats = lazy(() => import('./scenes/Scene2LabyrinthGhats'));
