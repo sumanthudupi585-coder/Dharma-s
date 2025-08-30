@@ -307,7 +307,7 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
 
     const cleanup = init();
     return () => { disposed = true; if (cleanup) cleanup(); };
-  }, [text, secondaryText, onComplete, durationMs, holdMs]);
+  }, [text, secondaryText, onComplete, durationMs, holdMs, quality]);
 
   return (
     <CanvasWrap>
