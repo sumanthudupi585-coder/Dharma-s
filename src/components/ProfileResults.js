@@ -87,6 +87,13 @@ const SutraSecondary = styled.div`
   font-size: 0.95rem;
 `;
 
+const HeaderActions = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+`;
+
 const Body = styled.div`
   padding: var(--spacing-lg);
   display: grid;
@@ -206,17 +213,6 @@ const SutraEn = styled.div`
   font-style: italic;
 `;
 
-const Footer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  padding: var(--spacing-lg);
-  border-top: 1px solid rgba(212,175,55,0.25);
-  position: sticky;
-  bottom: 0;
-  background: linear-gradient(145deg, rgba(0,0,0,0.92), rgba(12,12,12,0.96));
-  backdrop-filter: blur(6px);
-  z-index: 5;
-`;
 
 const CTA = styled(motion.button)`
   appearance: none;
@@ -272,12 +268,15 @@ export default function ProfileResults() {
             <Title>Ātman Spanda</Title>
             <Subtitle>Revelation of your inner vibration</Subtitle>
           </TitleWrap>
-          {(playerProfile.atmanVakyaText || romanVakya) && (
-            <SutraBanner>
-              {playerProfile.atmanVakyaText && <SutraPrimary>{playerProfile.atmanVakyaText}</SutraPrimary>}
-              {romanVakya && <SutraSecondary>{romanVakya}</SutraSecondary>}
-            </SutraBanner>
-          )}
+          <HeaderActions>
+            {(playerProfile.atmanVakyaText || romanVakya) && (
+              <SutraBanner>
+                {playerProfile.atmanVakyaText && <SutraPrimary>{playerProfile.atmanVakyaText}</SutraPrimary>}
+                {romanVakya && <SutraSecondary>{romanVakya}</SutraSecondary>}
+              </SutraBanner>
+            )}
+            <CTA className="is-interactive" type="button" aria-label="Begin Your Sacred Journey" onClick={handleContinue} whileTap={{ scale: 0.98 }}>Begin Your Sacred Journey</CTA>
+          </HeaderActions>
         </Header>
 
         {show && (
@@ -339,9 +338,6 @@ export default function ProfileResults() {
           </Body>
         )}
 
-        <Footer>
-          <CTA className="is-interactive" type="button" aria-label="Begin Your Sacred Journey" onClick={handleContinue} whileTap={{ scale: 0.98 }}>Begin Your Sacred Journey</CTA>
-        </Footer>
       </Shell>
     </Screen>
   );
