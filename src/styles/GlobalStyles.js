@@ -64,6 +64,16 @@ const GlobalStyle = createGlobalStyle`
     --font-primary: 'Crimson Text', serif;
     --font-display: 'Cinzel', serif;
     --font-devanagari: 'Noto Serif Devanagari', 'Noto Sans Devanagari', serif;
+    /* Modular scale */
+    --fs-xs: 0.85rem;
+    --fs-sm: 0.95rem;
+    --fs-md: 1rem;
+    --fs-lg: 1.125rem;
+    --fs-xl: 1.5rem;
+    --fs-xxl: 2rem;
+    --lh-tight: 1.3;
+    --lh-normal: 1.6;
+    --lh-loose: 1.85;
 
     /* Spacing */
     --spacing-xs: 0.25rem;
