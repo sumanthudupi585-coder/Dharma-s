@@ -204,7 +204,6 @@ export default function FloatingWordsPanel({ pool, discovered }) {
         ctx.globalAlpha = alpha;
 
         // No box/outline; render only text with glow
-        const bw = b.width, bh = b.height; // still used for bounds elsewhere
 
         // Text
         ctx.shadowColor = 'rgba(255, 230, 140, 0.55)';
