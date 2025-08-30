@@ -181,6 +181,20 @@ const FooterHint = styled.p`
   opacity: 0.8;
 `;
 
+const ContentRow = styled.div`
+  width: min(96vw, 1240px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  padding: var(--spacing-md);
+
+  @media (max-width: 1020px) {
+    flex-direction: column;
+    align-items: center;
+  }
+`;
+
 export default function ProfileCreation() {
   const { dispatch } = useGame();
   const [index, setIndex] = useState(0);
