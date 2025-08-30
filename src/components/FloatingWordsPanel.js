@@ -61,19 +61,21 @@ const InnerArea = styled.div`
 const Tooltip = styled.div`
   position: absolute;
   transform: translate(-50%, -120%);
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid rgba(212,175,55,0.45);
-  background: linear-gradient(145deg, rgba(0,0,0,0.92), rgba(12,12,12,0.98));
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(212,175,55,0.5);
+  background: linear-gradient(145deg, rgba(0,0,0,0.94), rgba(12,12,12,0.99));
   color: #f3dfa0;
   font-family: var(--font-primary);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
+  line-height: 1.28;
   pointer-events: none;
   white-space: normal;
-  max-width: 260px;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.5);
+  max-width: 360px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.55);
   opacity: 0;
   transition: opacity 160ms ease;
+  backdrop-filter: blur(6px);
 
   &.visible { opacity: 1; }
 
@@ -86,8 +88,12 @@ const Tooltip = styled.div`
     width: 0; height: 0;
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
-    border-top: 6px solid rgba(212,175,55,0.45);
+    border-top: 6px solid rgba(212,175,55,0.5);
   }
+
+  .tip-sk { font-family: var(--font-display); font-weight: 700; color: #f6e7b5; display: block; margin-bottom: 2px; }
+  .tip-tr { opacity: 0.95; color: #e9d68f; font-style: italic; display: block; }
+  .tip-ann { opacity: 0.88; color: #d7be73; display: block; margin-top: 2px; }
 `;
 
 export default function FloatingWordsPanel({ pool, discovered }) {
@@ -174,7 +180,7 @@ export default function FloatingWordsPanel({ pool, discovered }) {
       last = now;
       ctx.clearRect(0, 0, w, h);
 
-      // Interaction: hover over full transformed word area (inverse transform)
+      // Interaction: hover over full transformed word area (inverse transform) with padding
       let hoveredIndex = -1;
       if (hoverRef.current.active) {
         const mx = hoverRef.current.x;
@@ -190,7 +196,8 @@ export default function FloatingWordsPanel({ pool, discovered }) {
           const sin = Math.sin(it.rot);
           const lx = (cos * dx + sin * dy) / s;
           const ly = (-sin * dx + cos * dy) / s;
-          if (Math.abs(lx) <= b.width / 2 && Math.abs(ly) <= b.height / 2) { hoveredIndex = i; break; }
+          const padX = 12, padY = 10; // forgiving hitbox
+          if (Math.abs(lx) <= b.width / 2 + padX && Math.abs(ly) <= b.height / 2 + padY) { hoveredIndex = i; break; }
         }
       }
 
@@ -262,8 +269,8 @@ export default function FloatingWordsPanel({ pool, discovered }) {
       if (hoveredIndex >= 0) {
         const it = items[hoveredIndex];
         const tx = Math.max(14, Math.min(w - 14, it.x));
-        const ty = Math.max(14, Math.min(h - 14, it.y + 10));
-        setHoverWord({ x: tx, y: ty, tr: it.tr, ann: it.ann });
+        const ty = Math.max(14, Math.min(h - 14, it.y + 14));
+        setHoverWord({ x: tx, y: ty, sk: it.sk, tr: it.tr, ann: it.ann });
       } else if (hoverWord) {
         setHoverWord(null);
       }
@@ -311,7 +318,9 @@ export default function FloatingWordsPanel({ pool, discovered }) {
         <Canvas ref={canvasRef} />
         {hoverWord && (
           <Tooltip style={{ left: hoverWord.x, top: hoverWord.y }} className="visible">
-            {hoverWord.tr || ''}{hoverWord.tr && hoverWord.ann ? ' — ' : ''}{hoverWord.ann || ''}
+            {hoverWord.sk && <span className="tip-sk">{hoverWord.sk}</span>}
+            {hoverWord.tr && <span className="tip-tr">{hoverWord.tr}</span>}
+            {hoverWord.ann && <span className="tip-ann">{hoverWord.ann}</span>}
           </Tooltip>
         )}
       </InnerArea>
