@@ -85,7 +85,7 @@ class SoundEngine {
     osc.type = type;
     osc.frequency.value = freq;
     const g = this.ctx.createGain();
-    g.gain.value = 0;
+    g.gain.value = 0.0001;
     osc.connect(g).connect(this.musicGain);
     osc.start();
     this.ambientNodes.push(osc, g);
