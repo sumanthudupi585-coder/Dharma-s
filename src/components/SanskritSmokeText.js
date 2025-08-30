@@ -209,7 +209,7 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       function tick(now) {
         if (disposed) return;
         const elapsed = now - start;
-        const dt = Math.min(64, now - last) / 1000; // seconds
+        const dt = Math.min(32, now - last) / 1000; // seconds
         last = now;
 
         ctx.clearRect(0, 0, w, h);
