@@ -246,6 +246,28 @@ class SoundEngine {
     this.ambientNodes.push({ stop: () => clearInterval(id) });
   }
 
+  _windGusts() {
+    const src = this.ctx.createBufferSource();
+    const len = 2 * this.ctx.sampleRate;
+    const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+    const ch = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) ch[i] = (Math.random() * 2 - 1) * 0.3;
+    src.buffer = buf; src.loop = true;
+    const hp = this.ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 500;
+    const g = this.ctx.createGain(); g.gain.value = 0.02;
+    src.connect(hp).connect(g).connect(this.ambientGain);
+    src.start();
+    this.ambientNodes.push(src, hp, g);
+    const mod = () => {
+      const t = this.ctx.currentTime;
+      g.gain.cancelScheduledValues(t);
+      g.gain.setTargetAtTime(0.01 + Math.random() * 0.05, t, 0.6);
+      hp.frequency.setTargetAtTime(300 + Math.random() * 700, t, 1.0);
+    };
+    const id = setInterval(mod, 4000);
+    this.ambientNodes.push({ stop: () => clearInterval(id) });
+  }
+
   playSfx(type = 'click') {
     if (!this.enabled) return;
     this.ensureContext();
