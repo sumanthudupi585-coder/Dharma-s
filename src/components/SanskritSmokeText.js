@@ -258,7 +258,7 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
           ctx.globalAlpha = Math.min(0.95, appear);
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
-          ctx.shadowBlur = 18;
+          ctx.shadowBlur = Math.floor(18 * qFactor);
 
           let yy = yStartSans;
           for (let i = 0; i < sansLines.length; i++) {
@@ -274,7 +274,7 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
             yy = yStartSans + sansLines.length * lineHeightSans + pairGap + lineHeightEng / 2;
             ctx.globalAlpha = Math.min(0.9, appear * 0.95);
             ctx.fillStyle = 'rgba(233, 214, 143, 0.92)';
-            ctx.shadowBlur = 12;
+            ctx.shadowBlur = Math.floor(12 * qFactor);
             ctx.font = `italic 500 ${smallSize}px ${englishFont}`;
             for (let i = 0; i < engLines.length; i++) { ctx.fillText(engLines[i], cx, yy); yy += lineHeightEng; }
           }
