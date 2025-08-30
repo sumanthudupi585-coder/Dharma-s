@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import React, { useEffect, useState } from 'react';
-
 export default function TypewriterText({ text = '', speed = 24, onAdvance, onComplete }) {
   const [out, setOut] = useState('');
   const [done, setDone] = useState(false);
