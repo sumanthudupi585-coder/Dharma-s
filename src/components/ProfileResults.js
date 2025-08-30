@@ -389,23 +389,6 @@ const TraitHeader = styled.div`
   gap: var(--spacing-md);
 `;
 
-const TraitIcon = styled.div`
-  width: 70px;
-  height: 70px;
-  background:
-    radial-gradient(circle, #d4af37 0%, #ffd700 50%, #d4af37 100%);
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 2rem;
-  color: #000;
-  box-shadow:
-    0 0 25px rgba(212, 175, 55, 0.6),
-    inset 0 2px 4px rgba(255, 255, 255, 0.3);
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  animation: ${breathingGlow} 5s ease-in-out infinite;
-`;
 
 const TraitTitle = styled.h2`
   font-family: var(--font-display);
