@@ -14,7 +14,7 @@ const Canvas = styled.canvas`
   display: block;
 `;
 
-export default function SanskritSmokeText({ text, secondaryText = '', onComplete, durationMs = 6500, holdMs = 3200 }) {
+export default function SanskritSmokeText({ text, secondaryText = '', onComplete, durationMs = 6500, holdMs = 3200, quality = 'auto' }) {
   const canvasRef = useRef(null);
   const rafRef = useRef(null);
 
@@ -25,7 +25,12 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       const canvas = canvasRef.current;
       if (!canvas || disposed) return () => {};
 
-      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const prefersReduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const cores = (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) ? navigator.hardwareConcurrency : 4;
+      const autoQuality = quality === 'auto';
+      const lowEnd = prefersReduced || cores <= 4;
+      const qFactor = quality === 'low' ? 0.6 : quality === 'high' ? 1 : (lowEnd ? 0.7 : 1);
+      const dpr = Math.max(1, Math.min(2, (window.devicePixelRatio || 1) * (qFactor < 0.85 ? 0.85 : 1)));
       const rect = canvas.getBoundingClientRect();
       canvas.width = Math.floor(rect.width * dpr);
       canvas.height = Math.floor(rect.height * dpr);
@@ -47,7 +52,7 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       // Sprites
       const goldSprite = document.createElement('canvas');
       const smokeSprite = document.createElement('canvas');
-      const SPR_G = 96, SPR_S = 120;
+      const SPR_G = Math.floor(96 * qFactor), SPR_S = Math.floor(120 * qFactor);
       goldSprite.width = SPR_G; goldSprite.height = SPR_G;
       smokeSprite.width = SPR_S; smokeSprite.height = SPR_S;
       const gctx = goldSprite.getContext('2d');
@@ -77,8 +82,8 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       const fontPrimary = 'Noto Serif Devanagari, Noto Sans Devanagari, serif';
       const englishFont = 'Crimson Text, serif';
       const maxBlockWidth = w * 0.84;
-      const baseSize = Math.min(128, Math.max(48, Math.floor((w / Math.max(4, (text || '').length)) * 1.6)));
-      const smallSize = Math.max(18, Math.floor(baseSize * 0.36));
+      const baseSize = Math.min(128, Math.max(48, Math.floor((w / Math.max(4, (text || '').length)) * 1.6 * (0.98 + 0.04 * qFactor))));
+      const smallSize = Math.max(18, Math.floor(baseSize * (0.32 + 0.04 * qFactor)));
       const pairGap = Math.floor(baseSize * 0.38);
 
       function wrapLines(str, font, size) {
@@ -125,11 +130,11 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
         return pts;
       }
 
-      const pointsSans = sample(sansLines, `600 ${baseSize}px ${fontPrimary}`, baseSize, lineHeightSans, yStartSans, 0.04);
-      const pointsEng = engLines.length ? sample(engLines, `italic 500 ${smallSize}px ${englishFont}`, smallSize, lineHeightEng, yStartSans + sansLines.length * lineHeightSans + pairGap + lineHeightEng / 2, 0.055) : [];
+      const pointsSans = sample(sansLines, `600 ${baseSize}px ${fontPrimary}`, baseSize, lineHeightSans, yStartSans, qFactor < 0.9 ? 0.06 : 0.04);
+      const pointsEng = engLines.length ? sample(engLines, `italic 500 ${smallSize}px ${englishFont}`, smallSize, lineHeightEng, yStartSans + sansLines.length * lineHeightSans + pairGap + lineHeightEng / 2, qFactor < 0.9 ? 0.075 : 0.055) : [];
 
       let allPoints = pointsSans.concat(pointsEng);
-      const maxParticles = 2200;
+      const maxParticles = prefersReduced ? 0 : Math.floor(1800 * qFactor);
       let ratio = Math.min(1, maxParticles / Math.max(1, allPoints.length));
       let targets = allPoints.filter(() => Math.random() < ratio);
       if (targets.length === 0 && (sansLines.length || engLines.length)) {
@@ -160,7 +165,7 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
 
       // Volumetric smoke: back and front layers
       const bounds = { x: cx - maxBlockWidth / 2, y: yStartSans - lineHeightSans, w: maxBlockWidth, h: blockHeight + lineHeightSans * 2 };
-      const SMOKE_COUNT = Math.floor(180 + Math.min(120, maxBlockWidth / 6));
+      const SMOKE_COUNT = prefersReduced ? 0 : Math.floor((120 + Math.min(100, maxBlockWidth / 7)) * qFactor);
       const smokeBack = new Array(SMOKE_COUNT).fill(0).map(() => ({
         x: bounds.x + Math.random() * bounds.w,
         y: bounds.y + Math.random() * bounds.h,
@@ -190,7 +195,7 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       }
 
       function updateSmoke(arr, dt, t) {
-        const ns = 0.007;
+        const ns = 0.006;
         for (let i = 0; i < arr.length; i++) {
           const p = arr[i];
           const ang = (noise2(p.x * ns + t * 0.0005, p.y * ns - t * 0.0004) - 0.5) * Math.PI * 2;
@@ -215,7 +220,6 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
         drawSmokeLayer(smokeBack, 1);
 
         // GOLD PARTICLES (text)
-        makeGoldSprite(0.9);
 
         ctx.globalCompositeOperation = 'screen';
         ctx.filter = 'blur(0.5px)';
