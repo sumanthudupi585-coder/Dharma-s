@@ -101,7 +101,7 @@ export default function useNyayaPuzzle() {
       setComplete(false);
       return { ok: false, why };
     }
-  }, [canSubmit, placed]);
+  }, [canSubmit, placed, ids]);
 
   return {
     cards,
