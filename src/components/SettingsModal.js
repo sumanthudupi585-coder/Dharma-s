@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useRef } from 'react';
 import { useGame, ACTIONS } from '../context/GameContext';
 
 const Backdrop = styled(motion.div)`
@@ -41,6 +42,7 @@ const CloseBtn = styled(motion.button)`
 
 export default function SettingsModal({ open, onClose }) {
   const { state, dispatch } = useGame();
+  const sheetRef = useRef(null);
 
   const setBodyClass = (cls, on) => {
     const body = document.body;
@@ -53,13 +55,43 @@ export default function SettingsModal({ open, onClose }) {
   const onLarge = (e) => { setBodyClass('large-text', e.target.checked); dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { accessibility: { ...state.settings.accessibility, largeText: e.target.checked } } }); };
   const onReduced = (e) => { setBodyClass('force-reduced-motion', e.target.checked); dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { accessibility: { ...state.settings.accessibility, reducedMotion: e.target.checked } } }); };
   const onHigh = (e) => { setBodyClass('high-contrast', e.target.checked); dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { accessibility: { ...state.settings.accessibility, highContrast: e.target.checked } } }); };
+  const onCursorTrail = (e) => dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { effects: { ...(state.settings.effects || {}), cursorTrail: e.target.checked } } });
+
+  // Focus trap and Escape handling
+  useEffect(() => {
+    if (!open || !sheetRef.current) return;
+    const root = sheetRef.current;
+    const focusables = root.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    first && first.focus();
+
+    function onKey(e) {
+      if (e.key === 'Escape') { e.preventDefault(); onClose(); }
+      if (e.key === 'Tab' && focusables.length) {
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    }
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
 
   return (
     <AnimatePresence>
       {open && (
         <Backdrop initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
-          <Sheet initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} onClick={(e) => e.stopPropagation()}>
-            <Title>Sacred Settings</Title>
+          <Sheet
+            ref={sheetRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="settings-title"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Title id="settings-title">Sacred Settings</Title>
 
             <Row>
               <Label htmlFor="music">Music Volume</Label>
@@ -76,6 +108,10 @@ export default function SettingsModal({ open, onClose }) {
             <Row>
               <Label htmlFor="reducedMotion">Reduced Motion</Label>
               <Toggle id="reducedMotion" type="checkbox" checked={state.settings.accessibility.reducedMotion} onChange={onReduced} />
+            </Row>
+            <Row>
+              <Label htmlFor="cursorTrail">Cursor Trail</Label>
+              <Toggle id="cursorTrail" type="checkbox" checked={state.settings.effects?.cursorTrail !== false} onChange={onCursorTrail} />
             </Row>
             <Row style={{ borderBottom: 'none' }}>
               <Label htmlFor="highContrast">High Contrast</Label>
