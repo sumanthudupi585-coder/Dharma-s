@@ -3,7 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
 import { SURVEY_QUESTIONS, calculatePlayerProfile } from '../data/profileData';
-import SanskritSmokeText from './SanskritSmokeText';
+import FloatingWordsPanel from './FloatingWordsPanel';
 
 // Ambient animations kept aligned with the existing design language
 const drift = keyframes`
@@ -181,24 +181,12 @@ const FooterHint = styled.p`
   opacity: 0.8;
 `;
 
-const FullscreenOverlay = styled(motion.div)`
-  position: fixed;
-  inset: 0;
-  background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 3000;
-`;
-
 export default function ProfileCreation() {
   const { dispatch } = useGame();
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState([]);
-  const [showSmoke, setShowSmoke] = useState(false);
-  const [smokeText, setSmokeText] = useState('');
-  const [romanText, setRomanText] = useState('');
   const [inputLocked, setInputLocked] = useState(false);
+  const [discovered, setDiscovered] = useState({});
 
   const total = SURVEY_QUESTIONS.length;
   const progress = useMemo(() => Math.round(((index) / total) * 100), [index, total]);
@@ -230,27 +218,23 @@ export default function ProfileCreation() {
     setAnswers((prev) => [...prev, newAnswer]);
 
     if (choice.seed) {
-      setSmokeText(choice.seed);
-      setRomanText(choice.transliteration || choice.annotation || '');
-      setShowSmoke(true);
-    } else {
-      proceed();
+      const id = `${current.id}-${choice.id}`;
+      setDiscovered((prev) => ({ ...prev, [id]: true }));
     }
+    proceed();
   };
 
   const proceed = () => {
-    setShowSmoke(false);
     setTimeout(() => {
       const next = index + 1;
       if (next < total) {
         setIndex(next);
         setInputLocked(false);
-        // scroll focus back to list
         if (listRef.current) listRef.current.scrollTop = 0;
       } else {
         finalize();
       }
-    }, 200);
+    }, 150);
   };
 
   const handleBack = () => {
@@ -317,41 +301,19 @@ export default function ProfileCreation() {
             ← Back
           </NavButton>
           <FooterHint>Tip: Use 1–{current.choices.length} keys to pick instantly. Backspace to go back.</FooterHint>
-          <NavButton
-            className="is-interactive"
-            onClick={() => {
-              setShowSmoke(false);
-              setInputLocked(false);
-            }}
-            disabled={!inputLocked || !showSmoke}
-            whileTap={{ scale: 0.98 }}
-            aria-disabled={!inputLocked || !showSmoke}
-          >
-            Skip Animation
-          </NavButton>
         </NavRow>
 
         <FooterHint>The chamber is silent. Choose with stillness.</FooterHint>
       </SurveyShell>
 
-      <AnimatePresence>
-        {showSmoke && (
-          <FullscreenOverlay
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <SanskritSmokeText
-              text={smokeText}
-              secondaryText={romanText}
-              durationMs={2800}
-              holdMs={1800}
-              onComplete={proceed}
-            />
-          </FullscreenOverlay>
-        )}
-      </AnimatePresence>
+      {/* Floating Words Panel (non-intrusive) */}
+      <FloatingWordsPanel pool={useMemo(() => {
+        const list = [];
+        SURVEY_QUESTIONS.forEach(q => q.choices.forEach(c => {
+          if (c.seed) list.push({ id: `${q.id}-${c.id}`, sk: c.seed, en: c.transliteration || c.annotation || '', tr: c.transliteration || '', ann: c.annotation || '' });
+        }));
+        return list;
+      }, [])} discovered={discovered} />
     </ScreenRoot>
   );
 }
