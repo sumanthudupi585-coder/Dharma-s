@@ -474,7 +474,7 @@ const InventorySlot = styled(motion.div)`
   position: relative;
   backdrop-filter: blur(5px);
   
-  ${props => props.$hasItem && `
+  ${props => props.$hasItem && css`
     animation: ${breathingGlow} 6s ease-in-out infinite;
     filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
   `}
