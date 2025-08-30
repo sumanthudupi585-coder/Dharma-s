@@ -186,6 +186,19 @@ const GlobalStyle = createGlobalStyle`
     cursor: var(--cursor-inactive) !important;
   }
 
+  /* Keyboard focus visibility */
+  :focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  /* Hint GPU acceleration for frequently animated elements */
+  .is-interactive,
+  .btn-manuscript,
+  .btn-choice {
+    will-change: transform, opacity;
+  }
+
   /* Interactive Elements */
   .btn-manuscript {
     background: linear-gradient(145deg, var(--parchment), var(--dark-parchment));
