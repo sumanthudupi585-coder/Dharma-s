@@ -169,9 +169,9 @@ const NarrativeContent = styled.div`
 
 // Mini-map panel
 const MiniMapPanel = styled.div`
-  position: fixed;
+  position: sticky;
   top: calc(var(--spacing-lg) + 70px);
-  right: var(--spacing-lg);
+  right: auto;
   width: 180px;
   height: 140px;
   background: linear-gradient(145deg, rgba(0,0,0,0.85), rgba(15,15,15,0.95));
@@ -201,10 +201,8 @@ const MiniMapPanel = styled.div`
 
 // Hotbar / quick slots
 const HotbarContainer = styled.div`
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
+  position: sticky;
+  bottom: 0;
   display: grid;
   grid-template-columns: repeat(6, 56px);
   gap: 10px;
@@ -213,7 +211,8 @@ const HotbarContainer = styled.div`
   border-radius: 14px;
   padding: 10px 12px;
   box-shadow: 0 10px 28px rgba(0,0,0,0.7), 0 0 20px rgba(212,175,55,0.25);
-  z-index: 180;
+  z-index: 20;
+  margin: var(--spacing-lg) auto 0;
 `;
 
 const HotbarSlot = styled.div`
@@ -244,6 +243,22 @@ const SlotIndex = styled.span`
   border-radius: 6px;
 `;
 
+// Sticky page header containing objective and HUD
+const HeaderBar = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--spacing-md);
+  align-items: center;
+  position: sticky;
+  top: var(--spacing-lg);
+  z-index: 30;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+`;
+
 // Tooltip
 const TooltipBubble = styled.div`
   position: fixed;
@@ -264,17 +279,19 @@ const TooltipBubble = styled.div`
 
 // HUD components
 const DecoHUD = styled.div`
-  position: fixed;
-  top: var(--spacing-lg);
-  left: var(--spacing-lg);
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-auto-flow: column;
   gap: var(--spacing-sm);
-  z-index: 200;
+  justify-content: end;
+  align-items: center;
+  @media (max-width: 1024px) {
+    grid-auto-flow: row;
+    justify-content: stretch;
+  }
 `;
 
 const Gauge = styled.div`
-  width: 260px;
+  width: 220px;
   height: 22px;
   background: linear-gradient(145deg, rgba(0,0,0,0.85), rgba(20,20,20,0.95));
   border: 2px solid #d4af37;
@@ -683,6 +700,21 @@ export default function GameplayScreen() {
             </Suspense>
           </NarrativeContent>
         </NarrativeWindow>
+
+        <HotbarContainer>
+          {Array.from({ length: 6 }, (_, i) => {
+            const item = inventory.items[i];
+            return (
+              <HotbarSlot key={i} $active={!!item} className={item ? 'is-interactive' : ''}
+                onMouseEnter={(e) => item && showTooltip(item.name, e)}
+                onMouseLeave={hideTooltip}
+              >
+                {item ? item.icon : '∅'}
+                <SlotIndex>{i + 1}</SlotIndex>
+              </HotbarSlot>
+            );
+          })}
+        </HotbarContainer>
 
         {sceneData.choices.length > 0 && (
           <ChoicesPanel
