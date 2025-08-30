@@ -46,6 +46,18 @@ function ClassSync() {
   return null;
 }
 
+function EffectsMount() {
+  const { state } = useGame();
+  const allowTrail = (state.settings.effects?.cursorTrail !== false) && !state.settings.accessibility.reducedMotion;
+  return (
+    <>
+      {allowTrail && <CursorTrail />}
+      <NavigatorSigilCursor />
+      <AudioManager />
+    </>
+  );
+}
+
 function App() {
   return (
     <GameProvider>
@@ -58,9 +70,7 @@ function App() {
           </div>
         </Suspense>
       </ErrorBoundary>
-      <CursorTrail />
-      <NavigatorSigilCursor />
-      <AudioManager />
+      <EffectsMount />
     </GameProvider>
   );
 }
