@@ -46,6 +46,7 @@ const SurveyShell = styled(motion.div)`
   box-shadow: 0 26px 80px rgba(0,0,0,0.75);
   position: relative;
   overflow: hidden;
+  flex: 1 1 auto;
 `;
 
 const Header = styled.div`
