@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import GlossaryTerm from '../GlossaryTerm';
 
 const SceneContainer = styled.div`
   height: 100%;
@@ -42,20 +43,20 @@ export default function Scene4VaisesikaTrial() {
         transition={{ duration: 1, delay: 0.3 }}
       >
         <p>
-          You step from the sterile, man-made logic of <span className="highlight-mystical">Nyāya</span> into a vast, 
-          breathing cavern that feels alive. The air is cool and damp, smelling of deep earth, wet stone, and 
-          something else... potential. In the center stands a colossal, dormant machine of brass and stone, 
+          You step from the sterile, man-made logic of <GlossaryTerm className="highlight-mystical" term="Nyāya" /> into a vast,
+          breathing cavern that feels alive. The air is cool and damp, smelling of deep earth, wet stone, and
+          something else... potential. In the center stands a colossal, dormant machine of brass and stone,
           like an orrery built by giants to map the cosmos.
         </p>
         
         <p>
-          Nine empty pedestals circle the machine. This is a place of substance, of the fundamental, 
-          tangible building blocks of reality. The <span className="highlight-mystical">Nine Dravyas</span> must be 
-          gathered and placed: <span className="highlight-mystical">Pṛthvī</span> (Earth), 
-          <span className="highlight-mystical">Ap</span> (Water), <span className="highlight-mystical">Tejas</span> (Fire), 
-          <span className="highlight-mystical">Vāyu</span> (Air), <span className="highlight-mystical">Ākāśa</span> (Ether), 
-          <span className="highlight-mystical">Kāla</span> (Time), <span className="highlight-mystical">Dik</span> (Direction), 
-          <span className="highlight-mystical">Ātman</span> (Soul), and <span className="highlight-mystical">Manas</span> (Mind).
+          Nine empty pedestals circle the machine. This is a place of substance, of the fundamental,
+          tangible building blocks of reality. The <GlossaryTerm className="highlight-mystical" term="Nine Dravyas" /> must be
+          gathered and placed: <GlossaryTerm className="highlight-mystical" term="Pṛthvī" /> (Earth),
+          <GlossaryTerm className="highlight-mystical" term="Ap" /> (Water), <GlossaryTerm className="highlight-mystical" term="Tejas" /> (Fire),
+          <GlossaryTerm className="highlight-mystical" term="Vāyu" /> (Air), <GlossaryTerm className="highlight-mystical" term="Ākāśa" /> (Ether),
+          <GlossaryTerm className="highlight-mystical" term="Kāla" /> (Time), <GlossaryTerm className="highlight-mystical" term="Dik" /> (Direction),
+          <GlossaryTerm className="highlight-mystical" term="Ātman" /> (Soul), and <GlossaryTerm className="highlight-mystical" term="Manas" /> (Mind).
         </p>
         
         <p>
