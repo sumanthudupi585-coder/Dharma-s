@@ -267,6 +267,7 @@ export default function ProfileResults() {
           <TitleWrap>
             <Title>Ātman Spanda</Title>
             <Subtitle>Revelation of your inner vibration</Subtitle>
+            <CTA className="is-interactive" type="button" aria-label="Begin Your Sacred Journey" onClick={handleContinue} whileTap={{ scale: 0.98 }}>Begin Your Sacred Journey</CTA>
           </TitleWrap>
           <HeaderActions>
             {(playerProfile.atmanVakyaText || romanVakya) && (
@@ -275,7 +276,6 @@ export default function ProfileResults() {
                 {romanVakya && <SutraSecondary>{romanVakya}</SutraSecondary>}
               </SutraBanner>
             )}
-            <CTA className="is-interactive" type="button" aria-label="Begin Your Sacred Journey" onClick={handleContinue} whileTap={{ scale: 0.98 }}>Begin Your Sacred Journey</CTA>
           </HeaderActions>
         </Header>
 
