@@ -23,7 +23,13 @@ class SoundEngine {
     this.ctx = new AudioCtx();
     this.master = this.ctx.createGain();
     this.master.gain.value = 1;
-    this.master.connect(this.ctx.destination);
+    this.compressor = this.ctx.createDynamicsCompressor();
+    this.compressor.threshold.setValueAtTime(-28, this.ctx.currentTime);
+    this.compressor.knee.setValueAtTime(24, this.ctx.currentTime);
+    this.compressor.ratio.setValueAtTime(12, this.ctx.currentTime);
+    this.compressor.attack.setValueAtTime(0.003, this.ctx.currentTime);
+    this.compressor.release.setValueAtTime(0.24, this.ctx.currentTime);
+    this.master.connect(this.compressor).connect(this.ctx.destination);
 
     this.musicGain = this.ctx.createGain();
     this.musicGain.gain.value = this.musicVolume;
