@@ -724,6 +724,7 @@ export default function GameplayScreen() {
 
       <JournalSidebar>
         <Journal isVisible={!mobileJournalOpen} />
+        <MiniMapPanel />
       </JournalSidebar>
 
       <JournalToggle
