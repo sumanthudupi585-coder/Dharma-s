@@ -98,9 +98,9 @@ const GameplayContainer = styled.div`
     radial-gradient(ellipse at center, rgba(5, 5, 5, 0.9) 0%, rgba(0, 0, 0, 1) 70%),
     linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%);
   display: grid;
-  grid-template-columns: 1fr 350px;
+  grid-template-columns: 1.3fr 380px;
   grid-template-rows: 1fr auto;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-xl);
   padding: var(--spacing-lg);
   padding-bottom: calc(var(--spacing-lg) + 160px); /* safe area for hotbar */
   position: relative;
@@ -134,9 +134,11 @@ const MainContentArea = styled.div`
   grid-row: 1 / -1;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--spacing-lg);
   position: relative;
   z-index: 10;
+  max-width: 980px;
+  width: 100%;
 
   @media (max-width: 1024px) {
     grid-row: 1;
@@ -146,17 +148,15 @@ const MainContentArea = styled.div`
 const NarrativeWindow = styled(motion.div)`
   background:
     linear-gradient(145deg, rgba(0, 0, 0, 0.9) 0%, rgba(15, 15, 15, 0.95) 100%);
-  border: 3px solid #d4af37;
-  border-radius: 15px;
+  border: 2px solid #d4af37;
+  border-radius: 14px;
   box-shadow:
-    0 15px 40px rgba(0, 0, 0, 0.8),
-    0 0 40px rgba(212, 175, 55, 0.3),
-    inset 0 1px 0 rgba(212, 175, 55, 0.2);
+    0 12px 32px rgba(0, 0, 0, 0.75),
+    0 0 24px rgba(212, 175, 55, 0.22);
   flex: 1;
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(10px);
-  animation: ${filigreeGlow} 8s ease-in-out infinite;
+  backdrop-filter: blur(8px);
 
   /* Clean content background for readability */
   &::before { display: none; }
@@ -209,7 +209,7 @@ const MiniMapPanel = styled.div`
 // Hotbar / quick slots
 const HotbarContainer = styled.div`
   position: fixed;
-  bottom: var(--spacing-lg);
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   display: grid;
@@ -373,17 +373,16 @@ const ObjectiveText = styled.h3`
 
 const ChoicesPanel = styled(motion.div)`
   background:
-    linear-gradient(145deg, rgba(0, 0, 0, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+    linear-gradient(145deg, rgba(0, 0, 0, 0.92) 0%, rgba(10, 10, 10, 0.96) 100%);
   border: 2px solid #d4af37;
   border-radius: 12px;
   padding: var(--spacing-lg);
   min-height: 150px;
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(10px);
   box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.8),
-    0 0 30px rgba(212, 175, 55, 0.2);
+    0 10px 26px rgba(0, 0, 0, 0.7),
+    0 0 18px rgba(212, 175, 55, 0.18);
   position: relative;
-  animation: ${filigreeGlow} 10s ease-in-out infinite;
 
   /* Decorative corner ornaments */
   &::before, &::after {
@@ -508,7 +507,9 @@ const ChoiceButton = styled(motion.button)`
 const JournalSidebar = styled(motion.div)`
   grid-column: 2;
   grid-row: 1 / -1;
-  position: relative;
+  position: sticky;
+  top: var(--spacing-lg);
+  align-self: start;
   z-index: 10;
   height: calc(100vh - 2 * var(--spacing-lg));
   overflow: hidden;
