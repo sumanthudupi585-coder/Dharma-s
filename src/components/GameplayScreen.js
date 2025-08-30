@@ -704,8 +704,17 @@ export default function GameplayScreen() {
         <HotbarContainer>
           {Array.from({ length: 6 }, (_, i) => {
             const item = inventory.items[i];
+            const label = item ? `Hotbar slot ${i + 1}: ${item.name}` : `Hotbar slot ${i + 1}: empty`;
+            const onActivate = () => { /* reserved for future item use */ };
             return (
-              <HotbarSlot key={i} $active={!!item} className={item ? 'is-interactive' : ''}
+              <HotbarSlot
+                key={i}
+                $active={!!item}
+                className={item ? 'is-interactive' : ''}
+                role={item ? 'button' : undefined}
+                tabIndex={item ? 0 : -1}
+                aria-label={label}
+                onKeyDown={(e) => { if (item && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onActivate(); } }}
                 onMouseEnter={(e) => item && showTooltip(item.name, e)}
                 onMouseLeave={hideTooltip}
               >
