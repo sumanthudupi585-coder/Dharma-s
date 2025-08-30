@@ -203,10 +203,13 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
       function easeInOutSine(x) { return -(Math.cos(Math.PI * x) - 1) / 2; }
 
       function drawScan(progress) {
-        const r = easeOutCubic(progress) * (Math.min(w, h) * 0.55);
-        const a0 = progress * Math.PI * 2 * 0.9; // rotating arc
+        const p = Math.max(0, Math.min(1, Number.isFinite(progress) ? progress : 0));
+        const base = Math.max(0, easeOutCubic(p) * (Math.max(1, Math.min(w, h)) * 0.55));
+        const a0 = p * Math.PI * 2 * 0.9; // rotating arc
         const a1 = a0 + Math.PI * 0.55;
-        const grad = ctx.createRadialGradient(cx, cy, Math.max(1, r - 2), cx, cy, r + 22);
+        const rInner = Math.max(0, base - 2);
+        const rOuter = Math.max(rInner + 0.001, base + 22);
+        const grad = ctx.createRadialGradient(cx, cy, rInner, cx, cy, rOuter);
         grad.addColorStop(0, 'rgba(212,175,55,0)');
         grad.addColorStop(0.5, 'rgba(212,175,55,0.18)');
         grad.addColorStop(1, 'rgba(212,175,55,0)');
@@ -214,7 +217,8 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
         ctx.strokeStyle = grad;
         ctx.lineWidth = 2.2;
         ctx.beginPath();
-        ctx.arc(cx, cy, r, a0, a1);
+        const rStroke = Math.max(0.001, base);
+        ctx.arc(cx, cy, rStroke, a0, a1);
         ctx.stroke();
         ctx.restore();
       }
