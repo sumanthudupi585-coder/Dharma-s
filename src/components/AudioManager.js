@@ -14,6 +14,9 @@ class SoundEngine {
     this.musicVolume = 0.7;
     this.sfxVolume = 0.8;
     this._initPending = false;
+    this.lastHoverAt = 0;
+    this.hoverCooldownMs = 140;
+    this.sceneFadeMs = 0.35;
   }
 
   ensureContext() {
