@@ -28,6 +28,35 @@ const SceneContainer = styled.div`
   position: relative;
 `;
 
+// Subtle atmosphere layers
+const motesDrift = keyframes`
+  0% { transform: translateY(0) translateX(0); opacity: 0.2; }
+  50% { opacity: 0.4; }
+  100% { transform: translateY(-40px) translateX(20px); opacity: 0.2; }
+`;
+const AtmosphereLayer = styled.div`
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background-image:
+    radial-gradient(2px 2px at 20% 80%, rgba(212,175,55,0.18) 0, transparent 60%),
+    radial-gradient(2px 2px at 60% 70%, rgba(255,215,0,0.12) 0, transparent 60%),
+    radial-gradient(2px 2px at 80% 40%, rgba(212,175,55,0.15) 0, transparent 60%);
+  animation: ${motesDrift} 16s linear infinite;
+  will-change: transform, opacity;
+`;
+
+const waterGlint = keyframes`
+  from { background-position: 0 0; }
+  to { background-position: 200% 0; }
+`;
+const WaterSheen = styled.div`
+  position: absolute; left: 0; right: 0; bottom: 6%; height: 8%;
+  background: linear-gradient(90deg, rgba(255,215,0,0.08), rgba(255,215,0,0.02), rgba(255,215,0,0.08));
+  background-size: 200% 100%;
+  filter: blur(6px); opacity: 0.25; pointer-events: none; z-index: 1;
+  animation: ${waterGlint} 12s linear infinite;
+  will-change: background-position, opacity;
+`;
+
 const SceneTitle = styled(motion.h1)`
   font-family: var(--font-display);
   color: var(--gold);
@@ -490,6 +519,8 @@ export default function Scene1DashashwamedhGhat() {
 
   return (
     <SceneContainer>
+      <AtmosphereLayer />
+      <WaterSheen />
       <SceneTitle
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
