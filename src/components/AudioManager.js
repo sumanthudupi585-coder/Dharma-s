@@ -11,7 +11,7 @@ class SoundEngine {
     this.currentAmbient = null;
     this.ambientNodes = [];
     this.enabled = true;
-    this.musicVolume = 0.7;
+    this.musicVolume = 0.5;
     this.sfxVolume = 0.8;
     this._initPending = false;
     this.lastHoverAt = 0;
