@@ -1,12 +1,7 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, ACTIONS } from '../context/GameContext';
-
-const breath = keyframes`
-  0%, 100% { box-shadow: 0 0 20px rgba(212,175,55,0.35); }
-  50% { box-shadow: 0 0 36px rgba(212,175,55,0.6); }
-`;
 
 const Backdrop = styled(motion.div)`
   position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index: 3000;
