@@ -648,6 +648,11 @@ export default function GameplayScreen() {
       </DecoHUD>
 
       <MainContentArea>
+        {state.gameProgress?.currentObjectives && state.gameProgress.currentObjectives[0] && (
+          <ObjectivesBanner initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
+            <ObjectiveText>{state.gameProgress.currentObjectives[0].text}</ObjectiveText>
+          </ObjectivesBanner>
+        )}
         <NarrativeWindow
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
