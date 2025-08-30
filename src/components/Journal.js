@@ -750,6 +750,8 @@ export default function Journal({ isVisible = true }) {
               key={tab.id}
               role="tab"
               aria-selected={activeTab === tab.id}
+              aria-controls={`tab-panel-${tab.id}`}
+              id={`tab-${tab.id}`}
               tabIndex={activeTab === tab.id ? 0 : -1}
               $active={activeTab === tab.id}
               onClick={() => {
