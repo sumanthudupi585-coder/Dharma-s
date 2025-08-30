@@ -274,8 +274,8 @@ class SoundEngine {
 
   _resonantHum() {
     // Two close oscillators with slow beating, filtered for a cold chamber hum
-    const { osc: o1, g: g1 } = this._makeOsc(110, 'sine');
-    const { osc: o2, g: g2 } = this._makeOsc(110.8, 'sine');
+    const { g: g1 } = this._makeOsc(110, 'sine');
+    const { g: g2 } = this._makeOsc(110.8, 'sine');
     const lpf = this.ctx.createBiquadFilter();
     lpf.type = 'lowpass';
     lpf.frequency.value = 240;
