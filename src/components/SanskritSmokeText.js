@@ -226,7 +226,6 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
         last = now;
 
         const tReveal = Math.min(1, elapsed / durationMs);
-        const tHold = Math.max(0, Math.min(1, (elapsed - durationMs) / holdMs));
 
         ctx.clearRect(0, 0, w, h);
 
