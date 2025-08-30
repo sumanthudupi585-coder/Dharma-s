@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
@@ -543,15 +542,6 @@ const ContinueButton = styled(motion.button)`
   }
 `;
 
-// Enhanced trait icons mapping
-const TRAIT_ICONS = {
-  SATTVA: '🧠', RAJAS: '⚡', TAMAS: '🌫️',
-  DEVA: '✨', MANUSHYA: '👤', RAKSHASA: '🔥'
-};
-
-const ELEMENT_SYMBOLS = {
-  Fire: '🔥', Earth: '����', Air: '💨', Water: '💧'
-};
 
 export default function ProfileResults() {
   const { state, dispatch } = useGame();
