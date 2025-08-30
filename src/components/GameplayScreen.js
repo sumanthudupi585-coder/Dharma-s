@@ -102,6 +102,7 @@ const GameplayContainer = styled.div`
   grid-template-rows: 1fr auto;
   gap: var(--spacing-lg);
   padding: var(--spacing-lg);
+  padding-bottom: calc(var(--spacing-lg) + 100px); /* safe area for hotbar */
   position: relative;
   overflow: hidden;
 
@@ -547,6 +548,8 @@ const JournalSidebar = styled(motion.div)`
   grid-row: 1 / -1;
   position: relative;
   z-index: 10;
+  height: calc(100vh - 2 * var(--spacing-lg));
+  overflow: hidden;
 
   @media (max-width: 1024px) {
     grid-column: 1;
@@ -670,7 +673,10 @@ export default function GameplayScreen() {
   };
 
   const showTooltip = (text, e) => {
-    setTooltip({ visible: true, text, x: e.clientX, y: e.clientY });
+    const pad = 16;
+    const x = Math.max(pad, Math.min(window.innerWidth - pad, e.clientX));
+    const y = Math.max(pad, Math.min(window.innerHeight - pad, e.clientY));
+    setTooltip({ visible: true, text, x, y });
   };
   const hideTooltip = () => setTooltip(prev => ({ ...prev, visible: false }));
 
