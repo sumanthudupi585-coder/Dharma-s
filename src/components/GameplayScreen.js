@@ -95,6 +95,8 @@ const GameplayContainer = styled.div`
   position: relative;
   overflow-x: hidden;
   overflow-y: auto;
+  max-width: 1280px;
+  margin: 0 auto;
 
   /* Mystical background pattern */
   &::before {
