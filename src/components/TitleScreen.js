@@ -141,6 +141,24 @@ const ActionButton = styled(motion.button)`
 
 export default function TitleScreen() {
   const { dispatch } = useGame();
+  const [openSettings, setOpenSettings] = useState(false);
+  const rootRef = useRef(null);
+  const particles = useMemo(() => Array.from({ length: 36 }, () => ({ x: Math.random() * 100, y: Math.random() * 100 })), []);
+  const glyphs = useMemo(() => ['ॐ','अ','इ','उ','क','थ','ध','ज्ञ','श','ष','ह','ग','य','र','ल','व'].map((g) => ({ g, x: Math.random()*100, y: Math.random()*100 })), []);
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const onMove = (e) => {
+      const r = el.getBoundingClientRect();
+      const mx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+      const my = ((e.clientY - r.top) / r.height - 0.5) * 2;
+      el.style.setProperty('--mx', String(mx));
+      el.style.setProperty('--my', String(my));
+    };
+    el.addEventListener('mousemove', onMove);
+    return () => el.removeEventListener('mousemove', onMove);
+  }, []);
 
   const handleNewGame = () => {
     dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.PROFILE_CREATION });
