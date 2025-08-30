@@ -102,7 +102,7 @@ const GameplayContainer = styled.div`
   grid-template-rows: 1fr auto;
   gap: var(--spacing-lg);
   padding: var(--spacing-lg);
-  padding-bottom: calc(var(--spacing-lg) + 100px); /* safe area for hotbar */
+  padding-bottom: calc(var(--spacing-lg) + 160px); /* safe area for hotbar */
   position: relative;
   overflow: hidden;
 
@@ -158,47 +158,9 @@ const NarrativeWindow = styled(motion.div)`
   backdrop-filter: blur(10px);
   animation: ${filigreeGlow} 8s ease-in-out infinite;
 
-  /* Golden filigree border pattern */
-  &::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background:
-      linear-gradient(45deg,
-        #d4af37 0%,
-        transparent 25%,
-        #ffd700 50%,
-        transparent 75%,
-        #d4af37 100%
-      );
-    background-size: 30px 30px;
-    border-radius: 15px;
-    z-index: -1;
-    opacity: 0.2;
-    animation: ${energyFlow} 8s linear infinite;
-  }
-
-  /* Manuscript-style ruling lines */
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: repeating-linear-gradient(
-      transparent,
-      transparent 1.5rem,
-      rgba(212, 175, 55, 0.1) 1.5rem,
-      rgba(212, 175, 55, 0.1) calc(1.5rem + 1px)
-    );
-    pointer-events: none;
-    z-index: 1;
-    opacity: 0.3;
-  }
+  /* Clean content background for readability */
+  &::before { display: none; }
+  &::after { display: none; }
 `;
 
 const NarrativeContent = styled.div`
