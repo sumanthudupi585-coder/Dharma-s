@@ -59,13 +59,13 @@ export default function useNyayaPuzzle() {
     setComplete(false);
   }, []);
 
-  const ids = {
+  const ids = useMemo(() => ({
     pratijna: 'c-prop-fire-hill',
     hetu: 'c-reason-smoke',
     udaharana: 'c-rule-correct',
     upanaya: 'c-apply-hill',
     nigamana: 'c-conclude-fire'
-  };
+  }), []);
 
   function analyzeFallacy(p) {
     // p is slot->card mapping
