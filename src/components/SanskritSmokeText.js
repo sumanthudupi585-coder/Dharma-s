@@ -27,7 +27,6 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
 
       const prefersReduced = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const cores = (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) ? navigator.hardwareConcurrency : 4;
-      const autoQuality = quality === 'auto';
       const lowEnd = prefersReduced || cores <= 4;
       const qFactor = quality === 'low' ? 0.6 : quality === 'high' ? 1 : (lowEnd ? 0.7 : 1);
       const dpr = Math.max(1, Math.min(2, (window.devicePixelRatio || 1) * (qFactor < 0.85 ? 0.85 : 1)));
