@@ -101,7 +101,7 @@ class SoundEngine {
   _env(g, a = 0.5, s = 0.2) {
     const t = this.ctx.currentTime;
     g.gain.cancelScheduledValues(t);
-    g.gain.setValueAtTime(0, t);
+    g.gain.setValueAtTime(0.0001, t);
     g.gain.linearRampToValueAtTime(s, t + a);
     g.gain.linearRampToValueAtTime(0, t + a + 8);
   }
