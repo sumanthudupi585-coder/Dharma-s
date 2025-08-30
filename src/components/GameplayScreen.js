@@ -716,20 +716,6 @@ export default function GameplayScreen() {
         )}
       </MainContentArea>
 
-      <HotbarContainer>
-        {Array.from({ length: 6 }, (_, i) => {
-          const item = inventory.items[i];
-          return (
-            <HotbarSlot key={i} $active={!!item} className={item ? 'is-interactive' : ''}
-              onMouseEnter={(e) => item && showTooltip(item.name, e)}
-              onMouseLeave={hideTooltip}
-            >
-              {item ? item.icon : '∅'}
-              <SlotIndex>{i + 1}</SlotIndex>
-            </HotbarSlot>
-          );
-        })}
-      </HotbarContainer>
 
       {tooltip.visible && (
         <TooltipBubble $x={tooltip.x} $y={tooltip.y}>
