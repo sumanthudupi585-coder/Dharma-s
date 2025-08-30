@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
@@ -591,7 +593,7 @@ export default function ProfileResults() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, delay: 0.5 }}
           >
-            Ātman Vivaraṇa
+            Ātman Vivara��a
           </ScrollTitle>
           {playerProfile.atmanVakyaText && (
             <VakyaBanner
