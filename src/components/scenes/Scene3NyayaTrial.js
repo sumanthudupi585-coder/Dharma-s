@@ -128,6 +128,13 @@ const AlcoveGlow = styled.div`
 export default function Scene3NyayaTrial() {
   return (
     <SceneContainer>
+      <ChamberVignette />
+      <LightSweep />
+      <IrisDoor />
+      <AlcoveGlow $position="north" />
+      <AlcoveGlow $position="east" />
+      <AlcoveGlow $position="south" />
+      <AlcoveGlow $position="west" />
       <SceneTitle
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -135,7 +142,7 @@ export default function Scene3NyayaTrial() {
       >
         Scene 3: The First Sage's Trial - The Logic of Nyāya
       </SceneTitle>
-      
+
       <NarrativeText
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
