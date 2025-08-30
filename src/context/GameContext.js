@@ -35,7 +35,7 @@ export const GANAS = {
 const initialState = {
   gameState: GAME_STATES.TITLE_SCREEN,
   currentScene: SCENES.DASHASHWAMEDH_GHAT,
-  
+
   // Player Profile
   playerProfile: {
     primaryGuna: null,
@@ -45,7 +45,7 @@ const initialState = {
     skills: [],
     surveyAnswers: []
   },
-  
+
   // Game Progress
   gameProgress: {
     completedScenes: [],
@@ -53,14 +53,15 @@ const initialState = {
     solvedPuzzles: [],
     unlockedAreas: []
   },
-  
+
   // Inventory & Journal
   inventory: {
     items: [],
     clues: [],
-    notes: []
+    notes: [],
+    glossary: []
   },
-  
+
   // Scene-specific state
   sceneData: {
     choices: [],
@@ -68,7 +69,7 @@ const initialState = {
     interactableObjects: [],
     completedInteractions: []
   },
-  
+
   // UI State
   uiState: {
     journalOpen: false,
@@ -76,7 +77,7 @@ const initialState = {
     showObjectives: false,
     dialogueVisible: false
   },
-  
+
   // Audio/Visual Settings
   settings: {
     soundEnabled: true,
@@ -87,6 +88,9 @@ const initialState = {
       highContrast: false,
       largeText: false,
       reducedMotion: false
+    },
+    effects: {
+      cursorTrail: true
     }
   }
 };
@@ -95,35 +99,36 @@ const initialState = {
 export const ACTIONS = {
   SET_GAME_STATE: 'SET_GAME_STATE',
   SET_CURRENT_SCENE: 'SET_CURRENT_SCENE',
-  
+
   // Profile actions
   SET_SURVEY_ANSWER: 'SET_SURVEY_ANSWER',
   SET_PLAYER_PROFILE: 'SET_PLAYER_PROFILE',
-  
+
   // Progress actions
   COMPLETE_SCENE: 'COMPLETE_SCENE',
   ADD_OBJECTIVE: 'ADD_OBJECTIVE',
   COMPLETE_OBJECTIVE: 'COMPLETE_OBJECTIVE',
   SOLVE_PUZZLE: 'SOLVE_PUZZLE',
-  
+
   // Inventory actions
   ADD_ITEM: 'ADD_ITEM',
   REMOVE_ITEM: 'REMOVE_ITEM',
   ADD_CLUE: 'ADD_CLUE',
   ADD_NOTE: 'ADD_NOTE',
-  
+  ADD_GLOSSARY_TERM: 'ADD_GLOSSARY_TERM',
+
   // Scene actions
   SET_NARRATIVE: 'SET_NARRATIVE',
   ADD_CHOICE: 'ADD_CHOICE',
   CLEAR_CHOICES: 'CLEAR_CHOICES',
   ADD_INTERACTABLE: 'ADD_INTERACTABLE',
   INTERACT_WITH_OBJECT: 'INTERACT_WITH_OBJECT',
-  
+
   // UI actions
   TOGGLE_JOURNAL: 'TOGGLE_JOURNAL',
   SET_JOURNAL_TAB: 'SET_JOURNAL_TAB',
   TOGGLE_OBJECTIVES: 'TOGGLE_OBJECTIVES',
-  
+
   // Settings actions
   UPDATE_SETTINGS: 'UPDATE_SETTINGS',
   LOAD_STATE: 'LOAD_STATE'
@@ -199,6 +204,18 @@ function gameReducer(state, action) {
           clues: [...state.inventory.clues, action.payload]
         }
       };
+
+    case ACTIONS.ADD_GLOSSARY_TERM:
+      if (state.inventory.glossary.some(g => g.id === action.payload.id)) {
+        return state;
+      }
+      return {
+        ...state,
+        inventory: {
+          ...state.inventory,
+          glossary: [...state.inventory.glossary, action.payload]
+        }
+      };
       
     case ACTIONS.SET_NARRATIVE:
       return {
@@ -264,6 +281,18 @@ const GameContext = createContext();
 
 // Provider component
 export function GameProvider({ children }) {
+  function deepMerge(base, override) {
+    if (Array.isArray(base) || Array.isArray(override)) return (override === undefined ? base : override);
+    if (typeof base === 'object' && base && typeof override === 'object' && override) {
+      const out = { ...base };
+      for (const k of Object.keys(override)) {
+        out[k] = deepMerge(base[k], override[k]);
+      }
+      return out;
+    }
+    return (override === undefined ? base : override);
+  }
+
   const [state, dispatch] = useReducer(
     gameReducer,
     initialState,
@@ -272,7 +301,7 @@ export function GameProvider({ children }) {
         const raw = localStorage.getItem('dharmas-cipher-state-v1');
         if (!raw) return init;
         const parsed = JSON.parse(raw);
-        return { ...init, ...parsed };
+        return deepMerge(init, parsed);
       } catch (e) {
         return init;
       }
