@@ -188,6 +188,8 @@ const ContentRow = styled.div`
   justify-content: center;
   gap: var(--spacing-lg);
   padding: var(--spacing-md);
+  position: relative;
+  z-index: 1;
 
   @media (max-width: 1020px) {
     flex-direction: column;
