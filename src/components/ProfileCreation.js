@@ -181,6 +181,16 @@ const FooterHint = styled.p`
   opacity: 0.8;
 `;
 
+const FullscreenOverlay = styled(motion.div)`
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+`;
+
 export default function ProfileCreation() {
   const { dispatch } = useGame();
   const [index, setIndex] = useState(0);
