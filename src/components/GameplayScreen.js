@@ -295,6 +295,7 @@ const Fill = styled.div`
   background-size: 200% 100%;
   animation: ${energyFlow} 3s linear infinite;
   border-radius: 10px;
+  transition: width 500ms ease;
 `;
 
 const GaugeLabel = styled.span`
