@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, SCENES } from '../context/GameContext';
 import Journal from './Journal';
@@ -60,19 +60,7 @@ const trailEffect = keyframes`
   }
 `;
 
-// Golden filigree animation
-const filigreeGlow = keyframes`
-  0%, 100% {
-    border-color: rgba(212, 175, 55, 0.4);
-    background:
-      linear-gradient(145deg, rgba(0, 0, 0, 0.9) 0%, rgba(15, 15, 15, 0.95) 100%);
-  }
-  50% {
-    border-color: rgba(212, 175, 55, 0.7);
-    background:
-      linear-gradient(145deg, rgba(10, 10, 10, 0.85) 0%, rgba(20, 20, 20, 0.9) 100%);
-  }
-`;
+// (removed filigreeGlow animation to simplify UI)
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -98,10 +86,11 @@ const GameplayContainer = styled.div`
     radial-gradient(ellipse at center, rgba(5, 5, 5, 0.9) 0%, rgba(0, 0, 0, 1) 70%),
     linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%);
   display: grid;
-  grid-template-columns: 1fr 350px;
+  grid-template-columns: 1.3fr 380px;
   grid-template-rows: 1fr auto;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-xl);
   padding: var(--spacing-lg);
+  padding-bottom: calc(var(--spacing-lg) + 160px); /* safe area for hotbar */
   position: relative;
   overflow: hidden;
 
@@ -133,9 +122,11 @@ const MainContentArea = styled.div`
   grid-row: 1 / -1;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--spacing-lg);
   position: relative;
   z-index: 10;
+  max-width: 980px;
+  width: 100%;
 
   @media (max-width: 1024px) {
     grid-row: 1;
@@ -145,59 +136,19 @@ const MainContentArea = styled.div`
 const NarrativeWindow = styled(motion.div)`
   background:
     linear-gradient(145deg, rgba(0, 0, 0, 0.9) 0%, rgba(15, 15, 15, 0.95) 100%);
-  border: 3px solid #d4af37;
-  border-radius: 15px;
+  border: 2px solid #d4af37;
+  border-radius: 14px;
   box-shadow:
-    0 15px 40px rgba(0, 0, 0, 0.8),
-    0 0 40px rgba(212, 175, 55, 0.3),
-    inset 0 1px 0 rgba(212, 175, 55, 0.2);
+    0 12px 32px rgba(0, 0, 0, 0.75),
+    0 0 24px rgba(212, 175, 55, 0.22);
   flex: 1;
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(10px);
-  animation: ${filigreeGlow} 8s ease-in-out infinite;
+  backdrop-filter: blur(8px);
 
-  /* Golden filigree border pattern */
-  &::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background:
-      linear-gradient(45deg,
-        #d4af37 0%,
-        transparent 25%,
-        #ffd700 50%,
-        transparent 75%,
-        #d4af37 100%
-      );
-    background-size: 30px 30px;
-    border-radius: 15px;
-    z-index: -1;
-    opacity: 0.2;
-    animation: ${energyFlow} 8s linear infinite;
-  }
-
-  /* Manuscript-style ruling lines */
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: repeating-linear-gradient(
-      transparent,
-      transparent 1.5rem,
-      rgba(212, 175, 55, 0.1) 1.5rem,
-      rgba(212, 175, 55, 0.1) calc(1.5rem + 1px)
-    );
-    pointer-events: none;
-    z-index: 1;
-    opacity: 0.3;
-  }
+  /* Clean content background for readability */
+  &::before { display: none; }
+  &::after { display: none; }
 `;
 
 const NarrativeContent = styled.div`
@@ -205,7 +156,10 @@ const NarrativeContent = styled.div`
   position: relative;
   z-index: 10;
   height: 100%;
-  overflow-y: hidden;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #d4af37, #ffd700); border-radius: 3px; }
 `;
 
 // Mini-map panel
@@ -221,6 +175,10 @@ const MiniMapPanel = styled.div`
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 24px rgba(212,175,55,0.25);
   z-index: 150;
+
+  @media (max-width: 1024px) {
+    display: none;
+  }
 
   &::before {
     content: '';
@@ -239,7 +197,7 @@ const MiniMapPanel = styled.div`
 // Hotbar / quick slots
 const HotbarContainer = styled.div`
   position: fixed;
-  bottom: var(--spacing-lg);
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   display: grid;
@@ -266,7 +224,7 @@ const HotbarSlot = styled.div`
   font-size: 1.4rem;
   position: relative;
   overflow: hidden;
-  ${p => p.$active && `animation: ${breathingGlow} 6s ease-in-out infinite;`}
+  ${p => p.$active && css`animation: ${breathingGlow} 6s ease-in-out infinite;`}
 `;
 
 const SlotIndex = styled.span`
@@ -403,17 +361,16 @@ const ObjectiveText = styled.h3`
 
 const ChoicesPanel = styled(motion.div)`
   background:
-    linear-gradient(145deg, rgba(0, 0, 0, 0.95) 0%, rgba(10, 10, 10, 0.98) 100%);
+    linear-gradient(145deg, rgba(0, 0, 0, 0.92) 0%, rgba(10, 10, 10, 0.96) 100%);
   border: 2px solid #d4af37;
   border-radius: 12px;
   padding: var(--spacing-lg);
   min-height: 150px;
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(10px);
   box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.8),
-    0 0 30px rgba(212, 175, 55, 0.2);
+    0 10px 26px rgba(0, 0, 0, 0.7),
+    0 0 18px rgba(212, 175, 55, 0.18);
   position: relative;
-  animation: ${filigreeGlow} 10s ease-in-out infinite;
 
   /* Decorative corner ornaments */
   &::before, &::after {
@@ -538,8 +495,12 @@ const ChoiceButton = styled(motion.button)`
 const JournalSidebar = styled(motion.div)`
   grid-column: 2;
   grid-row: 1 / -1;
-  position: relative;
+  position: sticky;
+  top: var(--spacing-lg);
+  align-self: start;
   z-index: 10;
+  height: calc(100vh - 2 * var(--spacing-lg));
+  overflow: hidden;
 
   @media (max-width: 1024px) {
     grid-column: 1;
@@ -663,7 +624,10 @@ export default function GameplayScreen() {
   };
 
   const showTooltip = (text, e) => {
-    setTooltip({ visible: true, text, x: e.clientX, y: e.clientY });
+    const pad = 16;
+    const x = Math.max(pad, Math.min(window.innerWidth - pad, e.clientX));
+    const y = Math.max(pad, Math.min(window.innerHeight - pad, e.clientY));
+    setTooltip({ visible: true, text, x, y });
   };
   const hideTooltip = () => setTooltip(prev => ({ ...prev, visible: false }));
 

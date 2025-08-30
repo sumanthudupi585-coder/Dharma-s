@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled, { keyframes } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame } from '../context/GameContext';
 
@@ -199,7 +199,7 @@ const Tab = styled(motion.button)`
   position: relative;
   overflow: hidden;
   
-  ${props => props.$active && `
+  ${props => props.$active && css`
     animation: ${tabGlow} 4s ease-in-out infinite;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   `}
@@ -474,7 +474,7 @@ const InventorySlot = styled(motion.div)`
   position: relative;
   backdrop-filter: blur(5px);
   
-  ${props => props.$hasItem && `
+  ${props => props.$hasItem && css`
     animation: ${breathingGlow} 6s ease-in-out infinite;
     filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
   `}
