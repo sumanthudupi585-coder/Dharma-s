@@ -357,6 +357,16 @@ export default function ProfileCreation() {
           return list;
         }, [answers])} discovered={discovered} />
       </ContentRow>
+      {flight && (
+        <FlyingWord
+          initial={{ x: flight.x, y: flight.y, opacity: 1, scale: 1 }}
+          animate={{ x: flight.tx, y: flight.ty, opacity: 0.2, scale: 0.8 }}
+          transition={{ duration: 0.5, ease: 'easeInOut' }}
+          onAnimationComplete={() => { setFlight(null); setTimeout(() => setInputLocked(false), 50); }}
+        >
+          {flight.text}
+        </FlyingWord>
+      )}
     </ScreenRoot>
   );
 }
