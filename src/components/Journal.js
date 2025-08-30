@@ -199,7 +199,7 @@ const Tab = styled(motion.button)`
   position: relative;
   overflow: hidden;
   
-  ${props => props.$active && `
+  ${props => props.$active && css`
     animation: ${tabGlow} 4s ease-in-out infinite;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   `}
