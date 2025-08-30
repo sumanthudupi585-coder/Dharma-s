@@ -233,7 +233,7 @@ export default function ProfileCreation() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current, inputLocked, index]);
 
-  const handleSelect = (choice) => {
+  const handleSelect = (choice, evt) => {
     if (inputLocked) return;
     setInputLocked(true);
 
