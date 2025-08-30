@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
+import SettingsModal from './SettingsModal';
 import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
 
 // Subtle breathing glow for golden elements
