@@ -543,6 +543,7 @@ export default function Journal({ isVisible = true }) {
     { id: 'profile', label: 'Self', icon: '👤' },
     { id: 'objectives', label: 'Tasks', icon: '📋' },
     { id: 'clues', label: 'Clues', icon: '🔍' },
+    { id: 'glossary', label: 'Glossary', icon: '📖' },
     { id: 'inventory', label: 'Items', icon: '🎒' }
   ];
 
@@ -656,6 +657,34 @@ export default function Journal({ isVisible = true }) {
             </CluesList>
           </ContentWrapper>
         );
+
+      case 'glossary':
+        return (
+          <ContentWrapper>
+            <CluesList>
+              {inventory.glossary.length > 0 ? (
+                inventory.glossary
+                  .slice()
+                  .sort((a, b) => a.term.localeCompare(b.term))
+                  .map((g, index) => (
+                    <ClueItem
+                      key={g.id}
+                      initial={{ y: 20, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{ duration: 0.5, delay: index * 0.05 }}
+                    >
+                      <ClueTitle>{g.term}</ClueTitle>
+                      <ClueDescription>{g.brief}</ClueDescription>
+                    </ClueItem>
+                  ))
+              ) : (
+                <EmptyState>
+                  <EmptyText>Explore to reveal sacred terms...</EmptyText>
+                </EmptyState>
+              )}
+            </CluesList>
+          </ContentWrapper>
+        );
         
       case 'inventory':
         return (
@@ -714,14 +743,25 @@ export default function Journal({ isVisible = true }) {
     >
       <JournalHeader>
         <JournalTitle>Sacred Journal</JournalTitle>
-        <TabsContainer>
-          {tabs.map((tab) => (
+        <TabsContainer role="tablist" aria-label="Journal Sections">
+          {tabs.map((tab, i) => (
             <Tab
               key={tab.id}
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              tabIndex={activeTab === tab.id ? 0 : -1}
               $active={activeTab === tab.id}
               onClick={() => {
                 setActiveTab(tab.id);
                 setSelectedItem(null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+                  e.preventDefault();
+                  const dir = e.key === 'ArrowRight' ? 1 : -1;
+                  const next = (i + dir + tabs.length) % tabs.length;
+                  setActiveTab(tabs[next].id);
+                }
               }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
