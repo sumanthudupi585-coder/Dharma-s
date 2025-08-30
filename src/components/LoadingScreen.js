@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 const spin = keyframes`
@@ -25,11 +26,25 @@ const Sigil = styled.div`
 `;
 
 const Title = styled.h1`
-  font-family: var(--font-display); letter-spacing: 0.12em; margin-top: 18px; text-align: center; background: linear-gradient(180deg, #fff4b0, #d4af37); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  font-family: var(--font-display);
+  letter-spacing: 0.12em;
+  margin-top: 18px;
+  text-align: center;
+  font-size: var(--fs-xxl);
+  background: linear-gradient(180deg, #fff4b0, #d4af37);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 `;
 
 const Tip = styled.p`
-  font-family: var(--font-primary); color: #b8941f; opacity: 0.9; margin-top: 12px; text-align: center; animation: ${pulse} 3s ease-in-out infinite;
+  font-family: var(--font-primary);
+  color: #b8941f;
+  opacity: 0.9;
+  margin-top: 12px;
+  text-align: center;
+  font-size: var(--fs-sm);
+  animation: ${pulse} 3s ease-in-out infinite;
 `;
 
 const tips = [
@@ -40,6 +55,11 @@ const tips = [
   'Aether flows where attention rests.'
 ];
 
+const Center = styled.div`
+  display: grid;
+  place-items: center;
+`;
+
 export default function LoadingScreen() {
   const [tip, setTip] = useState(tips[0]);
   useEffect(() => {
@@ -48,12 +68,12 @@ export default function LoadingScreen() {
     return () => clearInterval(id);
   }, []);
   return (
-    <Wrap>
-      <div style={{ display: 'grid', placeItems: 'center' }}>
-        <Sigil />
+    <Wrap role="status" aria-live="polite" aria-label="Loading">
+      <Center>
+        <Sigil aria-hidden />
         <Title>Dharma's Cipher</Title>
         <Tip>{tip}</Tip>
-      </div>
+      </Center>
     </Wrap>
   );
 }
