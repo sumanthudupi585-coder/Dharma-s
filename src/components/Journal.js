@@ -155,10 +155,10 @@ const JournalHeader = styled.div`
 const JournalTitle = styled.h2`
   font-family: var(--font-display);
   color: #d4af37;
-  font-size: 1.8rem;
+  font-size: var(--fs-xxl);
   margin-bottom: var(--spacing-md);
   text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
-  
+
   &::before, &::after {
     content: '✦';
     color: #ffd700;
@@ -182,16 +182,16 @@ const TabsContainer = styled.div`
 `;
 
 const Tab = styled(motion.button)`
-  background: ${props => props.$active ? 
-    'linear-gradient(145deg, #d4af37, #ffd700)' : 
+  background: ${props => props.$active ?
+    'linear-gradient(145deg, #d4af37, #ffd700)' :
     'transparent'};
   color: ${props => props.$active ? '#000' : '#d4af37'};
   border: none;
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: 6px;
   font-family: var(--font-primary);
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: var(--fs-sm);
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   flex: 1;
@@ -292,7 +292,7 @@ const ProfileSection = styled.div`
 const ProfileTitle = styled.h3`
   font-family: var(--font-display);
   color: #d4af37;
-  font-size: 1.4rem;
+  font-size: var(--fs-xl);
   margin-bottom: var(--spacing-md);
   text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
 `;
@@ -326,9 +326,9 @@ const TraitSummary = styled.div`
 const TraitLabel = styled.p`
   font-family: var(--font-primary);
   color: #b8941f;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0 0 var(--spacing-xs);
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   text-shadow: 0 0 5px rgba(184, 148, 31, 0.4);
 `;
 
@@ -336,7 +336,7 @@ const TraitValue = styled.p`
   font-family: var(--font-display);
   color: #d4af37;
   margin: 0;
-  font-size: 1.1rem;
+  font-size: var(--fs-lg);
   text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
 `;
 
@@ -371,7 +371,7 @@ const ObjectiveText = styled.p`
   color: #d4af37;
   margin: 0;
   margin-left: 30px;
-  font-size: 0.95rem;
+  font-size: var(--fs-sm);
   line-height: 1.4;
   text-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
 `;
@@ -411,7 +411,7 @@ const ClueItem = styled(motion.div)`
 const ClueTitle = styled.h4`
   font-family: var(--font-display);
   color: #d4af37;
-  font-size: 1.1rem;
+  font-size: var(--fs-lg);
   margin-bottom: var(--spacing-sm);
   display: flex;
   align-items: center;
@@ -430,7 +430,7 @@ const ClueDescription = styled.p`
   font-family: var(--font-primary);
   color: #b8941f;
   margin: 0;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   line-height: 1.5;
   font-style: italic;
   margin-left: var(--spacing-sm);
@@ -502,7 +502,7 @@ const ItemDetail = styled(motion.div)`
 const ItemName = styled.h4`
   font-family: var(--font-display);
   color: #d4af37;
-  font-size: 1.2rem;
+  font-size: var(--fs-xl);
   margin-bottom: var(--spacing-sm);
   text-align: center;
   text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
@@ -511,7 +511,7 @@ const ItemName = styled.h4`
 const ItemLore = styled.p`
   font-family: var(--font-primary);
   color: #b8941f;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   line-height: 1.5;
   font-style: italic;
   margin: 0;
@@ -529,6 +529,7 @@ const EmptyText = styled.p`
   color: #d4af37;
   font-style: italic;
   margin: 0;
+  font-size: var(--fs-sm);
   text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
 `;
 
@@ -766,7 +767,7 @@ export default function Journal({ isVisible = true }) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              {tab.icon} {tab.label}
+              <span className="emoji-icon" aria-hidden>{tab.icon}</span> {tab.label}
             </Tab>
           ))}
         </TabsContainer>
