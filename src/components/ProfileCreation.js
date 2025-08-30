@@ -251,69 +251,81 @@ export default function ProfileCreation() {
 
   return (
     <ScreenRoot>
-      <SurveyShell
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        role="form"
-        aria-labelledby="survey-title"
-      >
-        <Header>
-          <TitleWrap>
-            <Title id="survey-title">Ātman Resonance Survey</Title>
-            <Subtitle>Question {index + 1} of {total}</Subtitle>
-          </TitleWrap>
-          <Progress aria-label={`Progress ${progress}%`}>
-            <ProgressFill $value={progress} />
-          </Progress>
-        </Header>
-
-        <QuestionCard
-          key={current.id}
-          initial={{ opacity: 0, y: 8 }}
+      <ContentRow>
+        <SurveyShell
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -8 }}
-          transition={{ duration: 0.35 }}
-          aria-live="polite"
+          transition={{ duration: 0.5 }}
+          role="form"
+          aria-labelledby="survey-title"
         >
-          <QTitle>{current.title}</QTitle>
-          {current.description && <QDesc>{current.description}</QDesc>}
+          <Header>
+            <TitleWrap>
+              <Title id="survey-title">Ātman Resonance Survey</Title>
+              <Subtitle>Question {index + 1} of {total}</Subtitle>
+            </TitleWrap>
+            <Progress aria-label={`Progress ${progress}%`}>
+              <ProgressFill $value={progress} />
+            </Progress>
+          </Header>
 
-          <Choices ref={listRef}>
-            {current.choices.map((choice, i) => (
-              <Choice
-                key={choice.id}
-                className="is-interactive"
-                onClick={() => handleSelect(choice)}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-                aria-label={`Choice ${i + 1}: ${choice.text}`}
-                disabled={inputLocked}
-              >
-                {i + 1}. {choice.text}
-              </Choice>
-            ))}
-          </Choices>
-        </QuestionCard>
+          <QuestionCard
+            key={current.id}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.35 }}
+            aria-live="polite"
+          >
+            <QTitle>{current.title}</QTitle>
+            {current.description && <QDesc>{current.description}</QDesc>}
 
-        <NavRow>
-          <NavButton className="is-interactive" onClick={handleBack} disabled={index === 0 || inputLocked} whileTap={{ scale: 0.98 }}>
-            ← Back
-          </NavButton>
-          <FooterHint>Tip: Use 1–{current.choices.length} keys to pick instantly. Backspace to go back.</FooterHint>
-        </NavRow>
+            <Choices ref={listRef}>
+              {current.choices.map((choice, i) => (
+                <Choice
+                  key={choice.id}
+                  className="is-interactive"
+                  onClick={() => handleSelect(choice)}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  aria-label={`Choice ${i + 1}: ${choice.text}`}
+                  disabled={inputLocked}
+                >
+                  {i + 1}. {choice.text}
+                </Choice>
+              ))}
+            </Choices>
+          </QuestionCard>
 
-        <FooterHint>The chamber is silent. Choose with stillness.</FooterHint>
-      </SurveyShell>
+          <NavRow>
+            <NavButton className="is-interactive" onClick={handleBack} disabled={index === 0 || inputLocked} whileTap={{ scale: 0.98 }}>
+              ← Back
+            </NavButton>
+            <FooterHint>Tip: Use 1–{current.choices.length} keys to pick instantly. Backspace to go back.</FooterHint>
+          </NavRow>
 
-      {/* Floating Words Panel (non-intrusive) */}
-      <FloatingWordsPanel pool={useMemo(() => {
-        const list = [];
-        SURVEY_QUESTIONS.forEach(q => q.choices.forEach(c => {
-          if (c.seed) list.push({ id: `${q.id}-${c.id}`, sk: c.seed, en: c.transliteration || c.annotation || '', tr: c.transliteration || '', ann: c.annotation || '' });
-        }));
-        return list;
-      }, [])} discovered={discovered} />
+          <FooterHint>The chamber is silent. Choose with stillness.</FooterHint>
+        </SurveyShell>
+
+        {/* Floating Words Panel (non-intrusive) */}
+        <FloatingWordsPanel pool={useMemo(() => {
+          // Only words discovered from answers
+          const map = {};
+          const list = [];
+          answers.forEach(ans => {
+            const q = SURVEY_QUESTIONS.find(qq => qq.id === ans.questionId);
+            if (!q) return;
+            const c = q.choices.find(cc => cc.id === ans.choiceId);
+            if (!c || !c.seed) return;
+            const id = `${q.id}-${c.id}`;
+            if (!map[id]) {
+              map[id] = true;
+              list.push({ id, sk: c.seed, en: c.transliteration || c.annotation || '', tr: c.transliteration || '', ann: c.annotation || '' });
+            }
+          });
+          return list;
+        }, [answers])} discovered={discovered} />
+      </ContentRow>
     </ScreenRoot>
   );
 }
