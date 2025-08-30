@@ -61,6 +61,12 @@ class SoundEngine {
   }
 
   stopAmbient(fade = false) {
+    if (fade && this.musicGain && this.ctx) {
+      const t = this.ctx.currentTime;
+      this.musicGain.gain.setTargetAtTime(0.0001, t, this.sceneFadeMs);
+      setTimeout(() => this.stopAmbient(false), this.sceneFadeMs * 1000 + 60);
+      return;
+    }
     this.ambientNodes.forEach(n => { try { n.stop?.(); n.disconnect?.(); } catch (_) {} });
     this.ambientNodes = [];
     this.currentAmbient = null;
