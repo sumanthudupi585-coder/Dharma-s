@@ -3,12 +3,13 @@ import styled from 'styled-components';
 
 const PanelWrap = styled.div`
   width: min(32vw, 360px);
-  height: 360px;
+  height: ${p => (p.$min ? '42px' : '360px')};
   border: 1px solid rgba(212,175,55,0.28);
   border-radius: 14px;
   background: linear-gradient(145deg, rgba(0,0,0,0.78), rgba(10,10,10,0.92));
   box-shadow: 0 16px 40px rgba(0,0,0,0.5);
   overflow: hidden;
+  transition: height 220ms ease;
 `;
 
 const HeaderBar = styled.div`
