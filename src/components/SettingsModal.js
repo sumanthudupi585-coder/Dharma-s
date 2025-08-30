@@ -16,7 +16,11 @@ const Sheet = styled(motion.div)`
 `;
 
 const Title = styled.h2`
-  font-family: var(--font-display); color: #e6c76a; margin: 0 0 8px; letter-spacing: 0.06em;
+  font-family: var(--font-display);
+  color: #e6c76a;
+  margin: 0 0 8px;
+  letter-spacing: 0.06em;
+  font-size: var(--fs-xl);
 `;
 
 const Row = styled.div`
@@ -24,20 +28,38 @@ const Row = styled.div`
 `;
 
 const Label = styled.label`
-  font-family: var(--font-primary); color: #b8941f;
+  font-family: var(--font-primary);
+  color: #b8941f;
+  font-size: var(--fs-sm);
 `;
 
 const Slider = styled.input`
-  width: 200px; accent-color: #d4af37; cursor: pointer;
+  width: 200px;
+  accent-color: #d4af37;
+  cursor: pointer;
 `;
 
 const Toggle = styled.input`
-  width: 20px; height: 20px; accent-color: #d4af37; cursor: pointer;
+  width: 20px;
+  height: 20px;
+  accent-color: #d4af37;
+  cursor: pointer;
 `;
 
 const CloseBtn = styled(motion.button)`
-  margin-top: 14px; padding: 10px 16px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.35);
-  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95)); color: #e8c86a; font-weight: 700;
+  margin-top: 14px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(212,175,55,0.35);
+  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
+  color: #e8c86a;
+  font-weight: 700;
+`;
+
+const Value = styled.span`
+  font-family: var(--font-primary);
+  color: #d4af37;
+  font-size: var(--fs-sm);
 `;
 
 export default function SettingsModal({ open, onClose }) {
@@ -97,19 +119,31 @@ export default function SettingsModal({ open, onClose }) {
 
             <Row>
               <Label htmlFor="master">Master Volume</Label>
-              <Slider id="master" type="range" min="0" max="1" step="0.01" value={state.settings.masterVolume ?? 0.9} onChange={onMaster} />
+              <div>
+                <Slider id="master" type="range" min="0" max="1" step="0.01" value={state.settings.masterVolume ?? 0.9} onChange={onMaster} aria-valuemin={0} aria-valuemax={1} aria-valuenow={state.settings.masterVolume ?? 0.9} />
+                <Value>{Math.round((state.settings.masterVolume ?? 0.9) * 100)}%</Value>
+              </div>
             </Row>
             <Row>
               <Label htmlFor="music">Music Volume</Label>
-              <Slider id="music" type="range" min="0" max="1" step="0.01" value={state.settings.musicVolume} onChange={onMusic} />
+              <div>
+                <Slider id="music" type="range" min="0" max="1" step="0.01" value={state.settings.musicVolume} onChange={onMusic} aria-valuemin={0} aria-valuemax={1} aria-valuenow={state.settings.musicVolume} />
+                <Value>{Math.round((state.settings.musicVolume ?? 0) * 100)}%</Value>
+              </div>
             </Row>
             <Row>
               <Label htmlFor="ambient">Ambient Volume</Label>
-              <Slider id="ambient" type="range" min="0" max="1" step="0.01" value={state.settings.ambientVolume ?? 0.6} onChange={onAmbient} />
+              <div>
+                <Slider id="ambient" type="range" min="0" max="1" step="0.01" value={state.settings.ambientVolume ?? 0.6} onChange={onAmbient} aria-valuemin={0} aria-valuemax={1} aria-valuenow={state.settings.ambientVolume ?? 0.6} />
+                <Value>{Math.round((state.settings.ambientVolume ?? 0.6) * 100)}%</Value>
+              </div>
             </Row>
             <Row>
               <Label htmlFor="sfx">UI SFX Volume</Label>
-              <Slider id="sfx" type="range" min="0" max="1" step="0.01" value={state.settings.sfxVolume} onChange={onSfx} />
+              <div>
+                <Slider id="sfx" type="range" min="0" max="1" step="0.01" value={state.settings.sfxVolume} onChange={onSfx} aria-valuemin={0} aria-valuemax={1} aria-valuenow={state.settings.sfxVolume} />
+                <Value>{Math.round((state.settings.sfxVolume ?? 0) * 100)}%</Value>
+              </div>
             </Row>
             <Row>
               <Label htmlFor="largeText">Large Text</Label>
@@ -128,7 +162,7 @@ export default function SettingsModal({ open, onClose }) {
               <Toggle id="highContrast" type="checkbox" checked={state.settings.accessibility.highContrast} onChange={onHigh} />
             </Row>
 
-            <CloseBtn className="is-interactive" whileTap={{ scale: 0.98 }} onClick={onClose}>Close</CloseBtn>
+            <CloseBtn className="is-interactive" type="button" aria-label="Close Settings" whileTap={{ scale: 0.98 }} onClick={onClose}>Close</CloseBtn>
           </Sheet>
         </Backdrop>
       )}
