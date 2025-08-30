@@ -178,7 +178,6 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
 
       function easeInOutSine(x) { return -(Math.cos(Math.PI * x) - 1) / 2; }
       function easeOutExpo(x) { return x === 1 ? 1 : 1 - Math.pow(2, -10 * x); }
-      function lerp(a, b, t) { return a + (b - a) * t; }
 
       function drawSmokeLayer(arr, alphaScale) {
         ctx.globalCompositeOperation = 'source-over';
@@ -216,7 +215,6 @@ export default function SanskritSmokeText({ text, secondaryText = '', onComplete
         drawSmokeLayer(smokeBack, 1);
 
         // GOLD PARTICLES (text)
-        const blend = Math.min(1, elapsed / (durationMs * 0.85));
         makeGoldSprite(0.9);
 
         ctx.globalCompositeOperation = 'screen';
