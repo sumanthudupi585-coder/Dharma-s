@@ -7,11 +7,14 @@ class SoundEngine {
     this.ctx = null;
     this.master = null;
     this.musicGain = null;
+    this.ambientGain = null;
     this.sfxGain = null;
     this.currentAmbient = null;
     this.ambientNodes = [];
     this.enabled = true;
-    this.musicVolume = 0.5;
+    this.masterVolume = 0.9;
+    this.musicVolume = 0.7;
+    this.ambientVolume = 0.6;
     this.sfxVolume = 0.8;
     this._initPending = false;
     this.lastHoverAt = 0;
@@ -25,7 +28,7 @@ class SoundEngine {
     if (!AudioCtx) return;
     this.ctx = new AudioCtx();
     this.master = this.ctx.createGain();
-    this.master.gain.value = 1;
+    this.master.gain.value = this.masterVolume;
     this.compressor = this.ctx.createDynamicsCompressor();
     this.compressor.threshold.setValueAtTime(-28, this.ctx.currentTime);
     this.compressor.knee.setValueAtTime(24, this.ctx.currentTime);
@@ -37,6 +40,10 @@ class SoundEngine {
     this.musicGain = this.ctx.createGain();
     this.musicGain.gain.value = this.musicVolume;
     this.musicGain.connect(this.master);
+
+    this.ambientGain = this.ctx.createGain();
+    this.ambientGain.gain.value = this.ambientVolume;
+    this.ambientGain.connect(this.master);
 
     this.sfxGain = this.ctx.createGain();
     this.sfxGain.gain.value = this.sfxVolume;
@@ -52,10 +59,12 @@ class SoundEngine {
     window.addEventListener('keydown', resume);
   }
 
-  setVolumes({ music, sfx, enabled }) {
+  setVolumes({ master, music, ambient, sfx, enabled }) {
     this.ensureContext();
     if (typeof enabled === 'boolean') this.enabled = enabled;
+    if (this.master && typeof master === 'number') this.master.gain.setTargetAtTime(Math.max(0, Math.min(1, master)), this.ctx.currentTime, 0.05);
     if (this.musicGain && typeof music === 'number') this.musicGain.gain.setTargetAtTime(Math.max(0, Math.min(1, music)), this.ctx.currentTime, 0.05);
+    if (this.ambientGain && typeof ambient === 'number') this.ambientGain.gain.setTargetAtTime(Math.max(0, Math.min(1, ambient)), this.ctx.currentTime, 0.05);
     if (this.sfxGain && typeof sfx === 'number') this.sfxGain.gain.setTargetAtTime(Math.max(0, Math.min(1, sfx)), this.ctx.currentTime, 0.02);
     if (!this.enabled) this.stopAmbient();
   }
@@ -81,8 +90,8 @@ class SoundEngine {
     this.currentAmbient = kind;
 
     const t = this.ctx.currentTime;
-    const target = Math.max(0, Math.min(1, this.musicVolume));
-    this.musicGain.gain.setValueAtTime(0.0001, t);
+    const target = Math.max(0, Math.min(1, this.ambientVolume));
+    this.ambientGain.gain.setValueAtTime(0.0001, t);
 
     // Use small building blocks per scene
     if (kind === 'title') {
@@ -96,7 +105,7 @@ class SoundEngine {
       this._padChord([196, 246.94, 293.66], 0.5);
     }
 
-    this.musicGain.gain.setTargetAtTime(target, t + 0.02, this.sceneFadeMs);
+    this.ambientGain.gain.setTargetAtTime(target, t + 0.02, this.sceneFadeMs);
   }
 
   _makeOsc(freq, type = 'sine', gain = 0.1) {
@@ -105,7 +114,7 @@ class SoundEngine {
     osc.frequency.value = freq;
     const g = this.ctx.createGain();
     g.gain.value = 0.0001;
-    osc.connect(g).connect(this.musicGain);
+    osc.connect(g).connect(this.ambientGain);
     osc.start();
     this.ambientNodes.push(osc, g);
     return { osc, g };
@@ -143,7 +152,7 @@ class SoundEngine {
     lpf.frequency.value = 800;
     const g = this.ctx.createGain();
     g.gain.value = 0.08;
-    noise.connect(lpf).connect(g).connect(this.musicGain);
+    noise.connect(lpf).connect(g).connect(this.ambientGain);
     noise.start();
     this.ambientNodes.push(noise, lpf, g);
 
@@ -179,7 +188,7 @@ class SoundEngine {
     lpf.type = 'lowpass';
     lpf.frequency.value = 300;
     g.disconnect();
-    g.connect(lpf).connect(this.musicGain);
+    g.connect(lpf).connect(this.ambientGain);
     this._env(g, 1.5, 0.06);
     this.ambientNodes.push(lpf);
   }
@@ -191,7 +200,7 @@ class SoundEngine {
       o.type = 'sine';
       const g = this.ctx.createGain();
       g.gain.value = 0;
-      o.connect(g).connect(this.musicGain);
+      o.connect(g).connect(this.ambientGain);
       const base = 520 + Math.random() * 120;
       const t = this.ctx.currentTime;
       o.frequency.setValueAtTime(base, t);
@@ -256,8 +265,8 @@ export default function AudioManager() {
   const prevScene = useRef(null);
 
   useEffect(() => {
-    engine.setVolumes({ music: state.settings.musicVolume, sfx: state.settings.sfxVolume, enabled: state.settings.soundEnabled });
-  }, [state.settings.musicVolume, state.settings.sfxVolume, state.settings.soundEnabled]);
+    engine.setVolumes({ master: state.settings.masterVolume, music: state.settings.musicVolume, ambient: state.settings.ambientVolume, sfx: state.settings.sfxVolume, enabled: state.settings.soundEnabled });
+  }, [state.settings.masterVolume, state.settings.musicVolume, state.settings.ambientVolume, state.settings.sfxVolume, state.settings.soundEnabled]);
 
   useEffect(() => {
     let scene = null;
