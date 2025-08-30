@@ -39,7 +39,7 @@ const glowPulse = keyframes`
 `;
 
 const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:wght@400;600;700&family=Noto+Serif+Devanagari:wght@400;600&display=swap');
   * {
     box-sizing: border-box;
     margin: 0;
