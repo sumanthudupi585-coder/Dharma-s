@@ -178,9 +178,7 @@ export default function TitleScreen() {
     }
   };
 
-  const handleSettings = () => {
-    alert('Settings will be added.');
-  };
+  const handleSettings = () => { setOpenSettings(true); };
 
   return (
     <ScreenRoot>
