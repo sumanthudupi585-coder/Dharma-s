@@ -141,10 +141,9 @@ const GlobalStyle = createGlobalStyle`
 
   .app {
     min-height: 100vh;
-    height: 100vh;
     width: 100%;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
   }
 
   /* Typography Classes */
