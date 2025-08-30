@@ -77,22 +77,27 @@ class SoundEngine {
     this.ensureContext();
     if (!this.ctx) return;
     if (this.currentAmbient === kind) return;
-    this.stopAmbient();
+    if (this.currentAmbient) this.stopAmbient(true);
     this.currentAmbient = kind;
+
+    const t = this.ctx.currentTime;
+    const target = Math.max(0, Math.min(1, this.musicVolume));
+    this.musicGain.gain.setValueAtTime(0.0001, t);
 
     // Use small building blocks per scene
     if (kind === 'title') {
-      // Soft arpeggio pad
-      this._padChord([220, 277.18, 329.63], 0.7);
+      this._padChord([220, 277.18, 329.63], 0.6);
     } else if (kind === 'DASHASHWAMEDH_GHAT') {
       this._riverNoise();
-      this._randomBell(2.5);
+      this._randomBell(5);
     } else if (kind === 'LABYRINTH_GHATS') {
       this._lowDrone();
-      this._drip(4);
+      this._drip(7);
     } else {
       this._padChord([196, 246.94, 293.66], 0.5);
     }
+
+    this.musicGain.gain.setTargetAtTime(target, t + 0.02, this.sceneFadeMs);
   }
 
   _makeOsc(freq, type = 'sine', gain = 0.1) {
