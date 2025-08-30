@@ -249,8 +249,14 @@ export default function Scene3NyayaTrial() {
         </p>
         <p>
           <Paragraph>
-            The Four Pramāṇas await your understanding: Pratyakṣa (Perception), Anumāṇa (Inference), Upamāna (Comparison), and Śabda (Testimony). Each must be proven before the way forward opens.
+            The Four Pramāṇas await your understanding:
           </Paragraph>
+          <span>
+            <GlossaryTerm className="highlight-mystical is-interactive" term="Pratyakṣa" /> (Perception),
+            <GlossaryTerm className="highlight-mystical is-interactive" term="Anumāṇa" /> (Inference),
+            <GlossaryTerm className="highlight-mystical is-interactive" term="Upamāna" /> (Comparison), and
+            <GlossaryTerm className="highlight-mystical is-interactive" term="Śabda" /> (Testimony). Each must be proven before the way forward opens.
+          </span>
         </p>
       </NarrativeText>
 
