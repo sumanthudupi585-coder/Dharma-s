@@ -60,10 +60,10 @@ export default function Scene3NyayaTrial() {
         
         <p>
           The <span className="highlight-mystical">Four Pramāṇas</span> await your understanding:
-          <GlossaryTerm className="highlight-mystical" term="Pratyakṣa" /> (Perception),
-          <GlossaryTerm className="highlight-mystical" term="Anumāṇa" /> (Inference),
-          <GlossaryTerm className="highlight-mystical" term="Upamāna" /> (Comparison), and
-          <GlossaryTerm className="highlight-mystical" term="Śabda" /> (Testimony). Each must be proven before the way forward opens.
+          <GlossaryTerm className="highlight-mystical is-interactive" term="Pratyakṣa" /> (Perception),
+          <GlossaryTerm className="highlight-mystical is-interactive" term="Anumāṇa" /> (Inference),
+          <GlossaryTerm className="highlight-mystical is-interactive" term="Upamāna" /> (Comparison), and
+          <GlossaryTerm className="highlight-mystical is-interactive" term="Śabda" /> (Testimony). Each must be proven before the way forward opens.
         </p>
       </NarrativeText>
     </SceneContainer>
