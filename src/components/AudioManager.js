@@ -98,6 +98,8 @@ class SoundEngine {
       this._padChord([220, 277.18, 329.63], 0.6);
     } else if (kind === 'DASHASHWAMEDH_GHAT') {
       this._riverNoise();
+      this._randomBell(8);
+      this._crowdMurmur();
     } else if (kind === 'LABYRINTH_GHATS') {
       this._lowDrone();
       this._drip(7);
@@ -179,6 +181,35 @@ class SoundEngine {
       setTimeout(() => { try { osc.stop(); } catch (_) {} }, 2500);
     };
     const id = setInterval(ring, avg * 1000 + Math.random() * 1500);
+    this.ambientNodes.push({ stop: () => clearInterval(id) });
+  }
+
+  _crowdMurmur() {
+    // Pink-ish noise with slow bandpass sweep to emulate distant crowd
+    const src = this.ctx.createBufferSource();
+    const len = 2 * this.ctx.sampleRate;
+    const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+    const ch = buf.getChannelData(0);
+    let b0 = 0, b1 = 0, b2 = 0; // pink filter
+    for (let i = 0; i < len; i++) {
+      const white = Math.random() * 2 - 1;
+      b0 = 0.99765 * b0 + white * 0.0990460;
+      b1 = 0.96300 * b1 + white * 0.2965164;
+      b2 = 0.57000 * b2 + white * 1.0526913;
+      ch[i] = (b0 + b1 + b2 + white * 0.1848) * 0.08;
+    }
+    src.buffer = buf; src.loop = true;
+    const bp = this.ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 400;
+    const g = this.ctx.createGain();
+    g.gain.value = 0.06;
+    src.connect(bp).connect(g).connect(this.ambientGain);
+    src.start();
+    this.ambientNodes.push(src, bp, g);
+    // slow sweep
+    const sweep = () => { if (!this.currentAmbient) return; bp.frequency.linearRampToValueAtTime(300 + Math.random()*300, this.ctx.currentTime + 3); };
+    const id = setInterval(sweep, 3000);
     this.ambientNodes.push({ stop: () => clearInterval(id) });
   }
 
