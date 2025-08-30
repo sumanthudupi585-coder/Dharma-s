@@ -654,25 +654,24 @@ export default function GameplayScreen() {
 
   return (
     <GameplayContainer>
-      <MiniMapPanel />
-
-      <DecoHUD>
-        <Gauge>
-          <Fill $value={82} />
-          <GaugeLabel>VITAL</GaugeLabel>
-        </Gauge>
-        <Gauge>
-          <Fill $value={65} />
-          <GaugeLabel>AETHER</GaugeLabel>
-        </Gauge>
-      </DecoHUD>
-
       <MainContentArea>
-        {state.gameProgress?.currentObjectives && state.gameProgress.currentObjectives[0] && (
-          <ObjectivesBanner initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
-            <ObjectiveText>{state.gameProgress.currentObjectives[0].text}</ObjectiveText>
-          </ObjectivesBanner>
-        )}
+        <HeaderBar>
+          {state.gameProgress?.currentObjectives && state.gameProgress.currentObjectives[0] && (
+            <ObjectivesBanner initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
+              <ObjectiveText>{state.gameProgress.currentObjectives[0].text}</ObjectiveText>
+            </ObjectivesBanner>
+          )}
+          <DecoHUD>
+            <Gauge>
+              <Fill $value={82} />
+              <GaugeLabel>VITAL</GaugeLabel>
+            </Gauge>
+            <Gauge>
+              <Fill $value={65} />
+              <GaugeLabel>AETHER</GaugeLabel>
+            </Gauge>
+          </DecoHUD>
+        </HeaderBar>
         <NarrativeWindow
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
