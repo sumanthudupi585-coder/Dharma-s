@@ -60,7 +60,7 @@ class SoundEngine {
     if (!this.enabled) this.stopAmbient();
   }
 
-  stopAmbient() {
+  stopAmbient(fade = false) {
     this.ambientNodes.forEach(n => { try { n.stop?.(); n.disconnect?.(); } catch (_) {} });
     this.ambientNodes = [];
     this.currentAmbient = null;
