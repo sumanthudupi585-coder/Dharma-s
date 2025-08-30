@@ -9,7 +9,12 @@ const PanelWrap = styled.div`
   background: linear-gradient(145deg, rgba(0,0,0,0.78), rgba(10,10,10,0.92));
   box-shadow: 0 16px 40px rgba(0,0,0,0.5);
   overflow: hidden;
-  transition: height 220ms ease;
+  transition: height 220ms ease, width 220ms ease, transform 220ms ease;
+  position: ${p => (p.$min ? 'absolute' : 'static')};
+  top: ${p => (p.$min ? '14px' : 'auto')};
+  right: ${p => (p.$min ? '14px' : 'auto')};
+  width: ${p => (p.$min ? 'auto' : 'min(32vw, 360px)')};
+  z-index: ${p => (p.$min ? 5 : 2)};
 `;
 
 const HeaderBar = styled.div`
@@ -57,14 +62,32 @@ const Tooltip = styled.div`
   position: absolute;
   transform: translate(-50%, -120%);
   padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(212,175,55,0.35);
-  background: linear-gradient(145deg, rgba(0,0,0,0.88), rgba(12,12,12,0.96));
-  color: #e8c86a;
+  border-radius: 10px;
+  border: 1px solid rgba(212,175,55,0.45);
+  background: linear-gradient(145deg, rgba(0,0,0,0.92), rgba(12,12,12,0.98));
+  color: #f3dfa0;
   font-family: var(--font-primary);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   pointer-events: none;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: 260px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.5);
+  opacity: 0;
+  transition: opacity 160ms ease;
+
+  &.visible { opacity: 1; }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgba(212,175,55,0.45);
+  }
 `;
 
 export default function FloatingWordsPanel({ pool, discovered }) {
@@ -238,7 +261,9 @@ export default function FloatingWordsPanel({ pool, discovered }) {
 
       if (hoveredIndex >= 0) {
         const it = items[hoveredIndex];
-        setHoverWord({ x: it.x, y: it.y + 10, tr: it.tr, ann: it.ann });
+        const tx = Math.max(14, Math.min(w - 14, it.x));
+        const ty = Math.max(14, Math.min(h - 14, it.y + 10));
+        setHoverWord({ x: tx, y: ty, tr: it.tr, ann: it.ann });
       } else if (hoverWord) {
         setHoverWord(null);
       }
@@ -285,7 +310,7 @@ export default function FloatingWordsPanel({ pool, discovered }) {
       <InnerArea $min={minimized} aria-hidden={minimized}>
         <Canvas ref={canvasRef} />
         {hoverWord && (
-          <Tooltip style={{ left: hoverWord.x, top: hoverWord.y }}>
+          <Tooltip style={{ left: hoverWord.x, top: hoverWord.y }} className="visible">
             {hoverWord.tr || ''}{hoverWord.tr && hoverWord.ann ? ' — ' : ''}{hoverWord.ann || ''}
           </Tooltip>
         )}
