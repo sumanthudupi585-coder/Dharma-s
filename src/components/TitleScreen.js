@@ -96,7 +96,7 @@ const TitleWordmark = styled.h1`
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: ${breath} 4.2s ease-in-out infinite;
+  animation: ${breath} 4.2s ease-in-out infinite; position: relative;
 `;
 
 const Whisper = styled.p`
