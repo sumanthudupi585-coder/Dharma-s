@@ -41,14 +41,14 @@ const SceneTitle = styled(motion.h1)`
 
 const NarrativeText = styled(motion.div)`
   font-family: var(--font-primary);
-  color: var(--ink-black);
+  color: var(--parchment);
   font-size: 1.1rem;
   line-height: 1.8;
-  
-  .highlight-place { color: var(--deep-red); font-weight: 600; }
-  .highlight-character { color: var(--muted-green); font-weight: 600; }
-  .highlight-object { color: var(--copper); font-weight: 600; }
-  .highlight-mystical { color: var(--gold); font-weight: 600; }
+
+  .highlight-place { color: #f0a8a8; font-weight: 700; }
+  .highlight-character { color: #a8e0b0; font-weight: 700; }
+  .highlight-object { color: #e1b06b; font-weight: 700; }
+  .highlight-mystical { color: #ffd95e; font-weight: 700; }
 `;
 
 const ObjectiveBox = styled(motion.div)`
@@ -69,7 +69,7 @@ const ObjectiveTitle = styled.h3`
 
 const ObjectiveText = styled.p`
   font-family: var(--font-primary);
-  color: var(--ink-black);
+  color: var(--parchment);
   margin: 0;
   font-weight: 600;
 `;
@@ -93,7 +93,7 @@ const PuzzleTitle = styled.h3`
 
 const PuzzleIntro = styled.p`
   font-family: var(--font-primary);
-  color: var(--ink-black);
+  color: var(--parchment);
   text-align: center;
   margin-bottom: var(--spacing-lg);
   font-style: italic;
@@ -153,9 +153,9 @@ const MovementIcon = styled.div`
 
 const MovementLabel = styled.div`
   font-family: var(--font-primary);
-  color: var(--ink-black);
-  font-size: 0.8rem;
-  font-weight: 600;
+  color: var(--parchment);
+  font-size: 0.9rem;
+  font-weight: 700;
 `;
 
 const JournalClue = styled(motion.div)`
@@ -177,7 +177,7 @@ const JournalClue = styled(motion.div)`
 
 const ClueText = styled.p`
   font-family: var(--font-primary);
-  color: var(--ink-black);
+  color: var(--parchment);
   margin: 0;
   margin-left: 30px;
   font-style: italic;
@@ -284,13 +284,13 @@ const CenteredText = styled.p`
   text-align: center;
   margin-bottom: var(--spacing-lg);
   font-family: var(--font-primary);
-  color: var(--ink-black);
+  color: var(--parchment);
   font-weight: 600;
 `;
 
 const NarrativePara = styled.p`
   font-family: var(--font-primary);
-  color: var(--ink-black);
+  color: var(--parchment);
   font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: var(--spacing-lg);
@@ -306,9 +306,9 @@ const EmphasisHeading = styled.p`
 
 const HintText = styled.p`
   font-family: var(--font-primary);
-  color: var(--copper);
+  color: #ffd95e;
   font-style: italic;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   text-align: center;
 `;
 
