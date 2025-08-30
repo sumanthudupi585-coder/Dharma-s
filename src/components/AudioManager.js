@@ -149,8 +149,8 @@ class SoundEngine {
       const { osc, g } = this._makeOsc(880, 'triangle');
       const t = this.ctx.currentTime;
       g.gain.cancelScheduledValues(t);
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.12, t + 0.01);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(0.08, t + 0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 2.2);
       osc.frequency.setValueAtTime(880, t);
       osc.frequency.exponentialRampToValueAtTime(660, t + 1.8);
