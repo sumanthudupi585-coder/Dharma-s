@@ -21,7 +21,7 @@ const SceneTitle = styled(motion.h1)`
 
 const NarrativeText = styled(motion.div)`
   font-family: var(--font-primary);
-  color: var(--ink-black);
+  color: var(--parchment);
   font-size: 1.1rem;
   line-height: 1.8;
 `;
