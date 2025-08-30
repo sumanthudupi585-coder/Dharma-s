@@ -71,7 +71,7 @@ const Tooltip = styled.div`
   line-height: 1.32;
   pointer-events: none;
   white-space: normal;
-  max-width: 420px;
+  display: inline-block;
   box-shadow: 0 10px 28px rgba(0,0,0,0.55);
   opacity: 0;
   transition: opacity 160ms ease;
@@ -274,7 +274,18 @@ export default function FloatingWordsPanel({ pool, discovered }) {
         const it = items[hoveredIndex];
         const tx = Math.max(14, Math.min(w - 14, it.x));
         const ty = Math.max(14, Math.min(h - 14, it.y + 14));
-        setHoverWord({ x: tx, y: ty, sk: it.sk, tr: it.tr, ann: it.ann });
+        // Measure three lines to keep width dynamic to longest line
+        ctx.save();
+        ctx.font = fontSk;
+        const wSk = Math.ceil(ctx.measureText(it.sk || '').width);
+        ctx.font = fontEn;
+        const wTr = Math.ceil(ctx.measureText(it.tr || '').width);
+        const wAnn = Math.ceil(ctx.measureText(it.ann || '').width);
+        ctx.restore();
+        const contentW = Math.max(wSk, wTr, wAnn);
+        const pad = 28; // 14px left/right padding
+        const maxW = Math.max(160, Math.min(w - 28, contentW + pad));
+        setHoverWord({ x: tx, y: ty, sk: it.sk, tr: it.tr, ann: it.ann, w: maxW });
       } else if (hoverWord) {
         setHoverWord(null);
       }
@@ -321,7 +332,7 @@ export default function FloatingWordsPanel({ pool, discovered }) {
       <InnerArea $min={minimized} aria-hidden={minimized}>
         <Canvas ref={canvasRef} />
         {hoverWord && (
-          <Tooltip style={{ left: hoverWord.x, top: hoverWord.y }} className="visible">
+          <Tooltip style={{ left: hoverWord.x, top: hoverWord.y, width: hoverWord.w }} className="visible">
             {hoverWord.sk && <span className="tip-sk">{hoverWord.sk}</span>}
             {hoverWord.tr && <span className="tip-tr">{hoverWord.tr}</span>}
             {hoverWord.ann && <span className="tip-ann">{hoverWord.ann}</span>}
