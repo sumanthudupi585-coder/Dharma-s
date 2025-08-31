@@ -68,6 +68,7 @@ function App() {
         <Suspense fallback={<LoadingScreen />}>
           <div className="app">
             <GameRouter />
+            <CornerMenu />
           </div>
         </Suspense>
       </ErrorBoundary>
