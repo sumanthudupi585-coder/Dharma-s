@@ -859,6 +859,32 @@ export default function GameplayScreen() {
           </Overlay>
         )}
       </AnimatePresence>
+
+      {/* Mobile overlay for journey map */}
+      <AnimatePresence>
+        {mobileMapOpen && (
+          <Overlay
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setMobileMapOpen(false)}
+          >
+            <OverlayContent
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <SceneProgressMap
+                scenes={sceneOrder}
+                current={currentScene}
+                completed={state.gameProgress.completedScenes}
+                onSelect={(s) => { dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: s }); setMobileMapOpen(false); }}
+              />
+            </OverlayContent>
+          </Overlay>
+        )}
+      </AnimatePresence>
     </GameplayContainer>
   );
 }
