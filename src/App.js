@@ -84,6 +84,7 @@ function App() {
       <ErrorBoundary>
         <Suspense fallback={<LoadingScreen />}>
           <div className="app">
+            {React.createElement(require('./components/GenerativeBackground').default)}
             <GameRouter />
           </div>
           <OrientationNotice />
