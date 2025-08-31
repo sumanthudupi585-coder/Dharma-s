@@ -3,6 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import SettingsModal from './SettingsModal';
 import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
+import Button from '../ui/primitives/Button';
 
 // Subtle breathing glow for golden elements
 const breath = keyframes`
