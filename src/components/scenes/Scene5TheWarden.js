@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import ProgressiveNarrative from '../ProgressiveNarrative';
 
 const SceneContainer = styled.div`
-  height: 100%;
   padding: var(--spacing-lg);
 `;
 
@@ -21,7 +20,7 @@ const SceneTitle = styled(motion.h1)`
 
 const NarrativeText = styled(motion.div)`
   font-family: var(--font-primary);
-  color: var(--ink-black);
+  color: var(--parchment);
   font-size: 1.1rem;
   line-height: 1.8;
 `;
