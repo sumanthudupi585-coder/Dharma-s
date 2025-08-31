@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import GlossaryTerm from '../GlossaryTerm';
 import { useGame } from '../../context/GameContext';
-import TypewriterText from '../TypewriterText';
+import ProgressiveNarrative from '../ProgressiveNarrative';
 import useNyayaPuzzle from '../hooks/useNyayaPuzzle';
 
 const SceneContainer = styled.div`
@@ -214,10 +214,7 @@ export default function Scene3NyayaTrial() {
   const { state } = useGame();
   const reduced = state.settings?.accessibility?.reducedMotion;
   const puzzle = useNyayaPuzzle();
-
-  const Paragraph = ({ children }) => reduced ? <span>{children}</span> : (
-    <TypewriterText text={String(children)} />
-  );
+  const [showPuzzle, setShowPuzzle] = useState(false);
 
   return (
     <SceneContainer>
@@ -236,34 +233,30 @@ export default function Scene3NyayaTrial() {
         Scene 3: The First Sage's Trial - The Logic of Nyāya
       </SceneTitle>
 
-      <NarrativeText
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 0.3 }}
-      >
-        <p>
-          <Paragraph>
-            You descend into perfect, suffocating silence. The chamber below is a flawless circle of polished black stone that seems to drink the light from your torch, giving nothing back. The architecture is stark, logical, minimalist, almost alien in its perfection. This is not a place of worship, but a place of pure, cold intellect, a sanctuary for the mind stripped of all distraction and emotion.
-          </Paragraph>
-        </p>
-        <p>
-          <Paragraph>
-            Four alcoves are spaced at perfect ninety-degree intervals. In the center of the chamber, a massive, iris-like stone door, sealed tight, bars your progress. As you approach the first alcove, you feel a faint resonance in your mind, a memory of Thorne's teachings. It seems this chamber is designed not just to be solved, but to be understood, a living lesson in the architecture of truth.
-          </Paragraph>
-        </p>
-        <p>
-          <Paragraph>
-            The Four Pramāṇas await your understanding:
-          </Paragraph>
-          <span>
-            <GlossaryTerm className="highlight-mystical is-interactive" term="Pratyakṣa" /> (Perception),
-            <GlossaryTerm className="highlight-mystical is-interactive" term="Anumāṇa" /> (Inference),
-            <GlossaryTerm className="highlight-mystical is-interactive" term="Upamāna" /> (Comparison), and
-            <GlossaryTerm className="highlight-mystical is-interactive" term="Śabda" /> (Testimony). Each must be proven before the way forward opens.
-          </span>
-        </p>
+      <NarrativeText initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.2 }}>
+        <ProgressiveNarrative
+          autoAdvance={!reduced}
+          delay={1200}
+          onComplete={() => setShowPuzzle(true)}
+          blocks={[
+            (<div>Silent, circular chamber of obsidian. Reason over ritual.</div>),
+            (<div>Four alcoves. A sealed iris door. The room demands clarity.</div>),
+            (
+              <div>
+                Prove the Four Pramāṇas:
+                <span>
+                  <GlossaryTerm className="highlight-mystical is-interactive" term="Pratyakṣa" /> (Perception),
+                  <GlossaryTerm className="highlight-mystical is-interactive" term="Anumāṇa" /> (Inference),
+                  <GlossaryTerm className="highlight-mystical is-interactive" term="Upamāna" /> (Comparison),
+                  <GlossaryTerm className="highlight-mystical is-interactive" term="Śabda" /> (Testimony).
+                </span>
+              </div>
+            )
+          ]}
+        />
       </NarrativeText>
 
+      {showPuzzle && (
       <PuzzleWrap role="region" aria-label="Nyāya syllogism puzzle">
         <CardsRow aria-label="Premise cards">
           {puzzle.cards.map((c) => (
@@ -313,6 +306,7 @@ export default function Scene3NyayaTrial() {
         </Controls>
         <Message role="status">{puzzle.message}</Message>
       </PuzzleWrap>
+      )}
     </SceneContainer>
   );
 }
