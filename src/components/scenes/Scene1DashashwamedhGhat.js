@@ -406,7 +406,8 @@ export default function Scene1DashashwamedhGhat() {
     const timer = setTimeout(() => {
       setHighlightedMovements(CORRECT_SEQUENCE);
       setShowPuzzle(true);
-      
+      setGamePhase('puzzle');
+
       dispatch({
         type: ACTIONS.ADD_CLUE,
         payload: {
