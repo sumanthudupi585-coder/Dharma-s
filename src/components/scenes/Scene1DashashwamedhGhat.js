@@ -24,7 +24,6 @@ const flameFlicker = keyframes`
 `;
 
 const SceneContainer = styled.div`
-  height: 100%;
   padding: var(--spacing-lg);
   position: relative;
 `;
@@ -36,7 +35,7 @@ const motesDrift = keyframes`
   100% { transform: translateY(-40px) translateX(20px); opacity: 0.2; }
 `;
 const AtmosphereLayer = styled.div`
-  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
   background-image:
     radial-gradient(2px 2px at 20% 80%, rgba(212,175,55,0.18) 0, transparent 60%),
     radial-gradient(2px 2px at 60% 70%, rgba(255,215,0,0.12) 0, transparent 60%),
@@ -53,12 +52,14 @@ const WaterSheen = styled.div`
   position: absolute; left: 0; right: 0; bottom: 6%; height: 8%;
   background: linear-gradient(90deg, rgba(255,215,0,0.08), rgba(255,215,0,0.02), rgba(255,215,0,0.08));
   background-size: 200% 100%;
-  filter: blur(6px); opacity: 0.25; pointer-events: none; z-index: 1;
+  filter: blur(6px); opacity: 0.25; pointer-events: none; z-index: 0;
   animation: ${waterGlint} 12s linear infinite;
   will-change: background-position, opacity;
 `;
 
 const SceneTitle = styled(motion.h1)`
+  position: relative;
+  z-index: 2;
   font-family: var(--font-display);
   color: var(--gold);
   font-size: var(--fs-xxl);
@@ -70,6 +71,8 @@ const SceneTitle = styled(motion.h1)`
 `;
 
 const NarrativeText = styled(motion.div)`
+  position: relative;
+  z-index: 2;
   font-family: var(--font-primary);
   color: var(--parchment);
   font-size: var(--fs-lg);
@@ -82,6 +85,8 @@ const NarrativeText = styled(motion.div)`
 `;
 
 const ObjectiveBox = styled(motion.div)`
+  position: relative;
+  z-index: 2;
   background: linear-gradient(145deg, rgba(212, 175, 55, 0.1), rgba(255, 107, 53, 0.1));
   border: 2px solid var(--gold);
   border-radius: var(--border-radius);
@@ -105,6 +110,8 @@ const ObjectiveText = styled.p`
 `;
 
 const PuzzleSection = styled(motion.div)`
+  position: relative;
+  z-index: 2;
   background: linear-gradient(145deg, rgba(26, 26, 46, 0.05), rgba(22, 33, 62, 0.05));
   border: 2px solid var(--copper);
   border-radius: var(--border-radius);
@@ -280,6 +287,8 @@ const PositionedRipple = styled(WaterRipple)`
 `;
 
 const ChoiceSection = styled(motion.div)`
+  position: relative;
+  z-index: 2;
   margin-top: var(--spacing-xl);
   text-align: center;
 `;
@@ -357,6 +366,8 @@ const HintText = styled.p`
 `;
 
 const CenteredBlock = styled(motion.div)`
+  position: relative;
+  z-index: 2;
   text-align: center;
   margin-top: var(--spacing-xl);
 `;
