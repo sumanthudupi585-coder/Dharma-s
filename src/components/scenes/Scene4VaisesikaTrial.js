@@ -5,7 +5,6 @@ import GlossaryTerm from '../GlossaryTerm';
 import ProgressiveNarrative from '../ProgressiveNarrative';
 
 const SceneContainer = styled.div`
-  height: 100%;
   padding: var(--spacing-lg);
 `;
 
