@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import ProgressiveNarrative from '../ProgressiveNarrative';
@@ -60,9 +60,41 @@ const NarrativeText = styled(motion.div)`
   line-height: 1.8;
 `;
 
+const PuzzleWrap = styled.div`
+  margin-top: var(--spacing-xl);
+  border: 2px solid #d4af37;
+  border-radius: 12px;
+  background: linear-gradient(145deg, rgba(0,0,0,0.85), rgba(12,12,12,0.95));
+  padding: var(--spacing-lg);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.7), 0 0 18px rgba(212,175,55,0.18);
+`;
+const Q = styled.p`
+  color: #e8c86a; text-align: center; margin: 0 0 var(--spacing-md);
+`;
+const Options = styled.div`
+  display: grid; gap: var(--spacing-sm);
+`;
+const OptionBtn = styled.button`
+  text-align: left; padding: 10px 12px; border-radius: 10px; border: 1px solid #d4af37; background: linear-gradient(145deg, rgba(0,0,0,0.8), rgba(15,15,15,0.9)); color: #d4af37; cursor: pointer;
+  &:hover { border-color: #ffd700; transform: translateY(-1px); }
+`;
+const ContinueBtn = styled.button`
+  margin-top: var(--spacing-md); padding: 10px 14px; border-radius: 10px; border: 1px solid #d4af37; background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95)); color: #e8c86a; cursor: pointer;
+`;
+
 export default function Scene2LabyrinthGhats() {
   const { dispatch } = useGame();
-  const handleDone = () => {
+  const [answered, setAnswered] = useState(false);
+  const [correct, setCorrect] = useState(false);
+  const handleAnswer = (id) => {
+    setAnswered(true);
+    const ok = id === 'conch_right_smoke';
+    setCorrect(ok);
+    if (ok) {
+      dispatch({ type: ACTIONS.ADD_CLUE, payload: { id: 'maze_rule', title: 'Labyrinth Rule', description: 'Follow the conch-call, keep right at the smoke.', tags: ['labyrinth','rule'], scene: SCENES.LABYRINTH_GHATS } });
+    }
+  };
+  const goNext = () => {
     dispatch({ type: ACTIONS.COMPLETE_SCENE, payload: SCENES.LABYRINTH_GHATS });
     dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: SCENES.NYAYA_TRIAL });
   };
@@ -80,7 +112,6 @@ export default function Scene2LabyrinthGhats() {
       
       <NarrativeText initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }}>
         <ProgressiveNarrative
-          onComplete={handleDone}
           blocks={[
             (
               <p>
@@ -111,6 +142,19 @@ export default function Scene2LabyrinthGhats() {
           ]}
         />
       </NarrativeText>
+
+      <PuzzleWrap role="region" aria-label="Labyrinth riddle">
+        <Q>Which path leads you onward through the ghats?</Q>
+        <Options>
+          <OptionBtn className="is-interactive" onClick={() => handleAnswer('toward_crowd')}>Head toward the loudest crowd; follow the noise.</OptionBtn>
+          <OptionBtn className="is-interactive" onClick={() => handleAnswer('conch_right_smoke')}>Follow the conch-call; keep right when the smoke thickens.</OptionBtn>
+          <OptionBtn className="is-interactive" onClick={() => handleAnswer('random_turns')}>Take random turns to confuse any tail.</OptionBtn>
+        </Options>
+        {answered && (
+          <Q style={{ color: correct ? '#a7e28a' : '#b8941f' }}>{correct ? 'The alleys open; you feel the way is true.' : 'The way narrows; that was not it.'}</Q>
+        )}
+        {correct && <ContinueBtn className="is-interactive" onClick={goNext}>Continue</ContinueBtn>}
+      </PuzzleWrap>
     </SceneContainer>
   );
 }
