@@ -243,6 +243,11 @@ function TitleScreen() {
             Sacred Settings
           </ActionButton>
         </Menu>
+        <div style={{ height: '8px' }} />
+        <React.Suspense fallback={null}>
+          {/* Daily riddle reward */}
+          <DailyRiddle />
+        </React.Suspense>
       </CenterStack>
       <SettingsModal open={openSettings} onClose={() => setOpenSettings(false)} />
     </ScreenRoot>
