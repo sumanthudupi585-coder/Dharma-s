@@ -216,7 +216,7 @@ const AlcoveGlow = styled.div`
 `;
 
 export default function Scene3NyayaTrial() {
-  const { state } = useGame();
+  useGame();
   const puzzle = useNyayaPuzzle();
   const [showPuzzle, setShowPuzzle] = useState(false);
 
