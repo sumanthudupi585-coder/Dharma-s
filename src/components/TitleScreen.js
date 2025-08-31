@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import SettingsModal from './SettingsModal';
@@ -40,15 +40,16 @@ const ScreenRoot = styled.div`
   position: relative;
   overflow: hidden;
   background:
-    radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.95) 65%),
+    radial-gradient(ellipse at center, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.95) 65%),
     linear-gradient(135deg, var(--ink-black) 0%, var(--deep-blue) 50%, var(--royal-blue) 100%);
 
   &::before {
     content: '';
     position: absolute;
     inset: -20%;
-    background: radial-gradient(60% 60% at 50% 45%, rgba(212,175,55,0.10) 0%, rgba(0,0,0,0) 60%),
-                radial-gradient(40% 40% at 70% 60%, rgba(255,215,0,0.08) 0%, rgba(0,0,0,0) 70%);
+    background:
+      radial-gradient(60% 60% at 50% 45%, rgba(212, 175, 55, 0.1) 0%, rgba(0, 0, 0, 0) 60%),
+      radial-gradient(40% 40% at 70% 60%, rgba(255, 215, 0, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
     filter: blur(26px);
     animation: ${drift} 18s ease-in-out infinite;
   }
@@ -57,7 +58,7 @@ const ScreenRoot = styled.div`
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     background-size: 3px 3px;
     opacity: 0.06;
     pointer-events: none;
@@ -65,12 +66,18 @@ const ScreenRoot = styled.div`
 `;
 
 const ParallaxLayer = styled.div`
-  position: absolute; inset: 0; pointer-events: none;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   transform: translate(calc(var(--mx, 0) * -2%), calc(var(--my, 0) * -2%));
 `;
 
 const Particle = styled.div`
-  position: absolute; width: 3px; height: 3px; border-radius: 50%; background: rgba(212,175,55,0.6);
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(212, 175, 55, 0.6);
   filter: blur(0.3px);
   left: var(--x);
   top: var(--y);
@@ -78,11 +85,14 @@ const Particle = styled.div`
 `;
 
 const Sanskrit = styled.span`
-  position: absolute; font-family: var(--font-devanagari); font-size: 18px; color: rgba(230, 199, 106, 0.6);
+  position: absolute;
+  font-family: var(--font-devanagari);
+  font-size: 18px;
+  color: rgba(230, 199, 106, 0.6);
   opacity: 0.8;
   left: var(--x);
   top: var(--y);
-  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 `;
 
 const CenterStack = styled.div`
@@ -106,8 +116,8 @@ const TitleHalo = styled.div`
   transform: translate(-50%, calc(-50% - 40px));
   border-radius: 1000px;
   background:
-    radial-gradient(65% 120% at 50% 50%, rgba(212,175,55,0.16), rgba(212,175,55,0) 70%),
-    radial-gradient(100% 220% at 50% 100%, rgba(255,215,0,0.08), rgba(0,0,0,0) 60%);
+    radial-gradient(65% 120% at 50% 50%, rgba(212, 175, 55, 0.16), rgba(212, 175, 55, 0) 70%),
+    radial-gradient(100% 220% at 50% 100%, rgba(255, 215, 0, 0.08), rgba(0, 0, 0, 0) 60%);
   filter: blur(18px);
   pointer-events: none;
   position: relative;
@@ -118,12 +128,13 @@ const TitleHalo = styled.div`
     position: absolute;
     inset: -12%;
     border-radius: inherit;
-    background: conic-gradient(from 0deg,
-      rgba(212,175,55,0.08) 0deg,
-      rgba(212,175,55,0.0) 45deg,
-      rgba(212,175,55,0.10) 180deg,
-      rgba(212,175,55,0.0) 315deg,
-      rgba(212,175,55,0.08) 360deg
+    background: conic-gradient(
+      from 0deg,
+      rgba(212, 175, 55, 0.08) 0deg,
+      rgba(212, 175, 55, 0) 45deg,
+      rgba(212, 175, 55, 0.1) 180deg,
+      rgba(212, 175, 55, 0) 315deg,
+      rgba(212, 175, 55, 0.08) 360deg
     );
     filter: blur(24px);
     animation: ${slowSpin} 30s linear infinite;
@@ -140,14 +151,16 @@ const Mandala = styled.div`
   height: clamp(160px, 32vw, 320px);
   border-radius: 50%;
   background:
-    radial-gradient(closest-side, rgba(212,175,55,0.12), rgba(0,0,0,0) 70%),
-    conic-gradient(from 0deg,
-      rgba(212,175,55,0.18) 0deg 6deg,
+    radial-gradient(closest-side, rgba(212, 175, 55, 0.12), rgba(0, 0, 0, 0) 70%),
+    conic-gradient(
+      from 0deg,
+      rgba(212, 175, 55, 0.18) 0deg 6deg,
       transparent 6deg 12deg,
-      rgba(212,175,55,0.14) 12deg 18deg,
+      rgba(212, 175, 55, 0.14) 12deg 18deg,
       transparent 18deg 24deg,
-      rgba(212,175,55,0.12) 24deg 30deg,
-      transparent 30deg 36deg);
+      rgba(212, 175, 55, 0.12) 24deg 30deg,
+      transparent 30deg 36deg
+    );
   filter: blur(0.2px);
   opacity: 0.6;
   pointer-events: none;
@@ -160,7 +173,13 @@ const TitleWordmark = styled.h1`
   letter-spacing: 0.12em;
   line-height: 1.05;
   margin: 0;
-  background: linear-gradient(180deg, rgba(255,244,176,0.95) 0%, var(--gold) 35%, var(--faded-gold) 65%, var(--copper) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 244, 176, 0.95) 0%,
+    var(--gold) 35%,
+    var(--faded-gold) 65%,
+    var(--copper) 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -172,7 +191,11 @@ const TitleWordmark = styled.h1`
     content: '';
     position: absolute;
     inset: -8px;
-    background: radial-gradient(circle at 50% 55%, rgba(212,175,55,0.16), rgba(212,175,55,0) 60%);
+    background: radial-gradient(
+      circle at 50% 55%,
+      rgba(212, 175, 55, 0.16),
+      rgba(212, 175, 55, 0) 60%
+    );
     filter: blur(14px);
     z-index: -1;
     pointer-events: none;
@@ -206,11 +229,22 @@ function TitleScreen() {
   const [openSettings, setOpenSettings] = useState(false);
   const [hasSave, setHasSave] = useState(false);
   const rootRef = useRef(null);
-  const particles = useMemo(() => Array.from({ length: 36 }, () => ({ x: Math.random() * 100, y: Math.random() * 100 })), []);
-  const glyphs = useMemo(() => ['ॐ','अ','इ','उ','क','थ','ध','ज्ञ','श','ष','ह','ग','य','र','ल','व'].map((g) => ({ g, x: Math.random()*100, y: Math.random()*100 })), []);
+  const particles = useMemo(
+    () => Array.from({ length: 36 }, () => ({ x: Math.random() * 100, y: Math.random() * 100 })),
+    []
+  );
+  const glyphs = useMemo(
+    () =>
+      ['ॐ', 'अ', 'इ', 'उ', 'क', 'थ', 'ध', 'ज्ञ', 'श', 'ष', 'ह', 'ग', 'य', 'र', 'ल', 'व'].map(
+        (g) => ({ g, x: Math.random() * 100, y: Math.random() * 100 })
+      ),
+    []
+  );
 
   useEffect(() => {
-    try { setHasSave(!!localStorage.getItem('dharmas-cipher-state-v1')); } catch (_) {}
+    try {
+      setHasSave(!!localStorage.getItem('dharmas-cipher-state-v1'));
+    } catch (_) {}
     const el = rootRef.current;
     if (!el) return;
     const onMove = (e) => {
@@ -221,16 +255,21 @@ function TitleScreen() {
       el.style.setProperty('--my', String(my));
     };
     const onKey = (e) => {
-      if (e.key === 'Enter') handleNewGame();
+      if (e.key === 'Enter') {
+        dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.PROFILE_CREATION });
+      }
     };
     el.addEventListener('mousemove', onMove);
     window.addEventListener('keydown', onKey);
-    return () => { el.removeEventListener('mousemove', onMove); window.removeEventListener('keydown', onKey); };
-  }, []);
+    return () => {
+      el.removeEventListener('mousemove', onMove);
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [dispatch]);
 
-  const handleNewGame = () => {
+  const handleNewGame = useCallback(() => {
     dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.PROFILE_CREATION });
-  };
+  }, [dispatch]);
 
   const handleLoadGame = () => {
     try {
@@ -246,7 +285,9 @@ function TitleScreen() {
     }
   };
 
-  const handleSettings = () => { setOpenSettings(true); };
+  const handleSettings = () => {
+    setOpenSettings(true);
+  };
 
   return (
     <ScreenRoot ref={rootRef}>
@@ -255,7 +296,9 @@ function TitleScreen() {
           <Particle key={i} style={{ '--x': `${p.x}%`, '--y': `${p.y}%` }} />
         ))}
         {glyphs.map((s, i) => (
-          <Sanskrit key={i} style={{ '--x': `${s.x}%`, '--y': `${s.y}%` }}>{s.g}</Sanskrit>
+          <Sanskrit key={i} style={{ '--x': `${s.x}%`, '--y': `${s.y}%` }}>
+            {s.g}
+          </Sanskrit>
         ))}
       </ParallaxLayer>
       <CenterStack>
@@ -263,14 +306,41 @@ function TitleScreen() {
         <Mandala aria-hidden />
         <TitleWordmark className="shimmer">Dharma's Cipher</TitleWordmark>
         <Whisper>Press Enter to begin.</Whisper>
-        <Menu initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-          <ActionButton className="is-interactive" type="button" aria-label="Start New Journey" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleNewGame}>
+        <Menu
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35 }}
+        >
+          <ActionButton
+            className="is-interactive"
+            type="button"
+            aria-label="Start New Journey"
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            onClick={handleNewGame}
+          >
             Start New Journey
           </ActionButton>
-          <ActionButton className="is-interactive" type="button" aria-label="Continue Path" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleLoadGame} disabled={!hasSave} aria-disabled={!hasSave}>
+          <ActionButton
+            className="is-interactive"
+            type="button"
+            aria-label="Continue Path"
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            onClick={handleLoadGame}
+            disabled={!hasSave}
+            aria-disabled={!hasSave}
+          >
             Continue Path
           </ActionButton>
-          <ActionButton className="is-interactive" type="button" aria-label="Open Sacred Settings" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleSettings}>
+          <ActionButton
+            className="is-interactive"
+            type="button"
+            aria-label="Open Sacred Settings"
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            onClick={handleSettings}
+          >
             Sacred Settings
           </ActionButton>
         </Menu>

@@ -13,16 +13,43 @@ const pulse = keyframes`
 `;
 
 const Wrap = styled.div`
-  min-height: 100vh; display: grid; place-items: center; background: radial-gradient(ellipse at center, var(--ink-black) 0%, var(--deep-blue) 55%, var(--royal-blue) 100%);
-  color: #e6c76a; position: relative; overflow: hidden;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(
+    ellipse at center,
+    var(--ink-black) 0%,
+    var(--deep-blue) 55%,
+    var(--royal-blue) 100%
+  );
+  color: #e6c76a;
+  position: relative;
+  overflow: hidden;
 `;
 
 const Sigil = styled.div`
-  width: 120px; height: 120px; border-radius: 50%; border: 2px solid #d4af37; position: relative; animation: ${spin} 5s linear infinite;
-  box-shadow: 0 0 30px rgba(212,175,55,0.25);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px solid #d4af37;
+  position: relative;
+  animation: ${spin} 5s linear infinite;
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.25);
   will-change: transform, opacity, filter;
-  &::before, &::after { content: ''; position: absolute; inset: 10px; border-radius: 50%; border: 1px dashed rgba(212,175,55,0.5); }
-  &::after { inset: 22px; border-style: solid; border-width: 1px; border-color: rgba(212,175,55,0.4); }
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border-radius: 50%;
+    border: 1px dashed rgba(212, 175, 55, 0.5);
+  }
+  &::after {
+    inset: 22px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgba(212, 175, 55, 0.4);
+  }
 `;
 
 const Title = styled.h1`
@@ -53,7 +80,12 @@ const tips = [
   'Listen to the river; it remembers.',
   'Symbols whisper when the mind is still.',
   'Your journal preserves fragments of fate.',
-  'Aether flows where attention rests.'
+  'Aether flows where attention rests.',
+  'Where there is smoke, there is inference.',
+  'Nine dravyas bind the world; discern which is at play.',
+  'Sattva clarifies, Rajas propels, Tamas obscures.',
+  'The Ganga keeps counsel with those who linger.',
+  'Let the mind be a still page; the ink will arrange itself.',
 ];
 
 const Center = styled.div`
@@ -65,7 +97,10 @@ function LoadingScreen() {
   const [tip, setTip] = useState(tips[0]);
   useEffect(() => {
     let i = 0;
-    const id = setInterval(() => { i = (i + 1) % tips.length; setTip(tips[i]); }, 2800);
+    const id = setInterval(() => {
+      i = (i + 1) % tips.length;
+      setTip(tips[i]);
+    }, 2800);
     return () => clearInterval(id);
   }, []);
   return (

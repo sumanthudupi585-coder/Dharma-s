@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGame } from '../context/GameContext';
+import { useGame, ACTIONS } from '../context/GameContext';
 
 // Breathing glow effect for golden elements
 const breathingGlow = keyframes`
@@ -63,11 +63,10 @@ const tabGlow = keyframes`
 `;
 
 const JournalContainer = styled(motion.div)`
-  background: 
-    linear-gradient(145deg, rgba(10, 10, 10, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
+  background: linear-gradient(145deg, rgba(10, 10, 10, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
   border: 3px solid #d4af37;
   border-radius: 12px;
-  box-shadow: 
+  box-shadow:
     0 15px 40px rgba(0, 0, 0, 0.8),
     0 0 40px rgba(212, 175, 55, 0.3),
     inset 0 1px 0 rgba(212, 175, 55, 0.2);
@@ -78,7 +77,7 @@ const JournalContainer = styled(motion.div)`
   overflow: hidden;
   animation: ${breathingGlow} 8s ease-in-out infinite;
   backdrop-filter: blur(10px);
-  
+
   /* Ancient book binding decoration */
   &::before {
     content: '';
@@ -87,20 +86,21 @@ const JournalContainer = styled(motion.div)`
     top: 10%;
     bottom: 10%;
     width: 10px;
-    background: linear-gradient(to bottom, 
-      #d4af37 0%, 
-      #ffd700 25%, 
-      #d4af37 50%, 
-      #ffd700 75%, 
+    background: linear-gradient(
+      to bottom,
+      #d4af37 0%,
+      #ffd700 25%,
+      #d4af37 50%,
+      #ffd700 75%,
       #d4af37 100%
     );
     border-radius: 0 5px 5px 0;
-    box-shadow: 
+    box-shadow:
       inset 1px 0 2px rgba(0, 0, 0, 0.3),
       0 0 15px rgba(212, 175, 55, 0.6);
     z-index: 5;
   }
-  
+
   /* Binding rivets with breathing glow */
   &::after {
     content: '';
@@ -111,7 +111,7 @@ const JournalContainer = styled(motion.div)`
     height: 4px;
     background: #ffd700;
     border-radius: 50%;
-    box-shadow: 
+    box-shadow:
       0 20% 0 #ffd700,
       0 40% 0 #ffd700,
       0 60% 0 #ffd700,
@@ -127,11 +127,11 @@ const JournalHeader = styled.div`
   border-bottom: 2px solid #d4af37;
   margin-bottom: var(--spacing-md);
   position: relative;
-  background:
-    linear-gradient(145deg, rgba(15, 15, 15, 0.9) 0%, rgba(5, 5, 5, 0.95) 100%);
+  background: linear-gradient(145deg, rgba(15, 15, 15, 0.9) 0%, rgba(5, 5, 5, 0.95) 100%);
 
   /* Decorative corner flourishes */
-  &::before, &::after {
+  &::before,
+  &::after {
     content: '❦';
     position: absolute;
     top: var(--spacing-sm);
@@ -156,8 +156,8 @@ const HintCounter = styled.span`
   position: absolute;
   right: var(--spacing-lg);
   top: var(--spacing-lg);
-  border: 1px solid rgba(212,175,55,0.45);
-  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.82), rgba(18, 18, 18, 0.95));
   color: #e8c86a;
   border-radius: 999px;
   padding: 6px 10px;
@@ -172,7 +172,8 @@ const JournalTitle = styled.h2`
   margin-bottom: var(--spacing-md);
   text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
 
-  &::before, &::after {
+  &::before,
+  &::after {
     content: '✦';
     color: #ffd700;
     font-size: 1rem;
@@ -186,8 +187,7 @@ const TabsContainer = styled.div`
   display: flex;
   justify-content: space-around;
   margin-bottom: var(--spacing-md);
-  background: 
-    linear-gradient(145deg, rgba(0, 0, 0, 0.7) 0%, rgba(10, 10, 10, 0.9) 100%);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.7) 0%, rgba(10, 10, 10, 0.9) 100%);
   border-radius: 8px;
   padding: var(--spacing-xs);
   margin: 0 var(--spacing-sm) var(--spacing-md);
@@ -195,10 +195,9 @@ const TabsContainer = styled.div`
 `;
 
 const Tab = styled(motion.button)`
-  background: ${props => props.$active ?
-    'linear-gradient(145deg, #d4af37, #ffd700)' :
-    'transparent'};
-  color: ${props => props.$active ? '#000' : '#d4af37'};
+  background: ${(props) =>
+    props.$active ? 'linear-gradient(145deg, #d4af37, #ffd700)' : 'transparent'};
+  color: ${(props) => (props.$active ? '#000' : '#d4af37')};
   border: none;
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: 6px;
@@ -211,12 +210,14 @@ const Tab = styled(motion.button)`
   text-align: center;
   position: relative;
   overflow: hidden;
-  
-  ${props => props.$active && css`
-    animation: ${tabGlow} 4s ease-in-out infinite;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  `}
-  
+
+  ${(props) =>
+    props.$active &&
+    css`
+      animation: ${tabGlow} 4s ease-in-out infinite;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    `}
+
   /* Golden energy sweep effect */
   &::before {
     content: '';
@@ -225,23 +226,17 @@ const Tab = styled(motion.button)`
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, 
-      transparent, 
-      rgba(212, 175, 55, 0.3), 
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
     transition: left 0.3s ease;
   }
-  
+
   &:hover {
-    background: ${props => props.$active ? 
-      'linear-gradient(145deg, #ffd700, #ffed4e)' : 
-      'rgba(212, 175, 55, 0.2)'};
-    color: ${props => props.$active ? '#000' : '#ffd700'};
-    text-shadow: ${props => props.$active ? 
-      '1px 1px 2px rgba(0, 0, 0, 0.6)' : 
-      '0 0 10px rgba(255, 215, 0, 0.6)'};
-    
+    background: ${(props) =>
+      props.$active ? 'linear-gradient(145deg, #ffd700, #ffed4e)' : 'rgba(212, 175, 55, 0.2)'};
+    color: ${(props) => (props.$active ? '#000' : '#ffd700')};
+    text-shadow: ${(props) =>
+      props.$active ? '1px 1px 2px rgba(0, 0, 0, 0.6)' : '0 0 10px rgba(255, 215, 0, 0.6)'};
+
     &::before {
       left: 100%;
     }
@@ -254,7 +249,7 @@ const TabContent = styled(motion.div)`
   overflow-y: auto;
   position: relative;
   animation: ${pageFlip} 0.6s ease-in-out;
-  
+
   /* Golden journal lines background */
   &::after {
     content: '';
@@ -273,17 +268,17 @@ const TabContent = styled(motion.div)`
     z-index: 1;
     opacity: 0.6;
   }
-  
+
   /* Golden scrollbar */
   &::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.5);
     border-radius: 3px;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: linear-gradient(to bottom, #d4af37, #ffd700, #d4af37);
     border-radius: 3px;
@@ -311,15 +306,14 @@ const ProfileTitle = styled.h3`
 `;
 
 const TraitSummary = styled.div`
-  background: 
-    linear-gradient(145deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
+  background: linear-gradient(145deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
   border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 8px;
   padding: var(--spacing-md);
   margin-bottom: var(--spacing-md);
   position: relative;
   backdrop-filter: blur(5px);
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -327,11 +321,7 @@ const TraitSummary = styled.div`
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg, 
-      transparent 0%, 
-      #d4af37 50%, 
-      transparent 100%
-    );
+    background: linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%);
     animation: ${energyFlow} 4s linear infinite;
   }
 `;
@@ -361,14 +351,13 @@ const ObjectivesList = styled.div`
 `;
 
 const ObjectiveItem = styled(motion.div)`
-  background: 
-    linear-gradient(145deg, rgba(0, 0, 0, 0.8) 0%, rgba(15, 15, 15, 0.9) 100%);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.8) 0%, rgba(15, 15, 15, 0.9) 100%);
   border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 8px;
   padding: var(--spacing-md);
   position: relative;
   backdrop-filter: blur(5px);
-  
+
   &::before {
     content: '📋';
     position: absolute;
@@ -400,11 +389,11 @@ const ClueItem = styled(motion.div)`
   border-bottom: 1px solid rgba(212, 175, 55, 0.3);
   padding-bottom: var(--spacing-md);
   position: relative;
-  
+
   &:last-child {
     border-bottom: none;
   }
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -412,11 +401,7 @@ const ClueItem = styled(motion.div)`
     top: 0;
     width: 3px;
     height: 100%;
-    background: linear-gradient(to bottom, 
-      transparent, 
-      #d4af37, 
-      transparent
-    );
+    background: linear-gradient(to bottom, transparent, #d4af37, transparent);
     opacity: 0.5;
   }
 `;
@@ -431,7 +416,7 @@ const ClueTitle = styled.h4`
   gap: var(--spacing-sm);
   text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
   margin-left: var(--spacing-sm);
-  
+
   &::before {
     content: '🔍';
     font-size: 1rem;
@@ -456,8 +441,7 @@ const ClueSketch = styled.div`
   padding: var(--spacing-sm);
   border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 6px;
-  background: 
-    linear-gradient(145deg, rgba(212, 175, 55, 0.05) 0%, rgba(0, 0, 0, 0.8) 100%);
+  background: linear-gradient(145deg, rgba(212, 175, 55, 0.05) 0%, rgba(0, 0, 0, 0.8) 100%);
   text-align: center;
   font-size: 2rem;
   opacity: 0.8;
@@ -474,36 +458,37 @@ const InventoryGrid = styled.div`
 
 const InventorySlot = styled(motion.div)`
   aspect-ratio: 1;
-  background: 
-    linear-gradient(145deg, rgba(0, 0, 0, 0.8) 0%, rgba(15, 15, 15, 0.9) 100%);
-  border: 2px solid ${props => props.$hasItem ? '#d4af37' : 'rgba(212, 175, 55, 0.3)'};
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.8) 0%, rgba(15, 15, 15, 0.9) 100%);
+  border: 2px solid ${(props) => (props.$hasItem ? '#d4af37' : 'rgba(212, 175, 55, 0.3)')};
   border-radius: 8px;
   display: flex;
   justify-content: center;
   align-items: center;
-  cursor: ${props => props.$hasItem ? 'pointer' : 'default'};
+  cursor: ${(props) => (props.$hasItem ? 'pointer' : 'default')};
   font-size: 1.5rem;
   transition: all 0.3s ease;
   position: relative;
   backdrop-filter: blur(5px);
-  
-  ${props => props.$hasItem && css`
-    animation: ${breathingGlow} 6s ease-in-out infinite;
-    filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
-  `}
-  
+
+  ${(props) =>
+    props.$hasItem &&
+    css`
+      animation: ${breathingGlow} 6s ease-in-out infinite;
+      filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.4));
+    `}
+
   &:hover {
-    background: ${props => props.$hasItem ? 
-      'linear-gradient(145deg, rgba(212, 175, 55, 0.2) 0%, rgba(255, 107, 53, 0.1) 100%)' : 
-      'rgba(212, 175, 55, 0.1)'};
-    transform: ${props => props.$hasItem ? 'scale(1.05)' : 'none'};
-    border-color: ${props => props.$hasItem ? '#ffd700' : 'rgba(212, 175, 55, 0.5)'};
+    background: ${(props) =>
+      props.$hasItem
+        ? 'linear-gradient(145deg, rgba(212, 175, 55, 0.2) 0%, rgba(255, 107, 53, 0.1) 100%)'
+        : 'rgba(212, 175, 55, 0.1)'};
+    transform: ${(props) => (props.$hasItem ? 'scale(1.05)' : 'none')};
+    border-color: ${(props) => (props.$hasItem ? '#ffd700' : 'rgba(212, 175, 55, 0.5)')};
   }
 `;
 
 const ItemDetail = styled(motion.div)`
-  background: 
-    linear-gradient(145deg, rgba(5, 5, 5, 0.95) 0%, rgba(15, 15, 15, 0.9) 100%);
+  background: linear-gradient(145deg, rgba(5, 5, 5, 0.95) 0%, rgba(15, 15, 15, 0.9) 100%);
   border: 2px solid #d4af37;
   border-radius: 10px;
   padding: var(--spacing-lg);
@@ -547,21 +532,25 @@ const EmptyText = styled.p`
 `;
 
 export default function Journal({ isVisible = true }) {
-  const { state } = useGame();
+  const { state, dispatch } = useGame();
   const [activeTab, setActiveTab] = useState('profile');
   const [selectedItem, setSelectedItem] = useState(null);
-  
+
   const { playerProfile, gameProgress, inventory } = state;
 
   const [search, setSearch] = useState('');
   const [activeTags, setActiveTags] = useState(new Set());
 
-  const tagOptions = Array.from(new Set((inventory.clues || []).flatMap((c) => c.tags || []))).sort();
-  const toggleTag = (t) => setActiveTags((prev) => {
-    const next = new Set(prev);
-    if (next.has(t)) next.delete(t); else next.add(t);
-    return next;
-  });
+  const tagOptions = Array.from(
+    new Set((inventory.clues || []).flatMap((c) => c.tags || []))
+  ).sort();
+  const toggleTag = (t) =>
+    setActiveTags((prev) => {
+      const next = new Set(prev);
+      if (next.has(t)) next.delete(t);
+      else next.add(t);
+      return next;
+    });
   const filteredClues = (inventory.clues || []).filter((c) => {
     const text = `${c.title} ${c.description} ${c.sketch || ''}`.toLowerCase();
     const okText = !search || text.includes(search.toLowerCase());
@@ -574,7 +563,7 @@ export default function Journal({ isVisible = true }) {
     { id: 'objectives', label: 'Tasks', icon: '📋' },
     { id: 'clues', label: 'Clues', icon: '🔍' },
     { id: 'glossary', label: 'Glossary', icon: '📖' },
-    { id: 'inventory', label: 'Items', icon: '🎒' }
+    { id: 'inventory', label: 'Items', icon: '🎒' },
   ];
 
   const renderTabContent = () => {
@@ -584,44 +573,50 @@ export default function Journal({ isVisible = true }) {
           <ContentWrapper>
             <ProfileSection>
               <ProfileTitle>Ātman Vivaraṇa</ProfileTitle>
-              
+
               {playerProfile.primaryGuna && (
                 <TraitSummary>
                   <TraitLabel>Primary Guṇa</TraitLabel>
                   <TraitValue>
-                    {playerProfile.primaryGuna === 'SATTVA' ? 'Sattva (The Sage)' :
-                     playerProfile.primaryGuna === 'RAJAS' ? 'Rajas (The Scion)' :
-                     'Tamas (The Shadow)'}
+                    {playerProfile.primaryGuna === 'SATTVA'
+                      ? 'Sattva (The Sage)'
+                      : playerProfile.primaryGuna === 'RAJAS'
+                        ? 'Rajas (The Scion)'
+                        : 'Tamas (The Shadow)'}
                   </TraitValue>
                 </TraitSummary>
               )}
-              
+
               {playerProfile.primaryGana && (
                 <TraitSummary>
                   <TraitLabel>Primary Gaṇa</TraitLabel>
                   <TraitValue>
-                    {playerProfile.primaryGana === 'DEVA' ? 'Deva (The Divine)' :
-                     playerProfile.primaryGana === 'MANUSHYA' ? 'Manushya (The Human)' :
-                     'Rakshasa (The Fierce)'}
+                    {playerProfile.primaryGana === 'DEVA'
+                      ? 'Deva (The Divine)'
+                      : playerProfile.primaryGana === 'MANUSHYA'
+                        ? 'Manushya (The Human)'
+                        : 'Rakshasa (The Fierce)'}
                   </TraitValue>
                 </TraitSummary>
               )}
-              
+
               {playerProfile.nakshatra && (
                 <TraitSummary>
                   <TraitLabel>Janma Nakshatra</TraitLabel>
                   <TraitValue>{playerProfile.nakshatra.name}</TraitValue>
                 </TraitSummary>
               )}
-              
+
               {playerProfile.rashi && (
                 <TraitSummary>
                   <TraitLabel>Rashi</TraitLabel>
-                  <TraitValue>{playerProfile.rashi} ({playerProfile.nakshatra?.element})</TraitValue>
+                  <TraitValue>
+                    {playerProfile.rashi} ({playerProfile.nakshatra?.element})
+                  </TraitValue>
                 </TraitSummary>
               )}
             </ProfileSection>
-            
+
             {playerProfile.skills && playerProfile.skills.length > 0 && (
               <div>
                 <ProfileTitle>Sacred Abilities</ProfileTitle>
@@ -635,7 +630,7 @@ export default function Journal({ isVisible = true }) {
             )}
           </ContentWrapper>
         );
-        
+
       case 'objectives':
         return (
           <ContentWrapper>
@@ -659,18 +654,27 @@ export default function Journal({ isVisible = true }) {
             </ObjectivesList>
           </ContentWrapper>
         );
-        
+
       case 'clues':
         return (
           <ContentWrapper>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '12px' }}>
+            <div
+              style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '12px' }}
+            >
               <input
                 type="search"
                 placeholder="Search clues"
                 aria-label="Search clues"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                style={{ flex: 1, padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(212,175,55,0.35)', background: 'transparent', color: '#e8c86a' }}
+                style={{
+                  flex: 1,
+                  padding: '8px 10px',
+                  borderRadius: 8,
+                  border: '1px solid rgba(212,175,55,0.35)',
+                  background: 'transparent',
+                  color: '#e8c86a',
+                }}
               />
             </div>
             {tagOptions.length > 0 && (
@@ -681,7 +685,17 @@ export default function Journal({ isVisible = true }) {
                     className="is-interactive"
                     onClick={() => toggleTag(t)}
                     aria-pressed={activeTags.has(t)}
-                    style={{ padding: '6px 10px', borderRadius: 999, border: activeTags.has(t) ? '1px solid #ffd700' : '1px solid rgba(212,175,55,0.35)', background: activeTags.has(t) ? 'linear-gradient(145deg, #d4af37, #ffd700)' : 'transparent', color: activeTags.has(t) ? '#000' : '#e8c86a' }}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: 999,
+                      border: activeTags.has(t)
+                        ? '1px solid #ffd700'
+                        : '1px solid rgba(212,175,55,0.35)',
+                      background: activeTags.has(t)
+                        ? 'linear-gradient(145deg, #d4af37, #ffd700)'
+                        : 'transparent',
+                      color: activeTags.has(t) ? '#000' : '#e8c86a',
+                    }}
                   >
                     #{t}
                   </button>
@@ -697,7 +711,8 @@ export default function Journal({ isVisible = true }) {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.5, delay: index * 0.06 }}
                     onClick={() => {
-                      if (clue.scene) dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: clue.scene });
+                      if (clue.scene)
+                        dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: clue.scene });
                     }}
                     role={clue.scene ? 'button' : undefined}
                     tabIndex={clue.scene ? 0 : -1}
@@ -708,13 +723,22 @@ export default function Journal({ isVisible = true }) {
                     {clue.tags && clue.tags.length > 0 && (
                       <div style={{ marginTop: 6, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                         {clue.tags.map((tg) => (
-                          <span key={tg} style={{ border: '1px solid rgba(212,175,55,0.35)', borderRadius: 999, padding: '2px 8px', color: '#b8941f', fontSize: '0.8rem' }}>#{tg}</span>
+                          <span
+                            key={tg}
+                            style={{
+                              border: '1px solid rgba(212,175,55,0.35)',
+                              borderRadius: 999,
+                              padding: '2px 8px',
+                              color: '#b8941f',
+                              fontSize: '0.8rem',
+                            }}
+                          >
+                            #{tg}
+                          </span>
                         ))}
                       </div>
                     )}
-                    {clue.sketch && (
-                      <ClueSketch>{clue.sketch}</ClueSketch>
-                    )}
+                    {clue.sketch && <ClueSketch>{clue.sketch}</ClueSketch>}
                   </ClueItem>
                 ))
               ) : (
@@ -753,7 +777,7 @@ export default function Journal({ isVisible = true }) {
             </CluesList>
           </ContentWrapper>
         );
-        
+
       case 'inventory':
         return (
           <ContentWrapper>
@@ -773,7 +797,7 @@ export default function Journal({ isVisible = true }) {
                 );
               })}
             </InventoryGrid>
-            
+
             <AnimatePresence>
               {selectedItem && (
                 <ItemDetail
@@ -787,7 +811,7 @@ export default function Journal({ isVisible = true }) {
                 </ItemDetail>
               )}
             </AnimatePresence>
-            
+
             {inventory.items.length === 0 && (
               <EmptyState>
                 <EmptyText>Sacred artifacts will manifest here...</EmptyText>
@@ -795,7 +819,7 @@ export default function Journal({ isVisible = true }) {
             )}
           </ContentWrapper>
         );
-        
+
       default:
         return null;
     }
@@ -839,12 +863,15 @@ export default function Journal({ isVisible = true }) {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <span className="emoji-icon" aria-hidden>{tab.icon}</span> {tab.label}
+              <span className="emoji-icon" aria-hidden>
+                {tab.icon}
+              </span>{' '}
+              {tab.label}
             </Tab>
           ))}
         </TabsContainer>
       </JournalHeader>
-      
+
       <TabContent
         key={activeTab}
         id={`tab-panel-${activeTab}`}

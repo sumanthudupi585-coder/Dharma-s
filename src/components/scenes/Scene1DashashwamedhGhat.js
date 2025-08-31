@@ -24,7 +24,6 @@ const flameFlicker = keyframes`
 `;
 
 const SceneContainer = styled.div`
-  height: 100%;
   padding: var(--spacing-lg);
   position: relative;
 `;
@@ -36,11 +35,14 @@ const motesDrift = keyframes`
   100% { transform: translateY(-40px) translateX(20px); opacity: 0.2; }
 `;
 const AtmosphereLayer = styled.div`
-  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
   background-image:
-    radial-gradient(2px 2px at 20% 80%, rgba(212,175,55,0.18) 0, transparent 60%),
-    radial-gradient(2px 2px at 60% 70%, rgba(255,215,0,0.12) 0, transparent 60%),
-    radial-gradient(2px 2px at 80% 40%, rgba(212,175,55,0.15) 0, transparent 60%);
+    radial-gradient(2px 2px at 20% 80%, rgba(212, 175, 55, 0.18) 0, transparent 60%),
+    radial-gradient(2px 2px at 60% 70%, rgba(255, 215, 0, 0.12) 0, transparent 60%),
+    radial-gradient(2px 2px at 80% 40%, rgba(212, 175, 55, 0.15) 0, transparent 60%);
   animation: ${motesDrift} 16s linear infinite;
   will-change: transform, opacity;
 `;
@@ -50,15 +52,29 @@ const waterGlint = keyframes`
   to { background-position: 200% 0; }
 `;
 const WaterSheen = styled.div`
-  position: absolute; left: 0; right: 0; bottom: 6%; height: 8%;
-  background: linear-gradient(90deg, rgba(255,215,0,0.08), rgba(255,215,0,0.02), rgba(255,215,0,0.08));
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6%;
+  height: 8%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 215, 0, 0.08),
+    rgba(255, 215, 0, 0.02),
+    rgba(255, 215, 0, 0.08)
+  );
   background-size: 200% 100%;
-  filter: blur(6px); opacity: 0.25; pointer-events: none; z-index: 1;
+  filter: blur(6px);
+  opacity: 0.25;
+  pointer-events: none;
+  z-index: 0;
   animation: ${waterGlint} 12s linear infinite;
   will-change: background-position, opacity;
 `;
 
 const SceneTitle = styled(motion.h1)`
+  position: relative;
+  z-index: 2;
   font-family: var(--font-display);
   color: var(--gold);
   font-size: var(--fs-xxl);
@@ -70,18 +86,34 @@ const SceneTitle = styled(motion.h1)`
 `;
 
 const NarrativeText = styled(motion.div)`
+  position: relative;
+  z-index: 2;
   font-family: var(--font-primary);
   color: var(--parchment);
   font-size: var(--fs-lg);
   line-height: var(--lh-loose);
 
-  .highlight-place { color: #f0a8a8; font-weight: 700; }
-  .highlight-character { color: #a8e0b0; font-weight: 700; }
-  .highlight-object { color: #e1b06b; font-weight: 700; }
-  .highlight-mystical { color: #ffd95e; font-weight: 700; }
+  .highlight-place {
+    color: #f0a8a8;
+    font-weight: 700;
+  }
+  .highlight-character {
+    color: #a8e0b0;
+    font-weight: 700;
+  }
+  .highlight-object {
+    color: #e1b06b;
+    font-weight: 700;
+  }
+  .highlight-mystical {
+    color: #ffd95e;
+    font-weight: 700;
+  }
 `;
 
 const ObjectiveBox = styled(motion.div)`
+  position: relative;
+  z-index: 2;
   background: linear-gradient(145deg, rgba(212, 175, 55, 0.1), rgba(255, 107, 53, 0.1));
   border: 2px solid var(--gold);
   border-radius: var(--border-radius);
@@ -105,11 +137,14 @@ const ObjectiveText = styled.p`
 `;
 
 const PuzzleSection = styled(motion.div)`
+  position: relative;
+  z-index: 2;
   background: linear-gradient(145deg, rgba(26, 26, 46, 0.05), rgba(22, 33, 62, 0.05));
   border: 2px solid var(--copper);
   border-radius: var(--border-radius);
   padding: var(--spacing-xl);
   margin-top: var(--spacing-xl);
+  max-width: 100%;
 `;
 
 const PuzzleTitle = styled.h3`
@@ -131,32 +166,46 @@ const PuzzleIntro = styled.p`
 
 const RitualDisplay = styled.div`
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-xl);
   padding: var(--spacing-lg);
   background: rgba(212, 175, 55, 0.05);
   border-radius: var(--border-radius);
   border: 1px dashed var(--copper);
+  max-width: 100%;
+  overflow: visible;
+  @media (max-width: 520px) {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
 `;
 
 const RitualMovement = styled(motion.div)`
   background: linear-gradient(145deg, var(--parchment), var(--dark-parchment));
-  border: 2px solid ${props => props.$highlighted ? 'var(--gold)' : 'var(--copper)'};
+  border: 2px solid ${(props) => (props.$highlighted ? 'var(--gold)' : 'var(--copper)')};
   border-radius: var(--border-radius);
   padding: var(--spacing-md);
   text-align: center;
   position: relative;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-width: 0;
 
   &:hover {
     border-color: var(--gold);
     transform: translateY(-2px);
   }
 
-  ${props => props.$highlighted && css`animation: ${ritualGlow} 2s infinite;`}
-  ${props => props.$flicker && css`animation: ${flameFlicker} 2s infinite;`}
+  ${(props) =>
+    props.$highlighted &&
+    css`
+      animation: ${ritualGlow} 2s infinite;
+    `}
+  ${(props) =>
+    props.$flicker &&
+    css`
+      animation: ${flameFlicker} 2s infinite;
+    `}
 `;
 
 const MovementNumber = styled.div`
@@ -166,7 +215,7 @@ const MovementNumber = styled.div`
   transform: translateX(-50%);
   width: 20px;
   height: 20px;
-  background: ${props => props.$highlighted ? 'var(--gold)' : 'var(--copper)'};
+  background: ${(props) => (props.$highlighted ? 'var(--gold)' : 'var(--copper)')};
   color: var(--parchment);
   border-radius: 50%;
   display: flex;
@@ -179,7 +228,7 @@ const MovementNumber = styled.div`
 const MovementIcon = styled.div`
   font-size: 1.5rem;
   margin-bottom: var(--spacing-xs);
-  filter: drop-shadow(0 0 8px rgba(212,175,55,0.4));
+  filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
 `;
 
 const MovementLabel = styled.div`
@@ -196,7 +245,7 @@ const JournalClue = styled(motion.div)`
   padding: var(--spacing-lg);
   margin: var(--spacing-lg) 0;
   position: relative;
-  
+
   &::before {
     content: '📖';
     position: absolute;
@@ -228,7 +277,7 @@ const OfferingBowl = styled(motion.div)`
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  
+
   &:hover {
     box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
   }
@@ -259,10 +308,10 @@ const Petal = styled(motion.div)`
 `;
 
 const PositionedPetal = styled(Petal)`
-  ${p => p.$top !== undefined ? `top:${p.$top};` : ''}
-  ${p => p.$left !== undefined ? `left:${p.$left};` : ''}
-  ${p => p.$right !== undefined ? `right:${p.$right};` : ''}
-  ${p => p.$bottom !== undefined ? `bottom:${p.$bottom};` : ''}
+  ${(p) => (p.$top !== undefined ? `top:${p.$top};` : '')}
+  ${(p) => (p.$left !== undefined ? `left:${p.$left};` : '')}
+  ${(p) => (p.$right !== undefined ? `right:${p.$right};` : '')}
+  ${(p) => (p.$bottom !== undefined ? `bottom:${p.$bottom};` : '')}
 `;
 
 const WaterRipple = styled(motion.div)`
@@ -275,11 +324,13 @@ const WaterRipple = styled(motion.div)`
 `;
 
 const PositionedRipple = styled(WaterRipple)`
-  left: ${p => `${p.$x}px`};
-  top: ${p => `${p.$y}px`};
+  left: ${(p) => `${p.$x}px`};
+  top: ${(p) => `${p.$y}px`};
 `;
 
 const ChoiceSection = styled(motion.div)`
+  position: relative;
+  z-index: 2;
   margin-top: var(--spacing-xl);
   text-align: center;
 `;
@@ -357,6 +408,8 @@ const HintText = styled.p`
 `;
 
 const CenteredBlock = styled(motion.div)`
+  position: relative;
+  z-index: 2;
   text-align: center;
   margin-top: var(--spacing-xl);
 `;
@@ -369,7 +422,7 @@ const RITUAL_MOVEMENTS = [
   { id: 4, icon: '🔃', label: 'Sweep Counter', description: 'Against the sun' },
   { id: 5, icon: '➡️', label: 'Towards Crowd', description: 'Sharing the light' },
   { id: 6, icon: '⬅️', label: 'Pull Back', description: 'Drawing within' },
-  { id: 7, icon: '⚪', label: 'Hold Center', description: 'Perfect balance' }
+  { id: 7, icon: '⚪', label: 'Hold Center', description: 'Perfect balance' },
 ];
 
 // The sequence from the journal: flames 2, 5, 7 are circled
@@ -388,24 +441,26 @@ export default function Scene1DashashwamedhGhat() {
     // Add initial objective
     dispatch({
       type: ACTIONS.ADD_OBJECTIVE,
-      payload: { id: 'find_contact', text: 'Find Dr. Thorne\'s contact at Dashashwamedh Ghat' }
+      payload: { id: 'find_contact', text: "Find Dr. Thorne's contact at Dashashwamedh Ghat" },
     });
 
     // Simulate priests performing ritual with highlighted movements
     const timer = setTimeout(() => {
       setHighlightedMovements(CORRECT_SEQUENCE);
       setShowPuzzle(true);
-      
+      setGamePhase('puzzle');
+
       dispatch({
         type: ACTIONS.ADD_CLUE,
         payload: {
           id: 'ritual_cipher',
           title: 'The Ritual Cipher',
-          description: 'Seven priestly movements observed. Flames 2, 5, and 7 are circled in red ink in Thorne\'s journal.',
+          description:
+            "Seven priestly movements observed. Flames 2, 5, and 7 are circled in red ink in Thorne's journal.",
           sketch: '🕯️🕯️🔥🕯️🔥���️🔥',
-          tags: ['ritual','observation'],
-          scene: SCENES.DASHASHWAMEDH_GHAT
-        }
+          tags: ['ritual', 'observation'],
+          scene: SCENES.DASHASHWAMEDH_GHAT,
+        },
       });
     }, 3000);
 
@@ -414,23 +469,23 @@ export default function Scene1DashashwamedhGhat() {
 
   const handleMovementClick = (movementId) => {
     if (puzzleSolved) return;
-    
+
     const newSequence = [...playerSequence, movementId];
     setPlayerSequence(newSequence);
-    
+
     // Check if sequence matches
     if (newSequence.length === CORRECT_SEQUENCE.length) {
       const isCorrect = newSequence.every((id, index) => id === CORRECT_SEQUENCE[index]);
-      
+
       if (isCorrect) {
         setPuzzleSolved(true);
         dispatch({
           type: ACTIONS.COMPLETE_OBJECTIVE,
-          payload: 'find_contact'
+          payload: 'find_contact',
         });
         dispatch({
           type: ACTIONS.ADD_OBJECTIVE,
-          payload: { id: 'trace_pattern', text: 'Trace the ritual pattern on the offering bowl' }
+          payload: { id: 'trace_pattern', text: 'Trace the ritual pattern on the offering bowl' },
         });
         setGamePhase('solution');
       } else {
@@ -444,24 +499,24 @@ export default function Scene1DashashwamedhGhat() {
 
   const handleBowlInteraction = (event) => {
     if (!puzzleSolved) return;
-    
+
     const rect = event.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
-    
+
     const newRipple = {
       id: Date.now(),
       x: event.clientX - centerX,
-      y: event.clientY - centerY
+      y: event.clientY - centerY,
     };
-    
-    setRipples(prev => [...prev, newRipple]);
-    
+
+    setRipples((prev) => [...prev, newRipple]);
+
     // Remove ripple after animation
     setTimeout(() => {
-      setRipples(prev => prev.filter(r => r.id !== newRipple.id));
+      setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
     }, 1000);
-    
+
     // Progress after tracing the pattern
     if (playerSequence.length === 3) {
       setTimeout(() => {
@@ -473,38 +528,42 @@ export default function Scene1DashashwamedhGhat() {
   const handleSceneComplete = () => {
     dispatch({
       type: ACTIONS.COMPLETE_OBJECTIVE,
-      payload: 'trace_pattern'
+      payload: 'trace_pattern',
     });
-    
+
     dispatch({
       type: ACTIONS.ADD_ITEM,
       payload: {
         id: 'clay_pot',
         name: 'Sealed Clay Pot',
         icon: '🏺',
-        lore: 'A mysterious clay pot given by the silent boatman. Its surface is cool and rough, and something shifts within.'
-      }
+        lore: 'A mysterious clay pot given by the silent boatman. Its surface is cool and rough, and something shifts within.',
+      },
     });
-    
+
     dispatch({
       type: ACTIONS.COMPLETE_SCENE,
-      payload: SCENES.DASHASHWAMEDH_GHAT
+      payload: SCENES.DASHASHWAMEDH_GHAT,
     });
 
     dispatch({
       type: ACTIONS.ADD_ACHIEVEMENT,
-      payload: { id: 'first_step', title: 'First Step', description: 'Completed Dashashwamedh Ghat.' }
+      payload: {
+        id: 'first_step',
+        title: 'First Step',
+        description: 'Completed Dashashwamedh Ghat.',
+      },
     });
 
     dispatch({
       type: ACTIONS.SET_CURRENT_SCENE,
-      payload: SCENES.LABYRINTH_GHATS
+      payload: SCENES.LABYRINTH_GHATS,
     });
   };
 
   const handleChoiceFocus = (choice) => {
     setGamePhase('observation');
-    
+
     switch (choice) {
       case 'ritual':
         dispatch({
@@ -512,11 +571,12 @@ export default function Scene1DashashwamedhGhat() {
           payload: {
             id: 'focus_ritual',
             title: 'Ritual Focus',
-            description: 'Your analytical mind takes over. The spectacle resolves into data points and repeating variables. The dance is a pattern, a complex algorithm of faith.',
+            description:
+              'Your analytical mind takes over. The spectacle resolves into data points and repeating variables. The dance is a pattern, a complex algorithm of faith.',
             sketch: '🔄📊🔄',
-            tags: ['ritual','pattern'],
-            scene: SCENES.DASHASHWAMEDH_GHAT
-          }
+            tags: ['ritual', 'pattern'],
+            scene: SCENES.DASHASHWAMEDH_GHAT,
+          },
         });
         break;
       case 'crowd':
@@ -525,11 +585,12 @@ export default function Scene1DashashwamedhGhat() {
           payload: {
             id: 'focus_crowd',
             title: 'Crowd Wisdom',
-            description: 'You overhear whispers about "men in grey suits" who have been asking questions near the temples. A dangerous, modern tension coiled beneath ancient faith.',
+            description:
+              'You overhear whispers about "men in grey suits" who have been asking questions near the temples. A dangerous, modern tension coiled beneath ancient faith.',
             sketch: '👥💭👥',
-            tags: ['crowd','intel'],
-            scene: SCENES.DASHASHWAMEDH_GHAT
-          }
+            tags: ['crowd', 'intel'],
+            scene: SCENES.DASHASHWAMEDH_GHAT,
+          },
         });
         break;
       case 'river':
@@ -537,12 +598,13 @@ export default function Scene1DashashwamedhGhat() {
           type: ACTIONS.ADD_CLUE,
           payload: {
             id: 'focus_river',
-            title: 'River\'s Wisdom',
-            description: 'Thorne\'s voice echoes: "The river carries everything, forgives everything. Find that stillness in yourself." You feel profound peace.',
+            title: "River's Wisdom",
+            description:
+              'Thorne\'s voice echoes: "The river carries everything, forgives everything. Find that stillness in yourself." You feel profound peace.',
             sketch: '🌊🕉️🌊',
-            tags: ['river','focus'],
-            scene: SCENES.DASHASHWAMEDH_GHAT
-          }
+            tags: ['river', 'focus'],
+            scene: SCENES.DASHASHWAMEDH_GHAT,
+          },
         });
         break;
       default:
@@ -561,47 +623,49 @@ export default function Scene1DashashwamedhGhat() {
       >
         Scene 1: Dashashwamedh Ghat
       </SceneTitle>
-      
-      <NarrativeText initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }}>
+
+      <NarrativeText
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.3 }}
+      >
         <ProgressiveNarrative
           blocks={[
-            (
-              <p>
-                You materialize not with a sound, but with a gasp, as if you've just surfaced from a
-                deep, dark water. The air is thick, a heady, almost overwhelming cocktail of
-                <span className="highlight-object"> sandalwood incense</span>, crushed <span className="highlight-object">marigolds</span>,
-                <span className="highlight-object">ghee-fed flames</span>, and the damp, ancient scent of the
-                <span className="highlight-place">river</span>. A wall of sound crashes over you: a thousand voices murmuring
-                in a dozen languages, the percussive, insistent clang of <span className="highlight-object">temple bells</span>,
-                and the deep, resonant drone of <span className="highlight-mystical">Sanskrit chanting</span> that seems to
-                vibrate in your very bones, shaking loose the dust of your former reality.
-              </p>
-            ),
-            (
-              <p>
-                You stand on the worn stone steps of <span className="highlight-place">Dashashwamedh Ghat</span>.
-                It is dusk, the hour of smoke and fire. Before you, the <span className="highlight-place">Ganga river</span>
-                is a sheet of dark, rippling silk, shattered into a million pieces by the reflections of countless flames.
-              </p>
-            ),
-            (
-              <p>
-                <span className="highlight-character">Saffron-robed priests</span>, their movements honed by generations of ritual,
-                move in a mesmerizing, synchronized dance. They wield massive, tiered <span className="highlight-object">oil lamps</span>,
-                painting the twilight in broad, sweeping strokes of fire, their shadows stretching and
-                capering like ancient gods. The ghat is packed with an ocean of humanity, their
-                faces upturned, a tapestry of awe, faith, and quiet desperation, all bathed in the
-                sacred glow.
-              </p>
-            ),
-            (
-              <p>
-                Your senses are overwhelmed, a symphony on the verge of becoming a cacophony. Your purpose,
-                however, is a single, clear note in the chaos. <span className="highlight-character">Dr. Thorne</span> sent you here.
-                You need to find his contact. But first, you must find your own focus in this beautiful,
-                terrifying storm of existence.
-              </p>
-            )
+            <p>
+              You materialize not with a sound, but with a gasp, as if you've just surfaced from a
+              deep, dark water. The air is thick, a heady, almost overwhelming cocktail of
+              <span className="highlight-object"> sandalwood incense</span>, crushed{' '}
+              <span className="highlight-object">marigolds</span>,
+              <span className="highlight-object">ghee-fed flames</span>, and the damp, ancient scent
+              of the
+              <span className="highlight-place">river</span>. A wall of sound crashes over you: a
+              thousand voices murmuring in a dozen languages, the percussive, insistent clang of{' '}
+              <span className="highlight-object">temple bells</span>, and the deep, resonant drone
+              of <span className="highlight-mystical">Sanskrit chanting</span> that seems to vibrate
+              in your very bones, shaking loose the dust of your former reality.
+            </p>,
+            <p>
+              You stand on the worn stone steps of{' '}
+              <span className="highlight-place">Dashashwamedh Ghat</span>. It is dusk, the hour of
+              smoke and fire. Before you, the <span className="highlight-place">Ganga river</span>
+              is a sheet of dark, rippling silk, shattered into a million pieces by the reflections
+              of countless flames.
+            </p>,
+            <p>
+              <span className="highlight-character">Saffron-robed priests</span>, their movements
+              honed by generations of ritual, move in a mesmerizing, synchronized dance. They wield
+              massive, tiered <span className="highlight-object">oil lamps</span>, painting the
+              twilight in broad, sweeping strokes of fire, their shadows stretching and capering
+              like ancient gods. The ghat is packed with an ocean of humanity, their faces upturned,
+              a tapestry of awe, faith, and quiet desperation, all bathed in the sacred glow.
+            </p>,
+            <p>
+              Your senses are overwhelmed, a symphony on the verge of becoming a cacophony. Your
+              purpose, however, is a single, clear note in the chaos.{' '}
+              <span className="highlight-character">Dr. Thorne</span> sent you here. You need to
+              find his contact. But first, you must find your own focus in this beautiful,
+              terrifying storm of existence.
+            </p>,
           ]}
         />
       </NarrativeText>
@@ -622,33 +686,42 @@ export default function Scene1DashashwamedhGhat() {
           transition={{ duration: 0.6, delay: 1.5 }}
         >
           <ChoiceHeading>How do you center yourself?</ChoiceHeading>
-          
+
           <div>
             <ChoiceButton
               className="is-interactive"
               onClick={() => handleChoiceFocus('ritual')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
->
-              <span className="emoji-icon" aria-hidden>🔥</span> Focus on the Ritual
+            >
+              <span className="emoji-icon" aria-hidden>
+                🔥
+              </span>{' '}
+              Focus on the Ritual
             </ChoiceButton>
-            
+
             <ChoiceButton
               className="is-interactive"
               onClick={() => handleChoiceFocus('crowd')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
->
-              <span className="emoji-icon" aria-hidden>👥</span> Focus on the Crowd
+            >
+              <span className="emoji-icon" aria-hidden>
+                👥
+              </span>{' '}
+              Focus on the Crowd
             </ChoiceButton>
-            
+
             <ChoiceButton
               className="is-interactive"
               onClick={() => handleChoiceFocus('river')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
->
-              <span className="emoji-icon" aria-hidden>🌊</span> Focus on the River
+            >
+              <span className="emoji-icon" aria-hidden>
+                🌊
+              </span>{' '}
+              Focus on the River
             </ChoiceButton>
           </div>
         </ChoiceSection>
@@ -661,10 +734,11 @@ export default function Scene1DashashwamedhGhat() {
           transition={{ duration: 0.5 }}
         >
           <ClueText>
-            You pull out Dr. Thorne's leather-bound journal. The page is bookmarked. It shows a 
-            hurried but precise sketch of a priest holding a <span className="highlight-mystical">diya</span>, 
-            a ceremonial lamp with <span className="highlight-mystical">seven flames</span>. 
-            Beneath it, a note: "The ritual is the key." Flames numbered 
+            You pull out Dr. Thorne's leather-bound journal. The page is bookmarked. It shows a
+            hurried but precise sketch of a priest holding a{' '}
+            <span className="highlight-mystical">diya</span>, a ceremonial lamp with{' '}
+            <span className="highlight-mystical">seven flames</span>. Beneath it, a note: "The
+            ritual is the key." Flames numbered
             <span className="highlight-mystical"> 2, 5, and 7</span> are circled in stark red ink.
           </ClueText>
         </JournalClue>
@@ -677,11 +751,11 @@ export default function Scene1DashashwamedhGhat() {
           transition={{ duration: 0.8 }}
         >
           <PuzzleTitle>🔍 The Ritual Cipher</PuzzleTitle>
-          
+
           <PuzzleIntro>
             Observe the seven movements of the priests and decode the sequence from the journal.
           </PuzzleIntro>
-          
+
           <RitualDisplay>
             {RITUAL_MOVEMENTS.map((movement) => (
               <RitualMovement
@@ -691,7 +765,9 @@ export default function Scene1DashashwamedhGhat() {
                 aria-label={`${movement.id} ${movement.label}`}
                 $highlighted={highlightedMovements.includes(movement.id)}
                 onClick={() => handleMovementClick(movement.id)}
-                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleMovementClick(movement.id); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') handleMovementClick(movement.id);
+                }}
                 onMouseEnter={() => document.body.classList.add('cursor-examine')}
                 onMouseLeave={() => document.body.classList.remove('cursor-examine')}
                 whileHover={{ scale: 1.05 }}
@@ -706,7 +782,7 @@ export default function Scene1DashashwamedhGhat() {
               </RitualMovement>
             ))}
           </RitualDisplay>
-          
+
           {playerSequence.length > 0 && (
             <CenteredText aria-live="polite">
               Your sequence: {playerSequence.join(' → ')}
@@ -723,15 +799,13 @@ export default function Scene1DashashwamedhGhat() {
           transition={{ duration: 0.8 }}
         >
           <NarrativePara>
-            A shadow falls over you. A simple wooden boat has poled silently to the steps. 
-            The boatman extends a weathered hand, offering you a small, sealed clay pot. 
-            He gestures toward a small offering bowl at the water's edge.
+            A shadow falls over you. A simple wooden boat has poled silently to the steps. The
+            boatman extends a weathered hand, offering you a small, sealed clay pot. He gestures
+            toward a small offering bowl at the water's edge.
           </NarrativePara>
-          
-          <EmphasisHeading>
-            Trace the ritual pattern on the water's surface
-          </EmphasisHeading>
-          
+
+          <EmphasisHeading>Trace the ritual pattern on the water's surface</EmphasisHeading>
+
           <OfferingBowl
             onClick={handleBowlInteraction}
             onMouseEnter={() => document.body.classList.add('cursor-examine')}
@@ -765,7 +839,7 @@ export default function Scene1DashashwamedhGhat() {
               ))}
             </Water>
           </OfferingBowl>
-          
+
           <HintText>
             Click on the offering bowl to trace the pattern: Lower → Towards Crowd → Center
           </HintText>

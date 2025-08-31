@@ -2,10 +2,10 @@ import React, { useState, useEffect, Suspense, lazy, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, SCENES, ACTIONS } from '../context/GameContext';
-const Journal = lazy(() => import('./Journal'));
 import { engine } from './AudioManager';
 import SwipeNavigator from './SwipeNavigator';
 import SceneProgressMap from './SceneProgressMap';
+const Journal = lazy(() => import('./Journal'));
 
 const Scene1DashashwamedhGhat = lazy(() => import('./scenes/Scene1DashashwamedhGhat'));
 const Scene2LabyrinthGhats = lazy(() => import('./scenes/Scene2LabyrinthGhats'));
@@ -86,17 +86,16 @@ const OverlayContent = styled(motion.div)`
 const GameplayContainer = styled.div`
   min-height: 100vh;
   background:
-    radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.95) 70%),
+    radial-gradient(ellipse at center, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.95) 70%),
     linear-gradient(135deg, var(--ink-black) 0%, var(--deep-blue) 50%, var(--royal-blue) 100%);
   display: grid;
   grid-template-columns: 1.3fr 380px;
   grid-template-rows: 1fr auto;
   gap: var(--spacing-xl);
   padding: var(--spacing-lg);
-  padding-bottom: calc(var(--spacing-lg) + 160px); /* safe area for hotbar */
+  padding-bottom: calc(var(--spacing-lg) + 280px); /* safe area for fixed hotbar */
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: visible;
   max-width: 1280px;
   margin: 0 auto;
 
@@ -111,7 +110,9 @@ const GameplayContainer = styled.div`
     background:
       radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.03) 1px, transparent 2px),
       radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.02) 1px, transparent 2px);
-    background-size: 100px 100px, 150px 150px;
+    background-size:
+      100px 100px,
+      150px 150px;
     animation: ${breathingGlow} 12s ease-in-out infinite;
     pointer-events: none;
     z-index: 1;
@@ -119,7 +120,7 @@ const GameplayContainer = styled.div`
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr auto 60px;
+    grid-auto-rows: auto;
   }
 `;
 
@@ -130,7 +131,7 @@ const MainContentArea = styled.div`
   flex-direction: column;
   gap: var(--spacing-lg);
   position: relative;
-  z-index: 10;
+  z-index: 20;
   max-width: 980px;
   width: 100%;
 
@@ -140,8 +141,7 @@ const MainContentArea = styled.div`
 `;
 
 const NarrativeWindow = styled(motion.div)`
-  background:
-    linear-gradient(145deg, rgba(0, 0, 0, 0.9) 0%, rgba(15, 15, 15, 0.95) 100%);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.9) 0%, rgba(15, 15, 15, 0.95) 100%);
   border: 2px solid #d4af37;
   border-radius: 14px;
   box-shadow:
@@ -153,22 +153,21 @@ const NarrativeWindow = styled(motion.div)`
   backdrop-filter: blur(8px);
 
   /* Clean content background for readability */
-  &::before { display: none; }
-  &::after { display: none; }
+  &::before {
+    display: none;
+  }
+  &::after {
+    display: none;
+  }
 `;
 
 const NarrativeContent = styled.div`
   padding: var(--spacing-xl);
   position: relative;
   z-index: 10;
-  height: 100%;
-  overflow-y: auto;
-  padding-bottom: calc(var(--spacing-xl) + 200px);
   max-width: 70ch;
   margin: 0 auto;
-
-  &::-webkit-scrollbar { width: 6px; }
-  &::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #d4af37, #ffd700); border-radius: 3px; }
+  padding-bottom: calc(var(--spacing-xl) + 320px);
 `;
 
 // Mini-map panel
@@ -178,11 +177,13 @@ const MiniMapPanel = styled.div`
   right: auto;
   width: 180px;
   height: 140px;
-  background: linear-gradient(145deg, rgba(0,0,0,0.85), rgba(15,15,15,0.95));
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.85), rgba(15, 15, 15, 0.95));
   border: 3px solid #d4af37;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 24px rgba(212,175,55,0.25);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.7),
+    0 0 24px rgba(212, 175, 55, 0.25);
   z-index: 150;
 
   @media (max-width: 1024px) {
@@ -195,36 +196,40 @@ const MiniMapPanel = styled.div`
     inset: 6px;
     border-radius: 10px;
     background:
-      radial-gradient(circle at 15% 25%, rgba(212,175,55,0.12) 1px, transparent 2px),
-      radial-gradient(circle at 65% 70%, rgba(212,175,55,0.08) 1px, transparent 2px),
-      repeating-linear-gradient(90deg, rgba(212,175,55,0.08) 0 2px, transparent 2px 10px),
-      repeating-linear-gradient(0deg, rgba(212,175,55,0.05) 0 2px, transparent 2px 10px);
+      radial-gradient(circle at 15% 25%, rgba(212, 175, 55, 0.12) 1px, transparent 2px),
+      radial-gradient(circle at 65% 70%, rgba(212, 175, 55, 0.08) 1px, transparent 2px),
+      repeating-linear-gradient(90deg, rgba(212, 175, 55, 0.08) 0 2px, transparent 2px 10px),
+      repeating-linear-gradient(0deg, rgba(212, 175, 55, 0.05) 0 2px, transparent 2px 10px);
     pointer-events: none;
   }
 `;
 
 // Hotbar / quick slots
 const HotbarContainer = styled.div`
-  position: sticky;
-  bottom: 0;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: var(--spacing-lg);
   display: grid;
   grid-template-columns: repeat(6, 56px);
   gap: 10px;
-  background: linear-gradient(145deg, rgba(0,0,0,0.85), rgba(15,15,15,0.95));
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.85), rgba(15, 15, 15, 0.95));
   border: 2px solid #d4af37;
   border-radius: 14px;
   padding: 10px 12px;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.7), 0 0 20px rgba(212,175,55,0.25);
-  z-index: 20;
-  margin: var(--spacing-lg) auto 0;
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.7),
+    0 0 20px rgba(212, 175, 55, 0.25);
+  z-index: 120;
+  margin: 0 auto;
 `;
 
 const HotbarSlot = styled.div`
   width: 56px;
   height: 56px;
-  border: 2px solid ${p => (p.$active ? '#ffd700' : 'rgba(212, 175, 55, 0.4)')};
+  border: 2px solid ${(p) => (p.$active ? '#ffd700' : 'rgba(212, 175, 55, 0.4)')};
   border-radius: 10px;
-  background: linear-gradient(145deg, rgba(0,0,0,0.7), rgba(10,10,10,0.85));
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.7), rgba(10, 10, 10, 0.85));
   display: flex;
   align-items: center;
   justify-content: center;
@@ -232,7 +237,11 @@ const HotbarSlot = styled.div`
   font-size: 1.4rem;
   position: relative;
   overflow: hidden;
-  ${p => p.$active && css`animation: ${breathingGlow} 6s ease-in-out infinite;`}
+  ${(p) =>
+    p.$active &&
+    css`
+      animation: ${breathingGlow} 6s ease-in-out infinite;
+    `}
 `;
 
 const SlotIndex = styled.span`
@@ -267,18 +276,20 @@ const HeaderBar = styled.div`
 const TooltipBubble = styled.div`
   position: fixed;
   transform: translate(-50%, calc(-100% - 10px));
-  background: linear-gradient(145deg, rgba(0,0,0,0.92), rgba(15,15,15,0.98));
-  border: 1px solid rgba(212,175,55,0.6);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.92), rgba(15, 15, 15, 0.98));
+  border: 1px solid rgba(212, 175, 55, 0.6);
   color: #d4af37;
   font-family: var(--font-primary);
   font-size: var(--fs-sm);
   padding: 6px 10px;
   border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 0 16px rgba(212,175,55,0.25);
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.6),
+    0 0 16px rgba(212, 175, 55, 0.25);
   pointer-events: none;
   z-index: 2000;
-  left: ${p => p.$x}px;
-  top: ${p => p.$y}px;
+  left: ${(p) => p.$x}px;
+  top: ${(p) => p.$y}px;
 `;
 
 // HUD components
@@ -298,14 +309,22 @@ const HintButton = styled(motion.button)`
   appearance: none;
   padding: 8px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(212,175,55,0.45);
-  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.82), rgba(18, 18, 18, 0.95));
   color: #e8c86a;
   font-family: var(--font-primary);
   font-weight: 700;
   cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
-  &:hover { border-color: #ffd700; background: linear-gradient(145deg, #ffd95e, #ffc82e); color: #000; transform: translateY(-1px); }
+  transition:
+    transform 0.15s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+  &:hover {
+    border-color: #ffd700;
+    background: linear-gradient(145deg, #ffd95e, #ffc82e);
+    color: #000;
+    transform: translateY(-1px);
+  }
 `;
 
 const HintBanner = styled(motion.div)`
@@ -320,10 +339,12 @@ const HintBanner = styled(motion.div)`
 const Gauge = styled.div`
   width: 220px;
   height: 22px;
-  background: linear-gradient(145deg, rgba(0,0,0,0.85), rgba(20,20,20,0.95));
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.85), rgba(20, 20, 20, 0.95));
   border: 2px solid #d4af37;
   border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.6), 0 0 16px rgba(212,175,55,0.2);
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.6),
+    0 0 16px rgba(212, 175, 55, 0.2);
   position: relative;
   overflow: hidden;
 
@@ -332,14 +353,18 @@ const Gauge = styled.div`
     position: absolute;
     inset: 3px;
     border-radius: 9px;
-    background: repeating-linear-gradient(90deg, rgba(212,175,55,0.15) 0 4px, transparent 4px 10px);
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(212, 175, 55, 0.15) 0 4px,
+      transparent 4px 10px
+    );
     pointer-events: none;
   }
 `;
 
 const Fill = styled.div`
   height: 100%;
-  width: ${props => props.$value}%;
+  width: ${(props) => props.$value}%;
   background: linear-gradient(90deg, #d4af37, #ffd700, #d4af37);
   background-size: 200% 100%;
   animation: ${energyFlow} 3s linear infinite;
@@ -362,8 +387,7 @@ const GaugeLabel = styled.span`
 `;
 
 const ObjectivesBanner = styled(motion.div)`
-  background:
-    linear-gradient(145deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
+  background: linear-gradient(145deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
   border: 2px solid #d4af37;
   border-radius: 10px;
   padding: var(--spacing-md) var(--spacing-lg);
@@ -392,11 +416,7 @@ const ObjectivesBanner = styled(motion.div)`
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg,
-      transparent 0%,
-      #d4af37 50%,
-      transparent 100%
-    );
+    background: linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%);
     animation: ${trailEffect} 3s ease-in-out infinite;
   }
 `;
@@ -412,8 +432,7 @@ const ObjectiveText = styled.h3`
 `;
 
 const ChoicesPanel = styled(motion.div)`
-  background:
-    linear-gradient(145deg, rgba(0, 0, 0, 0.92) 0%, rgba(10, 10, 10, 0.96) 100%);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.92) 0%, rgba(10, 10, 10, 0.96) 100%);
   border: 2px solid #d4af37;
   border-radius: 12px;
   padding: var(--spacing-lg);
@@ -425,7 +444,8 @@ const ChoicesPanel = styled(motion.div)`
   position: relative;
 
   /* Decorative corner ornaments */
-  &::before, &::after {
+  &::before,
+  &::after {
     content: '❦';
     position: absolute;
     top: var(--spacing-sm);
@@ -462,8 +482,7 @@ const ChoicesContainer = styled.div`
 `;
 
 const ChoiceButton = styled(motion.button)`
-  background:
-    linear-gradient(145deg, rgba(0, 0, 0, 0.8) 0%, rgba(15, 15, 15, 0.9) 100%);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.8) 0%, rgba(15, 15, 15, 0.9) 100%);
   border: 1px solid #d4af37;
   border-radius: 8px;
   padding: var(--spacing-md) var(--spacing-lg);
@@ -501,17 +520,40 @@ const ChoiceButton = styled(motion.button)`
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg,
-      transparent,
-      rgba(212, 175, 55, 0.2),
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
     transition: left 0.5s ease;
   }
 
+  .choice-text {
+    background: linear-gradient(180deg, #d4af37, #ffd700);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+  }
+  &.inking .choice-text::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0%;
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0),
+      rgba(212, 175, 55, 0.35),
+      rgba(0, 0, 0, 0)
+    );
+    animation: inking 700ms ease forwards;
+  }
+  @keyframes inking {
+    to {
+      width: 100%;
+    }
+  }
+
   &:hover {
-    background:
-      linear-gradient(145deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 215, 0, 0.2) 100%);
+    background: linear-gradient(145deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 215, 0, 0.2) 100%);
     border-color: #ffd700;
     color: #ffd700;
     animation: ${breathingGlow} 2s infinite;
@@ -553,13 +595,15 @@ const JournalSidebar = styled(motion.div)`
   position: sticky;
   top: var(--spacing-lg);
   align-self: start;
-  z-index: 10;
+  z-index: 5;
   height: calc(100vh - 2 * var(--spacing-lg));
+  max-width: 380px;
+  width: 100%;
   overflow: hidden;
 
   @media (max-width: 1024px) {
     grid-column: 1;
-    grid-row: 2;
+    grid-row: auto;
     height: 300px;
   }
 `;
@@ -570,8 +614,7 @@ const JournalToggle = styled(motion.button)`
   right: var(--spacing-lg);
   width: 60px;
   height: 60px;
-  background:
-    radial-gradient(circle, #d4af37 0%, #ffd700 50%, #d4af37 100%);
+  background: radial-gradient(circle, #d4af37 0%, #ffd700 50%, #d4af37 100%);
   border: 2px solid #d4af37;
   border-radius: 50%;
   color: #000;
@@ -593,8 +636,7 @@ const JournalToggle = styled(motion.button)`
   }
 
   &:hover {
-    background:
-      radial-gradient(circle, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+    background: radial-gradient(circle, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
     transform: scale(1.1);
     box-shadow:
       0 8px 25px rgba(255, 215, 0, 0.6),
@@ -612,8 +654,7 @@ const SkillIndicator = styled(motion.div)`
   position: fixed;
   bottom: var(--spacing-lg);
   left: var(--spacing-lg);
-  background:
-    linear-gradient(145deg, rgba(0, 0, 0, 0.95) 0%, rgba(15, 15, 15, 0.98) 100%);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.95) 0%, rgba(15, 15, 15, 0.98) 100%);
   border: 2px solid #d4af37;
   border-radius: 10px;
   padding: var(--spacing-md);
@@ -647,13 +688,15 @@ const EdgeNavButton = styled(motion.button)`
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  border: 1px solid rgba(212,175,55,0.45);
-  background: linear-gradient(145deg, rgba(0,0,0,0.6), rgba(15,15,15,0.85));
+  border: 1px solid rgba(212, 175, 55, 0.45);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.6), rgba(15, 15, 15, 0.85));
   color: #e8c86a;
   display: grid;
   place-items: center;
   z-index: 1200;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 16px rgba(212,175,55,0.2);
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.6),
+    0 0 16px rgba(212, 175, 55, 0.2);
   -webkit-tap-highlight-color: transparent;
   @media (min-width: 1024px) {
     display: none;
@@ -715,7 +758,10 @@ export default function GameplayScreen() {
     }
   }, [currentScene, playerProfile.skills]);
 
+  const [inkingId, setInkingId] = useState(null);
   const handleChoiceSelect = (choice) => {
+    setInkingId(choice.id);
+    setTimeout(() => setInkingId(null), 800);
   };
 
   const toggleMobileJournal = () => {
@@ -728,7 +774,7 @@ export default function GameplayScreen() {
     const y = Math.max(pad, Math.min(window.innerHeight - pad, e.clientY));
     setTooltip({ visible: true, text, x, y });
   };
-  const hideTooltip = () => setTooltip(prev => ({ ...prev, visible: false }));
+  const hideTooltip = () => setTooltip((prev) => ({ ...prev, visible: false }));
 
   const contentRef = useRef(null);
   const sceneOrder = [
@@ -736,7 +782,7 @@ export default function GameplayScreen() {
     SCENES.LABYRINTH_GHATS,
     SCENES.NYAYA_TRIAL,
     SCENES.VAISESIKA_TRIAL,
-    SCENES.THE_WARDEN
+    SCENES.THE_WARDEN,
   ];
   const goToSceneIndex = (idx) => {
     const clamped = Math.max(0, Math.min(sceneOrder.length - 1, idx));
@@ -744,16 +790,24 @@ export default function GameplayScreen() {
   };
   const i = sceneOrder.indexOf(currentScene);
   const canPrev = i > 0;
-  const canNext = state.gameProgress.completedScenes.includes(currentScene) && i < sceneOrder.length - 1;
-  const goNextScene = () => { if (canNext) goToSceneIndex(i + 1); };
-  const goPrevScene = () => { if (canPrev) goToSceneIndex(i - 1); };
+  const canNext =
+    state.gameProgress.completedScenes.includes(currentScene) && i < sceneOrder.length - 1;
+  const goNextScene = () => {
+    if (canNext) goToSceneIndex(i + 1);
+  };
+  const goPrevScene = () => {
+    if (canPrev) goToSceneIndex(i - 1);
+  };
 
   const HINTS = {
-    [SCENES.DASHASHWAMEDH_GHAT]: 'Observe the seven movements; the circled flames are 2, 5, and 7 in order.',
+    [SCENES.DASHASHWAMEDH_GHAT]:
+      'Observe the seven movements; the circled flames are 2, 5, and 7 in order.',
     [SCENES.LABYRINTH_GHATS]: 'Solemn landmarks guide you; after reading, the path leads onward.',
-    [SCENES.NYAYA_TRIAL]: 'Nyāya’s five: Pratijñā → Hetu → Udāharaṇa → Upanaya → Nigamana. Smoke → Fire (kitchen).',
-    [SCENES.VAISESIKA_TRIAL]: 'Nine dravyas: Earth, Water, Fire, Air, Ether, Time, Direction, Soul, Mind.',
-    [SCENES.THE_WARDEN]: 'Heed warnings; prepare before advancing.'
+    [SCENES.NYAYA_TRIAL]:
+      'Nyāya’s five: Pratijñā → Hetu → Udāharaṇa → Upanaya → Nigamana. Smoke → Fire (kitchen).',
+    [SCENES.VAISESIKA_TRIAL]:
+      'Nine dravyas: Earth, Water, Fire, Air, Ether, Time, Direction, Soul, Mind.',
+    [SCENES.THE_WARDEN]: 'Heed warnings; prepare before advancing.',
   };
   const useHint = () => {
     const n = state.gameProgress.hintPoints || 0;
@@ -769,10 +823,18 @@ export default function GameplayScreen() {
       <MainContentArea>
         <HeaderBar>
           {state.gameProgress?.currentObjectives && state.gameProgress.currentObjectives[0] && (
-            <ObjectivesBanner role="status" aria-live="polite" initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
+            <ObjectivesBanner
+              role="status"
+              aria-live="polite"
+              initial={{ x: -40, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               <ObjectiveText>{state.gameProgress.currentObjectives[0].text}</ObjectiveText>
               {hintText && (
-                <HintBanner initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Hint: {hintText}</HintBanner>
+                <HintBanner initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  Hint: {hintText}
+                </HintBanner>
               )}
             </ObjectivesBanner>
           )}
@@ -785,8 +847,14 @@ export default function GameplayScreen() {
               <Fill $value={65} />
               <GaugeLabel>AETHER</GaugeLabel>
             </Gauge>
-            <HintButton className="is-interactive" onClick={useHint} whileTap={{ scale: 0.96 }} aria-label={`Use hint. ${state.gameProgress.hintPoints || 0} remaining`} disabled={(state.gameProgress.hintPoints || 0) <= 0}>
-              💡 Hint × {(state.gameProgress.hintPoints || 0)}
+            <HintButton
+              className="is-interactive"
+              onClick={useHint}
+              whileTap={{ scale: 0.96 }}
+              aria-label={`Use hint. ${state.gameProgress.hintPoints || 0} remaining`}
+              disabled={(state.gameProgress.hintPoints || 0) <= 0}
+            >
+              💡 Hint × {state.gameProgress.hintPoints || 0}
             </HintButton>
           </DecoHUD>
         </HeaderBar>
@@ -831,8 +899,12 @@ export default function GameplayScreen() {
         <HotbarContainer>
           {Array.from({ length: 6 }, (_, i) => {
             const item = inventory.items[i];
-            const label = item ? `Hotbar slot ${i + 1}: ${item.name}` : `Hotbar slot ${i + 1}: empty`;
-            const onActivate = () => { /* reserved for future item use */ };
+            const label = item
+              ? `Hotbar slot ${i + 1}: ${item.name}`
+              : `Hotbar slot ${i + 1}: empty`;
+            const onActivate = () => {
+              /* reserved for future item use */
+            };
             return (
               <HotbarSlot
                 key={i}
@@ -841,7 +913,12 @@ export default function GameplayScreen() {
                 role={item ? 'button' : undefined}
                 tabIndex={item ? 0 : -1}
                 aria-label={label}
-                onKeyDown={(e) => { if (item && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); onActivate(); } }}
+                onKeyDown={(e) => {
+                  if (item && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    onActivate();
+                  }
+                }}
                 onMouseEnter={(e) => item && showTooltip(item.name, e)}
                 onMouseLeave={hideTooltip}
               >
@@ -852,7 +929,7 @@ export default function GameplayScreen() {
           })}
         </HotbarContainer>
 
-        {sceneData.choices.length > 0 && (
+        {sceneData.choices && sceneData.choices.length > 0 && (
           <ChoicesPanel
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -863,7 +940,7 @@ export default function GameplayScreen() {
               <AnimatePresence>
                 {sceneData.choices.map((choice, index) => (
                   <ChoiceButton
-                    className="is-interactive"
+                    className={`is-interactive ${inkingId === choice.id ? 'inking' : ''}`}
                     key={choice.id}
                     onClick={() => handleChoiceSelect(choice)}
                     onMouseEnter={(e) => showTooltip('Select to proceed', e)}
@@ -874,7 +951,7 @@ export default function GameplayScreen() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    {choice.text}
+                    <span className="choice-text">{choice.text}</span>
                   </ChoiceButton>
                 ))}
               </AnimatePresence>
@@ -882,7 +959,6 @@ export default function GameplayScreen() {
           </ChoicesPanel>
         )}
       </MainContentArea>
-
 
       {tooltip.visible && (
         <TooltipBubble $x={tooltip.x} $y={tooltip.y}>
@@ -928,9 +1004,7 @@ export default function GameplayScreen() {
             exit={{ opacity: 0, y: 50 }}
             transition={{ duration: 0.6 }}
           >
-            <SkillText>
-              ✨ {activeSkill.name} Awakened
-            </SkillText>
+            <SkillText>✨ {activeSkill.name} Awakened</SkillText>
           </SkillIndicator>
         )}
       </AnimatePresence>
@@ -975,7 +1049,10 @@ export default function GameplayScreen() {
                 scenes={sceneOrder}
                 current={currentScene}
                 completed={state.gameProgress.completedScenes}
-                onSelect={(s) => { dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: s }); setMobileMapOpen(false); }}
+                onSelect={(s) => {
+                  dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: s });
+                  setMobileMapOpen(false);
+                }}
               />
             </OverlayContent>
           </Overlay>
@@ -986,8 +1063,4 @@ export default function GameplayScreen() {
 }
 
 // Export enhanced styled components for use in scenes
-export {
-  ObjectivesBanner,
-  ObjectiveText,
-  ChoiceButton
-};
+export { ObjectivesBanner, ObjectiveText, ChoiceButton };

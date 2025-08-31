@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useGame } from '../context/GameContext';
+import { useIsTouchDevice } from '../hooks/useIsTouchDevice';
 
 // Simple synthesized audio engine using WebAudio. No external assets required.
 class SoundEngine {
@@ -20,6 +21,7 @@ class SoundEngine {
     this.lastHoverAt = 0;
     this.hoverCooldownMs = 140;
     this.sceneFadeMs = 0.35;
+    this.lowComplexity = false;
   }
 
   ensureContext() {
@@ -62,10 +64,26 @@ class SoundEngine {
   setVolumes({ master, music, ambient, sfx, enabled }) {
     this.ensureContext();
     if (typeof enabled === 'boolean') this.enabled = enabled;
-    if (this.master && typeof master === 'number') this.master.gain.setTargetAtTime(Math.max(0, Math.min(1, master)), this.ctx.currentTime, 0.05);
-    if (this.musicGain && typeof music === 'number') this.musicGain.gain.setTargetAtTime(Math.max(0, Math.min(1, music)), this.ctx.currentTime, 0.05);
-    if (this.ambientGain && typeof ambient === 'number') this.ambientGain.gain.setTargetAtTime(Math.max(0, Math.min(1, ambient)), this.ctx.currentTime, 0.05);
-    if (this.sfxGain && typeof sfx === 'number') this.sfxGain.gain.setTargetAtTime(Math.max(0, Math.min(1, sfx)), this.ctx.currentTime, 0.02);
+    if (this.master && typeof master === 'number')
+      this.master.gain.setTargetAtTime(
+        Math.max(0, Math.min(1, master)),
+        this.ctx.currentTime,
+        0.05
+      );
+    if (this.musicGain && typeof music === 'number')
+      this.musicGain.gain.setTargetAtTime(
+        Math.max(0, Math.min(1, music)),
+        this.ctx.currentTime,
+        0.05
+      );
+    if (this.ambientGain && typeof ambient === 'number')
+      this.ambientGain.gain.setTargetAtTime(
+        Math.max(0, Math.min(1, ambient)),
+        this.ctx.currentTime,
+        0.05
+      );
+    if (this.sfxGain && typeof sfx === 'number')
+      this.sfxGain.gain.setTargetAtTime(Math.max(0, Math.min(1, sfx)), this.ctx.currentTime, 0.02);
     if (!this.enabled) this.stopAmbient();
   }
 
@@ -76,7 +94,12 @@ class SoundEngine {
       setTimeout(() => this.stopAmbient(false), this.sceneFadeMs * 1000 + 60);
       return;
     }
-    this.ambientNodes.forEach(n => { try { n.stop?.(); n.disconnect?.(); } catch (_) {} });
+    this.ambientNodes.forEach((n) => {
+      try {
+        n.stop?.();
+        n.disconnect?.();
+      } catch (_) {}
+    });
     this.ambientNodes = [];
     this.currentAmbient = null;
   }
@@ -94,22 +117,47 @@ class SoundEngine {
     this.ambientGain.gain.setValueAtTime(0.0001, t);
 
     // Use small building blocks per scene
-    if (kind === 'title') {
-      this._padChord([220, 277.18, 329.63], 0.6);
-    } else if (kind === 'DASHASHWAMEDH_GHAT') {
-      this._riverNoise();
-      this._randomBell(8);
-      this._crowdMurmur();
-    } else if (kind === 'LABYRINTH_GHATS') {
-      this._lowDrone();
-      this._drip(7);
-      this._windGusts();
-    } else if (kind === 'NYAYA_TRIAL') {
-      this._resonantHum();
-      this._subtleAir();
-      this._echoPulse(10);
+    if (this.lowComplexity) {
+      if (kind === 'title') {
+        this._padChord([220, 277.18, 329.63], 0.5);
+      } else if (kind === 'DASHASHWAMEDH_GHAT') {
+        this._riverNoise();
+      } else if (kind === 'LABYRINTH_GHATS') {
+        this._lowDrone();
+      } else if (kind === 'NYAYA_TRIAL') {
+        this._resonantHum();
+      } else if (kind === 'VAISESIKA_TRIAL') {
+        this._lowDrone();
+      } else if (kind === 'THE_WARDEN') {
+        this._ominousPulse();
+      } else {
+        this._padChord([196, 246.94, 293.66], 0.5);
+      }
     } else {
-      this._padChord([196, 246.94, 293.66], 0.5);
+      if (kind === 'title') {
+        this._padChord([220, 277.18, 329.63], 0.6);
+      } else if (kind === 'DASHASHWAMEDH_GHAT') {
+        this._riverNoise();
+        this._randomBell(8);
+        this._crowdMurmur();
+      } else if (kind === 'LABYRINTH_GHATS') {
+        this._lowDrone();
+        this._drip(7);
+        this._windGusts();
+      } else if (kind === 'NYAYA_TRIAL') {
+        this._resonantHum();
+        this._subtleAir();
+        this._echoPulse(10);
+      } else if (kind === 'VAISESIKA_TRIAL') {
+        this._lowDrone();
+        this._sparkleGlisten();
+        this._echoPulse(12);
+      } else if (kind === 'THE_WARDEN') {
+        this._ominousPulse();
+        this._windGusts();
+      } else {
+        this._padChord([196, 246.94, 293.66], 0.5);
+      }
     }
 
     this.ambientGain.gain.setTargetAtTime(target, t + 0.02, this.sceneFadeMs);
@@ -183,7 +231,11 @@ class SoundEngine {
       g.gain.exponentialRampToValueAtTime(0.0001, t + 2.2);
       osc.frequency.setValueAtTime(880, t);
       osc.frequency.exponentialRampToValueAtTime(660, t + 1.8);
-      setTimeout(() => { try { osc.stop(); } catch (_) {} }, 2500);
+      setTimeout(() => {
+        try {
+          osc.stop();
+        } catch (_) {}
+      }, 2500);
     };
     const id = setInterval(ring, avg * 1000 + Math.random() * 1500);
     this.ambientNodes.push({ stop: () => clearInterval(id) });
@@ -195,15 +247,18 @@ class SoundEngine {
     const len = 2 * this.ctx.sampleRate;
     const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
     const ch = buf.getChannelData(0);
-    let b0 = 0, b1 = 0, b2 = 0; // pink filter
+    let b0 = 0,
+      b1 = 0,
+      b2 = 0; // pink filter
     for (let i = 0; i < len; i++) {
       const white = Math.random() * 2 - 1;
-      b0 = 0.99765 * b0 + white * 0.0990460;
-      b1 = 0.96300 * b1 + white * 0.2965164;
-      b2 = 0.57000 * b2 + white * 1.0526913;
+      b0 = 0.99765 * b0 + white * 0.099046;
+      b1 = 0.963 * b1 + white * 0.2965164;
+      b2 = 0.57 * b2 + white * 1.0526913;
       ch[i] = (b0 + b1 + b2 + white * 0.1848) * 0.08;
     }
-    src.buffer = buf; src.loop = true;
+    src.buffer = buf;
+    src.loop = true;
     const bp = this.ctx.createBiquadFilter();
     bp.type = 'bandpass';
     bp.frequency.value = 400;
@@ -213,7 +268,10 @@ class SoundEngine {
     src.start();
     this.ambientNodes.push(src, bp, g);
     // slow sweep
-    const sweep = () => { if (!this.currentAmbient) return; bp.frequency.linearRampToValueAtTime(300 + Math.random()*300, this.ctx.currentTime + 3); };
+    const sweep = () => {
+      if (!this.currentAmbient) return;
+      bp.frequency.linearRampToValueAtTime(300 + Math.random() * 300, this.ctx.currentTime + 3);
+    };
     const id = setInterval(sweep, 3000);
     this.ambientNodes.push({ stop: () => clearInterval(id) });
   }
@@ -244,7 +302,11 @@ class SoundEngine {
       g.gain.linearRampToValueAtTime(0.12, t + 0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 0.6);
       o.start();
-      setTimeout(() => { try { o.stop(); } catch (_) {} }, 700);
+      setTimeout(() => {
+        try {
+          o.stop();
+        } catch (_) {}
+      }, 700);
     };
     const id = setInterval(tick, avg * 1000 + Math.random() * 1500);
     this.ambientNodes.push({ stop: () => clearInterval(id) });
@@ -256,9 +318,13 @@ class SoundEngine {
     const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
     const ch = buf.getChannelData(0);
     for (let i = 0; i < len; i++) ch[i] = (Math.random() * 2 - 1) * 0.3;
-    src.buffer = buf; src.loop = true;
-    const hp = this.ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 500;
-    const g = this.ctx.createGain(); g.gain.value = 0.02;
+    src.buffer = buf;
+    src.loop = true;
+    const hp = this.ctx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 500;
+    const g = this.ctx.createGain();
+    g.gain.value = 0.02;
     src.connect(hp).connect(g).connect(this.ambientGain);
     src.start();
     this.ambientNodes.push(src, hp, g);
@@ -304,10 +370,17 @@ class SoundEngine {
     const buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
     const ch = buf.getChannelData(0);
     for (let i = 0; i < len; i++) ch[i] = (Math.random() * 2 - 1) * 0.25;
-    src.buffer = buf; src.loop = true;
-    const hp = this.ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 200;
-    const bp = this.ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = 0.7;
-    const g = this.ctx.createGain(); g.gain.value = 0.012;
+    src.buffer = buf;
+    src.loop = true;
+    const hp = this.ctx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 200;
+    const bp = this.ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 900;
+    bp.Q.value = 0.7;
+    const g = this.ctx.createGain();
+    g.gain.value = 0.012;
     src.connect(hp).connect(bp).connect(g).connect(this.ambientGain);
     src.start();
     this.ambientNodes.push(src, hp, bp, g);
@@ -326,10 +399,15 @@ class SoundEngine {
       if (!this.currentAmbient) return;
       const o = this.ctx.createOscillator();
       o.type = 'triangle';
-      const g = this.ctx.createGain(); g.gain.value = 0;
-      const delay = this.ctx.createDelay(); delay.delayTime.value = 0.28 + Math.random() * 0.12;
-      const fb = this.ctx.createGain(); fb.gain.value = 0.25;
-      const hpf = this.ctx.createBiquadFilter(); hpf.type = 'highpass'; hpf.frequency.value = 600;
+      const g = this.ctx.createGain();
+      g.gain.value = 0;
+      const delay = this.ctx.createDelay();
+      delay.delayTime.value = 0.28 + Math.random() * 0.12;
+      const fb = this.ctx.createGain();
+      fb.gain.value = 0.25;
+      const hpf = this.ctx.createBiquadFilter();
+      hpf.type = 'highpass';
+      hpf.frequency.value = 600;
       g.connect(delay).connect(fb).connect(delay); // feedback loop
       delay.connect(hpf).connect(this.ambientGain);
       o.connect(g);
@@ -340,10 +418,67 @@ class SoundEngine {
       g.gain.linearRampToValueAtTime(0.06, t + 0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 0.8);
       o.start();
-      setTimeout(() => { try { o.stop(); } catch (_) {} }, 900);
+      setTimeout(() => {
+        try {
+          o.stop();
+        } catch (_) {}
+      }, 900);
       this.ambientNodes.push(o, g, delay, fb, hpf);
     };
     const id = setInterval(ping, avg * 1000 + Math.random() * 2000);
+    this.ambientNodes.push({ stop: () => clearInterval(id) });
+  }
+
+  _sparkleGlisten() {
+    // Tiny high chimes that glisten randomly
+    const tick = () => {
+      if (!this.currentAmbient) return;
+      const o = this.ctx.createOscillator();
+      o.type = 'sine';
+      const g = this.ctx.createGain();
+      g.gain.value = 0;
+      const t = this.ctx.currentTime;
+      const f = 1500 + Math.random() * 1200;
+      o.frequency.setValueAtTime(f, t);
+      g.gain.linearRampToValueAtTime(0.03, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+      o.connect(g).connect(this.ambientGain);
+      o.start();
+      setTimeout(() => {
+        try {
+          o.stop();
+        } catch (_) {}
+      }, 600);
+      this.ambientNodes.push(o, g);
+    };
+    const id = setInterval(tick, 1800 + Math.random() * 1200);
+    this.ambientNodes.push({ stop: () => clearInterval(id) });
+  }
+
+  _ominousPulse() {
+    // Low percussive pulse for looming presence
+    const kick = () => {
+      if (!this.currentAmbient) return;
+      const o = this.ctx.createOscillator();
+      o.type = 'sine';
+      const g = this.ctx.createGain();
+      g.gain.value = 0;
+      const t = this.ctx.currentTime;
+      o.frequency.setValueAtTime(110, t);
+      o.frequency.exponentialRampToValueAtTime(55, t + 0.2);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(0.12, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+      o.connect(g).connect(this.ambientGain);
+      o.start();
+      setTimeout(() => {
+        try {
+          o.stop();
+        } catch (_) {}
+      }, 600);
+      this.ambientNodes.push(o, g);
+    };
+    const id = setInterval(kick, 2200 + Math.random() * 1200);
     this.ambientNodes.push({ stop: () => clearInterval(id) });
   }
 
@@ -378,7 +513,8 @@ class SoundEngine {
       g.gain.setValueAtTime(0.0001, t);
       g.gain.linearRampToValueAtTime(0.14, t + 0.01);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 0.45);
-    } else { // click
+    } else {
+      // click
       o.type = 'sine';
       o.frequency.setValueAtTime(360, t);
       g.gain.setValueAtTime(0.0001, t);
@@ -387,7 +523,11 @@ class SoundEngine {
     }
 
     o.start();
-    setTimeout(() => { try { o.stop(); } catch (_) {} }, 500);
+    setTimeout(() => {
+      try {
+        o.stop();
+      } catch (_) {}
+    }, 500);
   }
 }
 
@@ -397,9 +537,28 @@ export default function AudioManager() {
   const { state } = useGame();
   const prevScene = useRef(null);
 
+  const isTouch = useIsTouchDevice();
   useEffect(() => {
-    engine.setVolumes({ master: state.settings.masterVolume, music: state.settings.musicVolume, ambient: state.settings.ambientVolume, sfx: state.settings.sfxVolume, enabled: state.settings.soundEnabled });
-  }, [state.settings.masterVolume, state.settings.musicVolume, state.settings.ambientVolume, state.settings.sfxVolume, state.settings.soundEnabled]);
+    engine.lowComplexity = !!state.settings.accessibility.reducedMotion || isTouch;
+    const ambient = engine.lowComplexity
+      ? Math.min(state.settings.ambientVolume, 0.45)
+      : state.settings.ambientVolume;
+    engine.setVolumes({
+      master: state.settings.masterVolume,
+      music: state.settings.musicVolume,
+      ambient,
+      sfx: state.settings.sfxVolume,
+      enabled: state.settings.soundEnabled,
+    });
+  }, [
+    state.settings.masterVolume,
+    state.settings.musicVolume,
+    state.settings.ambientVolume,
+    state.settings.sfxVolume,
+    state.settings.soundEnabled,
+    state.settings.accessibility.reducedMotion,
+    isTouch,
+  ]);
 
   useEffect(() => {
     let scene = null;
