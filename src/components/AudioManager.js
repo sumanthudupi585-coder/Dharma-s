@@ -108,6 +108,13 @@ class SoundEngine {
       this._resonantHum();
       this._subtleAir();
       this._echoPulse(10);
+    } else if (kind === 'VAISESIKA_TRIAL') {
+      this._lowDrone();
+      this._sparkleGlisten();
+      this._echoPulse(12);
+    } else if (kind === 'THE_WARDEN') {
+      this._ominousPulse();
+      this._windGusts();
     } else {
       this._padChord([196, 246.94, 293.66], 0.5);
     }
