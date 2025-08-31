@@ -885,7 +885,7 @@ export default function GameplayScreen() {
               <AnimatePresence>
                 {sceneData.choices.map((choice, index) => (
                   <ChoiceButton
-                    className="is-interactive"
+                    className={`is-interactive ${inkingId === choice.id ? 'inking' : ''}`}
                     key={choice.id}
                     onClick={() => handleChoiceSelect(choice)}
                     onMouseEnter={(e) => showTooltip('Select to proceed', e)}
@@ -896,7 +896,7 @@ export default function GameplayScreen() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    {choice.text}
+                    <span className="choice-text">{choice.text}</span>
                   </ChoiceButton>
                 ))}
               </AnimatePresence>
