@@ -20,6 +20,7 @@ const Wrap = styled.div`
 const Sigil = styled.div`
   width: 120px; height: 120px; border-radius: 50%; border: 2px solid #d4af37; position: relative; animation: ${spin} 5s linear infinite;
   box-shadow: 0 0 30px rgba(212,175,55,0.25);
+  will-change: transform, opacity, filter;
   &::before, &::after { content: ''; position: absolute; inset: 10px; border-radius: 50%; border: 1px dashed rgba(212,175,55,0.5); }
   &::after { inset: 22px; border-style: solid; border-width: 1px; border-color: rgba(212,175,55,0.4); }
 `;
@@ -34,6 +35,7 @@ const Title = styled.h1`
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  will-change: opacity, transform, filter;
 `;
 
 const Tip = styled.p`
@@ -76,3 +78,4 @@ function LoadingScreen() {
     </Wrap>
   );
 }
+export default React.memo(LoadingScreen);
