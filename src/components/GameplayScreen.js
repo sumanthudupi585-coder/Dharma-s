@@ -788,7 +788,14 @@ export default function GameplayScreen() {
 
       <JournalSidebar>
         <Journal isVisible={!mobileJournalOpen} />
-        <MiniMapPanel />
+        <MiniMapPanel>
+          <SceneProgressMap
+            scenes={sceneOrder}
+            current={currentScene}
+            completed={state.gameProgress.completedScenes}
+            onSelect={(s) => dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: s })}
+          />
+        </MiniMapPanel>
       </JournalSidebar>
 
       <JournalToggle
