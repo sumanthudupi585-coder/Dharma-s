@@ -260,13 +260,14 @@ function TitleScreen() {
       </ParallaxLayer>
       <CenterStack>
         <TitleHalo />
+        <Mandala aria-hidden />
         <TitleWordmark className="shimmer">Dharma's Cipher</TitleWordmark>
-        <Whisper>Whisper the first vow.</Whisper>
+        <Whisper>Press Enter to begin.</Whisper>
         <Menu initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
           <ActionButton className="is-interactive" type="button" aria-label="Start New Journey" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleNewGame}>
             Start New Journey
           </ActionButton>
-          <ActionButton className="is-interactive" type="button" aria-label="Continue Path" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleLoadGame}>
+          <ActionButton className="is-interactive" type="button" aria-label="Continue Path" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleLoadGame} disabled={!hasSave} aria-disabled={!hasSave}>
             Continue Path
           </ActionButton>
           <ActionButton className="is-interactive" type="button" aria-label="Open Sacred Settings" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleSettings}>
@@ -275,7 +276,6 @@ function TitleScreen() {
         </Menu>
         <div style={{ height: '8px' }} />
         <React.Suspense fallback={null}>
-          {/* Daily riddle reward */}
           <DailyRiddle />
         </React.Suspense>
       </CenterStack>
