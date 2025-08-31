@@ -217,7 +217,6 @@ const AlcoveGlow = styled.div`
 
 export default function Scene3NyayaTrial() {
   const { state } = useGame();
-  const _reduced = state.settings?.accessibility?.reducedMotion;
   const puzzle = useNyayaPuzzle();
   const [showPuzzle, setShowPuzzle] = useState(false);
 
