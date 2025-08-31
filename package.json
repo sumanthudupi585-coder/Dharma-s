@@ -5,10 +5,10 @@
   "private": true,
   "homepage": "https://sumanthudupi585-coder.github.io/Dharma-sCip/",
   "dependencies": {
+    "framer-motion": "^10.16.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
-    "framer-motion": "^10.16.4",
     "styled-components": "^6.1.1"
   },
   "scripts": {
@@ -38,6 +38,16 @@
       "last 1 safari version"
     ]
   },
-  "keywords": ["philosophy", "adventure", "game", "dharma", "vedic", "interactive"],
-  "author": "Fusion AI"
+  "keywords": [
+    "philosophy",
+    "adventure",
+    "game",
+    "dharma",
+    "vedic",
+    "interactive"
+  ],
+  "author": "Fusion AI",
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
+  }
 }
