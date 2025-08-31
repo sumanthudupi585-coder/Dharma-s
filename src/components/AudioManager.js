@@ -95,29 +95,47 @@ class SoundEngine {
     this.ambientGain.gain.setValueAtTime(0.0001, t);
 
     // Use small building blocks per scene
-    if (kind === 'title') {
-      this._padChord([220, 277.18, 329.63], 0.6);
-    } else if (kind === 'DASHASHWAMEDH_GHAT') {
-      this._riverNoise();
-      this._randomBell(8);
-      this._crowdMurmur();
-    } else if (kind === 'LABYRINTH_GHATS') {
-      this._lowDrone();
-      this._drip(7);
-      this._windGusts();
-    } else if (kind === 'NYAYA_TRIAL') {
-      this._resonantHum();
-      this._subtleAir();
-      this._echoPulse(10);
-    } else if (kind === 'VAISESIKA_TRIAL') {
-      this._lowDrone();
-      this._sparkleGlisten();
-      this._echoPulse(12);
-    } else if (kind === 'THE_WARDEN') {
-      this._ominousPulse();
-      this._windGusts();
+    if (this.lowComplexity) {
+      if (kind === 'title') {
+        this._padChord([220, 277.18, 329.63], 0.5);
+      } else if (kind === 'DASHASHWAMEDH_GHAT') {
+        this._riverNoise();
+      } else if (kind === 'LABYRINTH_GHATS') {
+        this._lowDrone();
+      } else if (kind === 'NYAYA_TRIAL') {
+        this._resonantHum();
+      } else if (kind === 'VAISESIKA_TRIAL') {
+        this._lowDrone();
+      } else if (kind === 'THE_WARDEN') {
+        this._ominousPulse();
+      } else {
+        this._padChord([196, 246.94, 293.66], 0.5);
+      }
     } else {
-      this._padChord([196, 246.94, 293.66], 0.5);
+      if (kind === 'title') {
+        this._padChord([220, 277.18, 329.63], 0.6);
+      } else if (kind === 'DASHASHWAMEDH_GHAT') {
+        this._riverNoise();
+        this._randomBell(8);
+        this._crowdMurmur();
+      } else if (kind === 'LABYRINTH_GHATS') {
+        this._lowDrone();
+        this._drip(7);
+        this._windGusts();
+      } else if (kind === 'NYAYA_TRIAL') {
+        this._resonantHum();
+        this._subtleAir();
+        this._echoPulse(10);
+      } else if (kind === 'VAISESIKA_TRIAL') {
+        this._lowDrone();
+        this._sparkleGlisten();
+        this._echoPulse(12);
+      } else if (kind === 'THE_WARDEN') {
+        this._ominousPulse();
+        this._windGusts();
+      } else {
+        this._padChord([196, 246.94, 293.66], 0.5);
+      }
     }
 
     this.ambientGain.gain.setTargetAtTime(target, t + 0.02, this.sceneFadeMs);
