@@ -19,9 +19,9 @@ const GameplayScreen = lazy(() => import('./components/GameplayScreen'));
 
 function GameRouter() {
   const variants = {
-    initial: { opacity: 0, filter: 'blur(6px)' },
-    animate: { opacity: 1, filter: 'blur(0px)' },
-    exit: { opacity: 0, filter: 'blur(8px)' }
+    initial: { opacity: 0, filter: 'blur(8px) contrast(0.9)' },
+    animate: { opacity: 1, filter: 'blur(0px) contrast(1)' },
+    exit: { opacity: 0, filter: 'blur(10px) contrast(0.85)' }
   };
   const { state } = useGame();
   
