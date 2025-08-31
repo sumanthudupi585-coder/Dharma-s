@@ -71,15 +71,30 @@ const sceneLabels = {
 };
 
 export default function SceneProgressMap({ scenes, current, completed, onSelect }) {
+  const completedIdx = completed
+    .map((s) => scenes.indexOf(s))
+    .filter((i) => i >= 0);
+  const maxCompleted = completedIdx.length ? Math.max(...completedIdx) : -1;
+  const allowIndex = Math.min(maxCompleted + 1, scenes.length - 1);
+
   return (
     <Wrap>
       <Title>Journey Map</Title>
       <Map>
-        {scenes.map((s) => {
+        {scenes.map((s, idx) => {
           const active = s === current;
           const done = completed.includes(s);
+          const allowed = idx <= allowIndex;
           return (
-            <Node key={s} className="is-interactive" $active={active} onClick={() => onSelect && onSelect(s)} aria-current={active ? 'page' : undefined}>
+            <Node
+              key={s}
+              className={allowed ? 'is-interactive' : 'is-disabled'}
+              $active={active}
+              onClick={() => allowed && onSelect && onSelect(s)}
+              aria-current={active ? 'page' : undefined}
+              aria-disabled={allowed ? undefined : 'true'}
+              disabled={!allowed}
+            >
               <Dot $done={done} aria-hidden />
               <Label>{sceneLabels[s] || s}</Label>
               <Status $active={active}>{active ? 'Current' : done ? 'Done' : ''}</Status>
