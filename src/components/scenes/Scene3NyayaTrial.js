@@ -289,6 +289,9 @@ export default function Scene3NyayaTrial() {
     if (puzzle.complete) {
       dispatch({ type: ACTIONS.COMPLETE_SCENE, payload: SCENES.NYAYA_TRIAL });
       dispatch({ type: ACTIONS.ADD_ACHIEVEMENT, payload: { id: 'logician', title: 'Logician', description: 'Solved the Nyāya syllogism.' } });
+      // Progress to next trial
+      const t = setTimeout(() => dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: SCENES.VAISESIKA_TRIAL }), 800);
+      return () => clearTimeout(t);
     }
   }, [puzzle.complete, dispatch]);
 
@@ -393,6 +396,11 @@ export default function Scene3NyayaTrial() {
             const firstFilled = Object.keys(puzzle.placed)[0];
             if (firstFilled) puzzle.unplaceFromSlot(firstFilled);
           }}>Unplace</PlaceBtn>
+          {puzzle.complete && (
+            <PlaceBtn className="is-interactive" onClick={() => dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: SCENES.VAISESIKA_TRIAL })}>
+              Continue
+            </PlaceBtn>
+          )}
         </Controls>
         <Message role="status" $success={puzzle.complete}>{puzzle.message}</Message>
       </PuzzleWrap>
