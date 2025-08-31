@@ -684,6 +684,8 @@ export default function GameplayScreen() {
   };
   const goNextScene = () => {
     const i = sceneOrder.indexOf(currentScene);
+    const isCompleted = state.gameProgress.completedScenes.includes(currentScene);
+    if (!isCompleted) return;
     if (i < sceneOrder.length - 1) goToSceneIndex(i + 1);
   };
   const goPrevScene = () => {

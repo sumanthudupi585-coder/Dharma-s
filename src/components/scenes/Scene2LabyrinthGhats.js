@@ -2,6 +2,7 @@ import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import ProgressiveNarrative from '../ProgressiveNarrative';
+import { useGame, ACTIONS, SCENES } from '../../context/GameContext';
 
 const SceneContainer = styled.div`
   height: 100%;
@@ -57,6 +58,11 @@ const NarrativeText = styled(motion.div)`
 `;
 
 export default function Scene2LabyrinthGhats() {
+  const { dispatch } = useGame();
+  const handleDone = () => {
+    dispatch({ type: ACTIONS.COMPLETE_SCENE, payload: SCENES.LABYRINTH_GHATS });
+    dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: SCENES.NYAYA_TRIAL });
+  };
   return (
     <SceneContainer>
       <FogLayer />
@@ -71,6 +77,7 @@ export default function Scene2LabyrinthGhats() {
       
       <NarrativeText initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }}>
         <ProgressiveNarrative
+          onComplete={handleDone}
           blocks={[
             (
               <p>
