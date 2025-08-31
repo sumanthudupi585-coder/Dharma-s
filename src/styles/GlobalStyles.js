@@ -228,6 +228,8 @@ const GlobalStyle = createGlobalStyle`
     color: var(--ink-black);
     border: 2px solid var(--copper);
     padding: var(--spacing-sm) var(--spacing-lg);
+    min-height: 44px;
+    touch-action: manipulation;
     border-radius: var(--border-radius);
     font-family: var(--font-primary);
     font-weight: 600;
@@ -270,6 +272,8 @@ const GlobalStyle = createGlobalStyle`
     border: 1px solid var(--copper);
     color: var(--parchment);
     padding: var(--spacing-md) var(--spacing-lg);
+    min-height: 44px;
+    touch-action: manipulation;
     border-radius: var(--border-radius);
     font-family: var(--font-primary);
     cursor: pointer;

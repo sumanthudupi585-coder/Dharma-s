@@ -16,7 +16,7 @@ const TermWrap = styled.span`
   }
 `;
 
-const Tip = styled.div`
+const Tip = styled.span`
   position: absolute;
   left: 0;
   bottom: 125%;
@@ -32,6 +32,7 @@ const Tip = styled.div`
   will-change: transform, opacity;
   transform: translateY(-6px);
   animation: tooltipIn 160ms ease-out;
+  display: block;
 
   &::after {
     content: '';
@@ -96,7 +97,7 @@ export default function GlossaryTerm({ term, className }) {
     <TermWrap
       className={`is-interactive ${className || ''}`}
       role="button"
-      aria-haspopup="tooltip"
+      aria-haspopup="true"
       aria-expanded={open}
       aria-describedby={open ? `${id}-desc` : undefined}
       aria-controls={open ? `${id}-tip` : undefined}

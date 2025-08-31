@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion } from 'framer-motion';
 import { useGame, ACTIONS, SCENES } from '../../context/GameContext';
+import ProgressiveNarrative from '../ProgressiveNarrative';
 
 // Ritual movements animation
 const ritualGlow = keyframes`
@@ -355,6 +356,11 @@ const HintText = styled.p`
   text-align: center;
 `;
 
+const CenteredBlock = styled(motion.div)`
+  text-align: center;
+  margin-top: var(--spacing-xl);
+`;
+
 // Ritual movements data
 const RITUAL_MOVEMENTS = [
   { id: 1, icon: '🔺', label: 'Raise Upwards', description: 'Towards the sky' },
@@ -543,43 +549,48 @@ export default function Scene1DashashwamedhGhat() {
         Scene 1: Dashashwamedh Ghat
       </SceneTitle>
       
-      <NarrativeText
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 0.3 }}
-      >
-        <p>
-          You materialize not with a sound, but with a gasp, as if you've just surfaced from a 
-          deep, dark water. The air is thick, a heady, almost overwhelming cocktail of 
-          <span className="highlight-object"> sandalwood incense</span>, crushed <span className="highlight-object">marigolds</span>, 
-          <span className="highlight-object">ghee-fed flames</span>, and the damp, ancient scent of the 
-          <span className="highlight-place">river</span>. A wall of sound crashes over you: a thousand voices murmuring 
-          in a dozen languages, the percussive, insistent clang of <span className="highlight-object">temple bells</span>, 
-          and the deep, resonant drone of <span className="highlight-mystical">Sanskrit chanting</span> that seems to 
-          vibrate in your very bones, shaking loose the dust of your former reality.
-        </p>
-        
-        <p>
-          You stand on the worn stone steps of <span className="highlight-place">Dashashwamedh Ghat</span>. 
-          It is dusk, the hour of smoke and fire. Before you, the <span className="highlight-place">Ganga river</span> 
-          is a sheet of dark, rippling silk, shattered into a million pieces by the reflections of countless flames.
-        </p>
-        
-        <p>
-          <span className="highlight-character">Saffron-robed priests</span>, their movements honed by generations of ritual, 
-          move in a mesmerizing, synchronized dance. They wield massive, tiered <span className="highlight-object">oil lamps</span>, 
-          painting the twilight in broad, sweeping strokes of fire, their shadows stretching and 
-          capering like ancient gods. The ghat is packed with an ocean of humanity, their 
-          faces upturned, a tapestry of awe, faith, and quiet desperation, all bathed in the 
-          sacred glow.
-        </p>
-        
-        <p>
-          Your senses are overwhelmed, a symphony on the verge of becoming a cacophony. Your purpose, 
-          however, is a single, clear note in the chaos. <span className="highlight-character">Dr. Thorne</span> sent you here. 
-          You need to find his contact. But first, you must find your own focus in this beautiful, 
-          terrifying storm of existence.
-        </p>
+      <NarrativeText initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }}>
+        <ProgressiveNarrative
+          blocks={[
+            (
+              <p>
+                You materialize not with a sound, but with a gasp, as if you've just surfaced from a
+                deep, dark water. The air is thick, a heady, almost overwhelming cocktail of
+                <span className="highlight-object"> sandalwood incense</span>, crushed <span className="highlight-object">marigolds</span>,
+                <span className="highlight-object">ghee-fed flames</span>, and the damp, ancient scent of the
+                <span className="highlight-place">river</span>. A wall of sound crashes over you: a thousand voices murmuring
+                in a dozen languages, the percussive, insistent clang of <span className="highlight-object">temple bells</span>,
+                and the deep, resonant drone of <span className="highlight-mystical">Sanskrit chanting</span> that seems to
+                vibrate in your very bones, shaking loose the dust of your former reality.
+              </p>
+            ),
+            (
+              <p>
+                You stand on the worn stone steps of <span className="highlight-place">Dashashwamedh Ghat</span>.
+                It is dusk, the hour of smoke and fire. Before you, the <span className="highlight-place">Ganga river</span>
+                is a sheet of dark, rippling silk, shattered into a million pieces by the reflections of countless flames.
+              </p>
+            ),
+            (
+              <p>
+                <span className="highlight-character">Saffron-robed priests</span>, their movements honed by generations of ritual,
+                move in a mesmerizing, synchronized dance. They wield massive, tiered <span className="highlight-object">oil lamps</span>,
+                painting the twilight in broad, sweeping strokes of fire, their shadows stretching and
+                capering like ancient gods. The ghat is packed with an ocean of humanity, their
+                faces upturned, a tapestry of awe, faith, and quiet desperation, all bathed in the
+                sacred glow.
+              </p>
+            ),
+            (
+              <p>
+                Your senses are overwhelmed, a symphony on the verge of becoming a cacophony. Your purpose,
+                however, is a single, clear note in the chaos. <span className="highlight-character">Dr. Thorne</span> sent you here.
+                You need to find his contact. But first, you must find your own focus in this beautiful,
+                terrifying storm of existence.
+              </p>
+            )
+          ]}
+        />
       </NarrativeText>
 
       <ObjectiveBox
@@ -693,11 +704,10 @@ export default function Scene1DashashwamedhGhat() {
       )}
 
       {puzzleSolved && (
-        <motion.div
+        <CenteredBlock
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          style={{ textAlign: 'center', marginTop: 'var(--spacing-xl)' }}
         >
           <NarrativePara>
             A shadow falls over you. A simple wooden boat has poled silently to the steps. 
@@ -746,7 +756,7 @@ export default function Scene1DashashwamedhGhat() {
           <HintText>
             Click on the offering bowl to trace the pattern: Lower → Towards Crowd → Center
           </HintText>
-        </motion.div>
+        </CenteredBlock>
       )}
     </SceneContainer>
   );

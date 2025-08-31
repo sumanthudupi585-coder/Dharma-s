@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import GlossaryTerm from '../GlossaryTerm';
 import { useGame } from '../../context/GameContext';
-import TypewriterText from '../TypewriterText';
+import ProgressiveNarrative from '../ProgressiveNarrative';
 import useNyayaPuzzle from '../hooks/useNyayaPuzzle';
 
 const SceneContainer = styled.div`
@@ -27,6 +27,8 @@ const NarrativeText = styled(motion.div)`
   color: var(--parchment);
   font-size: 1.1rem;
   line-height: 1.8;
+  position: relative;
+  z-index: 2;
 `;
 
 const PuzzleWrap = styled.div`
@@ -36,6 +38,14 @@ const PuzzleWrap = styled.div`
   background: linear-gradient(145deg, rgba(0,0,0,0.85), rgba(12,12,12,0.95));
   padding: var(--spacing-lg);
   box-shadow: 0 10px 26px rgba(0,0,0,0.7), 0 0 18px rgba(212,175,55,0.18);
+`;
+
+const InstructionText = styled.div`
+  margin-bottom: var(--spacing-md);
+  color: #e0c062;
+  font-size: 0.95rem;
+  font-family: var(--font-primary);
+  opacity: 0.95;
 `;
 
 const CardsRow = styled.div`
@@ -51,10 +61,30 @@ const Card = styled.button`
   border: 1px solid #d4af37;
   background: linear-gradient(145deg, rgba(0,0,0,0.8), rgba(15,15,15,0.9));
   color: #d4af37;
+  min-height: 44px;
+  touch-action: manipulation;
   cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.2s ease;
+  transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   will-change: transform, opacity;
   outline-offset: 2px;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: #ffd700;
+    box-shadow: 0 6px 18px rgba(212,175,55,0.14), inset 0 0 0 1px rgba(255,215,0,0.15);
+  }
+  &:active {
+    transform: translateY(0) scale(0.99);
+  }
+  &:focus-visible {
+    outline: 2px solid #ffd700;
+    outline-offset: 2px;
+  }
+  &[aria-pressed="true"] {
+    border-color: #ffd700;
+    background: linear-gradient(145deg, rgba(25,20,0,0.9), rgba(40,30,0,0.95));
+    box-shadow: 0 0 0 2px rgba(255,215,0,0.2), 0 10px 24px rgba(0,0,0,0.6);
+  }
 `;
 
 const Slots = styled.div`
@@ -69,6 +99,11 @@ const SlotRow = styled.div`
   grid-template-columns: 260px 1fr auto;
   gap: var(--spacing-sm);
   align-items: center;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
 `;
 
 const SlotTitle = styled.div`
@@ -85,6 +120,14 @@ const SlotContent = styled.div`
   border-radius: 10px;
   color: #e8c86a;
   background: rgba(255,215,0,0.05);
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+
+  ${({ $filled }) => $filled && `
+    border-style: solid;
+    border-color: #ffd700;
+    background: linear-gradient(145deg, rgba(255,215,0,0.08), rgba(255,215,0,0.04));
+    box-shadow: inset 0 0 0 1px rgba(255,215,0,0.12);
+  `}
 `;
 
 const PlaceBtn = styled.button`
@@ -93,17 +136,46 @@ const PlaceBtn = styled.button`
   border: 1px solid #d4af37;
   background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
   color: #e8c86a;
+  min-height: 44px;
+  touch-action: manipulation;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+
+  &:hover {
+    border-color: #ffd700;
+    box-shadow: 0 6px 18px rgba(212,175,55,0.14), inset 0 0 0 1px rgba(255,215,0,0.1);
+    transform: translateY(-1px);
+  }
+  &:active {
+    transform: translateY(0) scale(0.99);
+  }
+  &:focus-visible {
+    outline: 2px solid #ffd700;
+    outline-offset: 2px;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+
+const SlotActions = styled.div`
+  display: flex;
+  gap: var(--spacing-sm);
 `;
 
 const Controls = styled.div`
   margin-top: var(--spacing-md);
   display: flex;
   gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  justify-content: flex-end;
 `;
 
 const Message = styled.div`
   margin-top: var(--spacing-sm);
-  color: #b8941f;
+  color: ${({ $success }) => ($success ? '#a7e28a' : '#b8941f')};
   font-family: var(--font-primary);
 `;
 
@@ -113,10 +185,10 @@ const chamberPulse = keyframes`
   50% { opacity: 0.28; }
 `;
 const ChamberVignette = styled.div`
-  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
   background:
-    radial-gradient(60% 60% at 50% 50%, rgba(212, 175, 55, 0.04), transparent 60%),
-    radial-gradient(80% 80% at 50% 50%, rgba(0, 0, 0, 0.6), rgba(0,0,0,0.9));
+    radial-gradient(60% 60% at 50% 50%, rgba(212, 175, 55, 0.03), transparent 60%),
+    radial-gradient(80% 80% at 50% 50%, rgba(0, 0, 0, 0.4), rgba(0,0,0,0.6));
   mix-blend-mode: soft-light;
   animation: ${chamberPulse} 16s ease-in-out infinite;
 `;
@@ -128,10 +200,11 @@ const sweepAnim = keyframes`
   100% { transform: translateX(60%) rotate(12deg); opacity: 0.04; }
 `;
 const LightSweep = styled.div`
-  position: absolute; top: 15%; left: -30%; width: 160%; height: 70%; z-index: 1; pointer-events: none;
-  background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.06) 50%, transparent 100%);
+  position: absolute; top: 15%; left: -30%; width: 160%; height: 70%; z-index: 0; pointer-events: none;
+  background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.05) 50%, transparent 100%);
   filter: blur(12px);
   animation: ${sweepAnim} 22s linear infinite;
+  @media (max-width: 768px) { display: none; }
 `;
 
 // Central iris-like mechanism with ultra-slow rotation
@@ -140,10 +213,10 @@ const irisRotate = keyframes`
   100% { transform: translate(-50%, -50%) rotate(360deg); }
 `;
 const IrisDoor = styled.div`
-  position: absolute; top: 50%; left: 50%; width: 220px; height: 220px; z-index: 1; pointer-events: none;
+  position: absolute; top: 50%; left: 50%; width: 220px; height: 220px; z-index: 0; pointer-events: none;
   border-radius: 50%;
   background:
-    radial-gradient(closest-side, rgba(212,175,55,0.08), rgba(0,0,0,0.85) 70%),
+    radial-gradient(closest-side, rgba(212,175,55,0.06), rgba(0,0,0,0.6) 70%),
     conic-gradient(from 0deg,
       rgba(212,175,55,0.1) 0deg 6deg,
       transparent 6deg 18deg,
@@ -186,9 +259,10 @@ const IrisDoor = styled.div`
       rgba(212,175,55,0.06) 342deg 348deg,
       transparent 348deg 360deg
     );
-  box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 40px rgba(212,175,55,0.08);
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.55), 0 0 40px rgba(212,175,55,0.06);
   transform: translate(-50%, -50%);
   animation: ${irisRotate} 180s linear infinite;
+  @media (max-width: 768px) { display: none; }
 `;
 
 // Alcove glows at cardinal points
@@ -197,9 +271,10 @@ const shimmer = keyframes`
   50% { opacity: 0.26; filter: blur(8px); }
 `;
 const AlcoveGlow = styled.div`
-  position: absolute; width: 110px; height: 110px; border-radius: 50%; pointer-events: none; z-index: 1;
-  background: radial-gradient(closest-side, rgba(212,175,55,0.18), rgba(212,175,55,0.06), transparent 70%);
+  position: absolute; width: 110px; height: 110px; border-radius: 50%; pointer-events: none; z-index: 0;
+  background: radial-gradient(closest-side, rgba(212,175,55,0.16), rgba(212,175,55,0.05), transparent 70%);
   animation: ${shimmer} 7s ease-in-out infinite;
+  @media (max-width: 768px) { display: none; }
   ${({ $position }) => $position === 'north' && 'top: 8%; left: 50%; transform: translateX(-50%);'}
   ${({ $position }) => $position === 'east' && 'right: 8%; top: 50%; transform: translateY(-50%);'}
   ${({ $position }) => $position === 'south' && 'bottom: 8%; left: 50%; transform: translateX(-50%);'}
@@ -207,13 +282,9 @@ const AlcoveGlow = styled.div`
 `;
 
 export default function Scene3NyayaTrial() {
-  const { state } = useGame();
-  const reduced = state.settings?.accessibility?.reducedMotion;
+  useGame();
   const puzzle = useNyayaPuzzle();
-
-  const Paragraph = ({ children }) => reduced ? <span>{children}</span> : (
-    <TypewriterText text={String(children)} />
-  );
+  const [showPuzzle, setShowPuzzle] = useState(false);
 
   return (
     <SceneContainer>
@@ -232,35 +303,32 @@ export default function Scene3NyayaTrial() {
         Scene 3: The First Sage's Trial - The Logic of Nyāya
       </SceneTitle>
 
-      <NarrativeText
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 0.3 }}
-      >
-        <p>
-          <Paragraph>
-            You descend into perfect, suffocating silence. The chamber below is a flawless circle of polished black stone that seems to drink the light from your torch, giving nothing back. The architecture is stark, logical, minimalist, almost alien in its perfection. This is not a place of worship, but a place of pure, cold intellect, a sanctuary for the mind stripped of all distraction and emotion.
-          </Paragraph>
-        </p>
-        <p>
-          <Paragraph>
-            Four alcoves are spaced at perfect ninety-degree intervals. In the center of the chamber, a massive, iris-like stone door, sealed tight, bars your progress. As you approach the first alcove, you feel a faint resonance in your mind, a memory of Thorne's teachings. It seems this chamber is designed not just to be solved, but to be understood, a living lesson in the architecture of truth.
-          </Paragraph>
-        </p>
-        <p>
-          <Paragraph>
-            The Four Pramāṇas await your understanding:
-          </Paragraph>
-          <span>
-            <GlossaryTerm className="highlight-mystical is-interactive" term="Pratyakṣa" /> (Perception),
-            <GlossaryTerm className="highlight-mystical is-interactive" term="Anumāṇa" /> (Inference),
-            <GlossaryTerm className="highlight-mystical is-interactive" term="Upamāna" /> (Comparison), and
-            <GlossaryTerm className="highlight-mystical is-interactive" term="Śabda" /> (Testimony). Each must be proven before the way forward opens.
-          </span>
-        </p>
+      <NarrativeText initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.2 }}>
+        <ProgressiveNarrative
+          autoAdvance={false}
+          delay={2400}
+          onComplete={() => setShowPuzzle(true)}
+          blocks={[
+            (<div>Silent, circular chamber of obsidian. Reason over ritual.</div>),
+            (<div>Four alcoves. A sealed iris door. The room demands clarity.</div>),
+            (
+              <div>
+                Prove the Four Pramāṇas:
+                <span>
+                  <GlossaryTerm className="highlight-mystical is-interactive" term="Pratyakṣa" /> (Perception),
+                  <GlossaryTerm className="highlight-mystical is-interactive" term="Anumāṇa" /> (Inference),
+                  <GlossaryTerm className="highlight-mystical is-interactive" term="Upamāna" /> (Comparison),
+                  <GlossaryTerm className="highlight-mystical is-interactive" term="Śabda" /> (Testimony).
+                </span>
+              </div>
+            )
+          ]}
+        />
       </NarrativeText>
 
+      {showPuzzle && (
       <PuzzleWrap role="region" aria-label="Nyāya syllogism puzzle">
+        <InstructionText>Select a card, then place it into the correct logical step.</InstructionText>
         <CardsRow aria-label="Premise cards">
           {puzzle.cards.map((c) => (
             <Card
@@ -282,17 +350,31 @@ export default function Scene3NyayaTrial() {
             return (
               <SlotRow key={s.id}>
                 <SlotTitle>{s.title}</SlotTitle>
-                <SlotContent aria-live="polite">
+                <SlotContent aria-live="polite" $filled={!!placedCard}>
                   {placedCard ? placedCard.text : 'Empty'}
                 </SlotContent>
-                <PlaceBtn
-                  className="is-interactive"
-                  aria-label={`Place selected card into ${s.title}`}
-                  onClick={() => puzzle.placeOnSlot(s.id)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); puzzle.placeOnSlot(s.id); } }}
-                >
-                  Place
-                </PlaceBtn>
+                <SlotActions>
+                  <PlaceBtn
+                    className="is-interactive"
+                    aria-label={`Place selected card into ${s.title}`}
+                    disabled={!puzzle.selected}
+                    aria-disabled={!puzzle.selected}
+                    onClick={() => puzzle.placeOnSlot(s.id)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); puzzle.placeOnSlot(s.id); } }}
+                  >
+                    Place
+                  </PlaceBtn>
+                  {placedCard && (
+                    <PlaceBtn
+                      className="is-interactive"
+                      aria-label={`Remove card from ${s.title}`}
+                      onClick={() => puzzle.unplaceFromSlot(s.id)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); puzzle.unplaceFromSlot(s.id); } }}
+                    >
+                      Remove
+                    </PlaceBtn>
+                  )}
+                </SlotActions>
               </SlotRow>
             );
           })}
@@ -302,13 +384,13 @@ export default function Scene3NyayaTrial() {
           <PlaceBtn className="is-interactive" onClick={puzzle.submit} disabled={!puzzle.canSubmit} aria-disabled={!puzzle.canSubmit}>Submit</PlaceBtn>
           <PlaceBtn className="is-interactive" onClick={puzzle.reset}>Reset</PlaceBtn>
           <PlaceBtn className="is-interactive" onClick={() => {
-            // allow unplacing from focused slot using button
             const firstFilled = Object.keys(puzzle.placed)[0];
             if (firstFilled) puzzle.unplaceFromSlot(firstFilled);
           }}>Unplace</PlaceBtn>
         </Controls>
-        <Message role="status">{puzzle.message}</Message>
+        <Message role="status" $success={puzzle.complete}>{puzzle.message}</Message>
       </PuzzleWrap>
+      )}
     </SceneContainer>
   );
 }

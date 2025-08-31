@@ -1,6 +1,8 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
+import ProgressiveNarrative from '../ProgressiveNarrative';
+import { useGame, ACTIONS, SCENES } from '../../context/GameContext';
 
 const SceneContainer = styled.div`
   height: 100%;
@@ -56,6 +58,11 @@ const NarrativeText = styled(motion.div)`
 `;
 
 export default function Scene2LabyrinthGhats() {
+  const { dispatch } = useGame();
+  const handleDone = () => {
+    dispatch({ type: ACTIONS.COMPLETE_SCENE, payload: SCENES.LABYRINTH_GHATS });
+    dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: SCENES.NYAYA_TRIAL });
+  };
   return (
     <SceneContainer>
       <FogLayer />
@@ -68,33 +75,38 @@ export default function Scene2LabyrinthGhats() {
         Scene 2: The Labyrinth of the Ghats
       </SceneTitle>
       
-      <NarrativeText
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 0.3 }}
-      >
-        <p>
-          You leave the vibrant, communal chaos of the <span className="highlight-mystical">Aarti</span> behind. 
-          Turning your back on the river is a physical wrench, like stepping out of a warm room into a cold night.
-          You step into the labyrinth. The alleys are narrow, suffocating veins of stone, lit by 
-          the sputtering, unreliable orange glow of torches that cast dancing, monstrous shadows.
-        </p>
-        
-        <p>
-          The glorious sounds of the city become a muffled, distant echo, replaced by the intimate, 
-          unsettling noises of the maze: the scuttling of unseen things in the drains, the mournful 
-          lowing of a stray cow, and the faint, haunting cry of a <span className="highlight-object">conch shell</span> 
-          from a hidden temple. Buildings, centuries old, lean against each other as if for support, 
-          their upper floors almost touching, creating a canopy of stone that hides the sky.
-        </p>
-        
-        <p>
-          The air grows heavier, thick with the unmistakable, cloying smell of woodsmoke. You are 
-          approaching <span className="highlight-place">Manikarnika Ghat</span>, the great cremation ground. 
-          The atmosphere is not frightening, but profoundly, intensely somber. You see a family at the edge 
-          of the ghat, offering prayers as a shrouded body is prepared for its final journey. 
-          This is a place of passage, and you feel like an intruder.
-        </p>
+      <NarrativeText initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }}>
+        <ProgressiveNarrative
+          onComplete={handleDone}
+          blocks={[
+            (
+              <p>
+                You leave the vibrant, communal chaos of the <span className="highlight-mystical">Aarti</span> behind.
+                Turning your back on the river is a physical wrench, like stepping out of a warm room into a cold night.
+                You step into the labyrinth. The alleys are narrow, suffocating veins of stone, lit by
+                the sputtering, unreliable orange glow of torches that cast dancing, monstrous shadows.
+              </p>
+            ),
+            (
+              <p>
+                The glorious sounds of the city become a muffled, distant echo, replaced by the intimate,
+                unsettling noises of the maze: the scuttling of unseen things in the drains, the mournful
+                lowing of a stray cow, and the faint, haunting cry of a <span className="highlight-object">conch shell</span>
+                from a hidden temple. Buildings, centuries old, lean against each other as if for support,
+                their upper floors almost touching, creating a canopy of stone that hides the sky.
+              </p>
+            ),
+            (
+              <p>
+                The air grows heavier, thick with the unmistakable, cloying smell of woodsmoke. You are
+                approaching <span className="highlight-place">Manikarnika Ghat</span>, the great cremation ground.
+                The atmosphere is not frightening, but profoundly, intensely somber. You see a family at the edge
+                of the ghat, offering prayers as a shrouded body is prepared for its final journey.
+                This is a place of passage, and you feel like an intruder.
+              </p>
+            )
+          ]}
+        />
       </NarrativeText>
     </SceneContainer>
   );

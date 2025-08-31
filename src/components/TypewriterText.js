@@ -1,4 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+
+const TypeSpan = styled.span`
+  cursor: pointer;
+  min-height: 1.5em;
+`;
 
 export default function TypewriterText({ text = '', speed = 24, onAdvance, onComplete }) {
   const [out, setOut] = useState('');
@@ -35,15 +41,15 @@ export default function TypewriterText({ text = '', speed = 24, onAdvance, onCom
   };
 
   return (
-    <span
+    <TypeSpan
+      className="is-interactive"
       role="button"
       tabIndex={0}
       onClick={handleActivate}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleActivate(e); }}
       aria-label={done ? 'Next' : 'Skip typewriter'}
-      style={{ cursor: 'pointer' }}
     >
       {out}
-    </span>
+    </TypeSpan>
   );
 }

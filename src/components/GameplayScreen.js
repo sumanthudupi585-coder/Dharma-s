@@ -1,9 +1,11 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGame, SCENES } from '../context/GameContext';
+import { useGame, SCENES, ACTIONS } from '../context/GameContext';
 import Journal from './Journal';
 import { engine } from './AudioManager';
+import SwipeNavigator from './SwipeNavigator';
+import SceneProgressMap from './SceneProgressMap';
 
 const Scene1DashashwamedhGhat = lazy(() => import('./scenes/Scene1DashashwamedhGhat'));
 const Scene2LabyrinthGhats = lazy(() => import('./scenes/Scene2LabyrinthGhats'));
@@ -569,6 +571,11 @@ const JournalToggle = styled(motion.button)`
   }
 `;
 
+const MapToggle = styled(JournalToggle)`
+  top: auto;
+  bottom: var(--spacing-lg);
+`;
+
 const SkillIndicator = styled(motion.div)`
   position: fixed;
   bottom: var(--spacing-lg);
@@ -619,12 +626,13 @@ function SceneRenderer({ currentScene }) {
 }
 
 export default function GameplayScreen() {
-  const { state } = useGame();
+  const { state, dispatch } = useGame();
   const [mobileJournalOpen, setMobileJournalOpen] = useState(false);
   const [activeSkill, setActiveSkill] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, text: '', x: 0, y: 0 });
 
   const { currentScene, sceneData, playerProfile, inventory } = state;
+  const [mobileMapOpen, setMobileMapOpen] = useState(false);
 
   const prevClues = React.useRef(inventory.clues.length);
   const prevObjectives = React.useRef(state.gameProgress.currentObjectives.length);
@@ -654,7 +662,6 @@ export default function GameplayScreen() {
   }, [currentScene, playerProfile.skills]);
 
   const handleChoiceSelect = (choice) => {
-    console.log('Choice selected:', choice);
   };
 
   const toggleMobileJournal = () => {
@@ -668,6 +675,29 @@ export default function GameplayScreen() {
     setTooltip({ visible: true, text, x, y });
   };
   const hideTooltip = () => setTooltip(prev => ({ ...prev, visible: false }));
+
+  const contentRef = useRef(null);
+  const sceneOrder = [
+    SCENES.DASHASHWAMEDH_GHAT,
+    SCENES.LABYRINTH_GHATS,
+    SCENES.NYAYA_TRIAL,
+    SCENES.VAISESIKA_TRIAL,
+    SCENES.THE_WARDEN
+  ];
+  const goToSceneIndex = (idx) => {
+    const clamped = Math.max(0, Math.min(sceneOrder.length - 1, idx));
+    dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: sceneOrder[clamped] });
+  };
+  const goNextScene = () => {
+    const i = sceneOrder.indexOf(currentScene);
+    const isCompleted = state.gameProgress.completedScenes.includes(currentScene);
+    if (!isCompleted) return;
+    if (i < sceneOrder.length - 1) goToSceneIndex(i + 1);
+  };
+  const goPrevScene = () => {
+    const i = sceneOrder.indexOf(currentScene);
+    if (i > 0) goToSceneIndex(i - 1);
+  };
 
   return (
     <GameplayContainer>
@@ -694,10 +724,11 @@ export default function GameplayScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         >
-          <NarrativeContent>
+          <NarrativeContent ref={contentRef}>
             <Suspense fallback={<LazyFallback>Summoning scene…</LazyFallback>}>
               <SceneRenderer currentScene={currentScene} />
             </Suspense>
+            <SwipeNavigator containerRef={contentRef} onPrev={goPrevScene} onNext={goNextScene} />
           </NarrativeContent>
         </NarrativeWindow>
 
@@ -765,7 +796,14 @@ export default function GameplayScreen() {
 
       <JournalSidebar>
         <Journal isVisible={!mobileJournalOpen} />
-        <MiniMapPanel />
+        <MiniMapPanel>
+          <SceneProgressMap
+            scenes={sceneOrder}
+            current={currentScene}
+            completed={state.gameProgress.completedScenes}
+            onSelect={(s) => dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: s })}
+          />
+        </MiniMapPanel>
       </JournalSidebar>
 
       <JournalToggle
@@ -776,6 +814,15 @@ export default function GameplayScreen() {
       >
         📖
       </JournalToggle>
+
+      <MapToggle
+        className="is-interactive"
+        onClick={() => setMobileMapOpen(true)}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+      >
+        🗺️
+      </MapToggle>
 
       <AnimatePresence>
         {activeSkill && (
@@ -808,6 +855,32 @@ export default function GameplayScreen() {
               onClick={(e) => e.stopPropagation()}
             >
               <Journal isVisible={true} />
+            </OverlayContent>
+          </Overlay>
+        )}
+      </AnimatePresence>
+
+      {/* Mobile overlay for journey map */}
+      <AnimatePresence>
+        {mobileMapOpen && (
+          <Overlay
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setMobileMapOpen(false)}
+          >
+            <OverlayContent
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <SceneProgressMap
+                scenes={sceneOrder}
+                current={currentScene}
+                completed={state.gameProgress.completedScenes}
+                onSelect={(s) => { dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: s }); setMobileMapOpen(false); }}
+              />
             </OverlayContent>
           </Overlay>
         )}

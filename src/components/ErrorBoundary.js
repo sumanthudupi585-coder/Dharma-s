@@ -1,4 +1,24 @@
 import React from 'react';
+import styled from 'styled-components';
+
+const ErrorWrap = styled.div`
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #000 0%, #0a0a0a 50%, #000 100%);
+  color: #d4af37;
+  padding: 2rem;
+  text-align: center;
+`;
+
+const ErrorTitle = styled.h1`
+  font-family: var(--font-display);
+  margin-bottom: 1rem;
+`;
+
+const ErrorText = styled.p`
+  font-family: var(--font-primary);
+`;
 
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -11,23 +31,18 @@ export default class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, info) {
-    // Could log to a service here
-    // console.error(error, info);
+    // Intentionally silent in production; hook logging service here if desired
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{
-          minHeight: '100vh', display: 'grid', placeItems: 'center',
-          background: 'linear-gradient(135deg, #000 0%, #0a0a0a 50%, #000 100%)',
-          color: '#d4af37', padding: '2rem', textAlign: 'center'
-        }}>
+        <ErrorWrap role="alert" aria-live="assertive">
           <div>
-            <h1 style={{ fontFamily: 'var(--font-display)', marginBottom: '1rem' }}>Threads of fate tangled</h1>
-            <p style={{ fontFamily: 'var(--font-primary)' }}>The weave faltered in this moment. Please refresh to restore order.</p>
+            <ErrorTitle>Threads of fate tangled</ErrorTitle>
+            <ErrorText>The weave faltered in this moment. Please refresh to restore order.</ErrorText>
           </div>
-        </div>
+        </ErrorWrap>
       );
     }
     return this.props.children;
