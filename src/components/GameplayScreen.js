@@ -695,10 +695,11 @@ export default function GameplayScreen() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         >
-          <NarrativeContent>
+          <NarrativeContent ref={contentRef}>
             <Suspense fallback={<LazyFallback>Summoning scene…</LazyFallback>}>
               <SceneRenderer currentScene={currentScene} />
             </Suspense>
+            <SwipeNavigator containerRef={contentRef} onPrev={goPrevScene} onNext={goNextScene} />
           </NarrativeContent>
         </NarrativeWindow>
 
