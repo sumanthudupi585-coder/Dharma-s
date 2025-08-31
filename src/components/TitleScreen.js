@@ -6,8 +6,18 @@ import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
 
 // Subtle breathing glow for golden elements
 const breath = keyframes`
-  0%, 100% { text-shadow: 0 0 14px rgba(212,175,55,0.35), 0 2px 0 rgba(0,0,0,0.35); }
-  50%      { text-shadow: 0 0 24px rgba(255,215,0,0.55), 0 2px 0 rgba(0,0,0,0.35); }
+  0%, 100% {
+    text-shadow:
+      0 0 10px rgba(212,175,55,0.35),
+      0 0 20px rgba(212,175,55,0.25),
+      0 2px 0 rgba(0,0,0,0.35);
+  }
+  50% {
+    text-shadow:
+      0 0 16px rgba(255,215,0,0.65),
+      0 0 32px rgba(212,175,55,0.45),
+      0 2px 0 rgba(0,0,0,0.35);
+  }
 `;
 
 // Slow ambient motion for background aura
@@ -17,12 +27,19 @@ const drift = keyframes`
   100% { transform: translate(-5%, -5%) scale(1); opacity: 0.35; }
 `;
 
+const slowSpin = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+`;
+
 const ScreenRoot = styled.div`
   min-height: 100vh;
   width: 100%;
   position: relative;
   overflow: hidden;
-  background: radial-gradient(ellipse at center, #070707 0%, #0a0a0a 55%, #000 100%);
+  background:
+    radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.95) 65%),
+    linear-gradient(135deg, var(--ink-black) 0%, var(--deep-blue) 50%, var(--royal-blue) 100%);
 
   &::before {
     content: '';
@@ -53,11 +70,17 @@ const ParallaxLayer = styled.div`
 const Particle = styled.div`
   position: absolute; width: 3px; height: 3px; border-radius: 50%; background: rgba(212,175,55,0.6);
   filter: blur(0.3px);
+  left: var(--x);
+  top: var(--y);
+  opacity: var(--o, 0.6);
 `;
 
 const Sanskrit = styled.span`
   position: absolute; font-family: var(--font-devanagari); font-size: 18px; color: rgba(230, 199, 106, 0.6);
   opacity: 0.8;
+  left: var(--x);
+  top: var(--y);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
 `;
 
 const CenterStack = styled.div`
@@ -81,23 +104,54 @@ const TitleHalo = styled.div`
   transform: translate(-50%, calc(-50% - 40px));
   border-radius: 1000px;
   background:
-    radial-gradient(65% 120% at 50% 50%, rgba(212,175,55,0.18), rgba(212,175,55,0) 70%),
-    radial-gradient(100% 220% at 50% 100%, rgba(255,215,0,0.10), rgba(0,0,0,0) 60%);
+    radial-gradient(65% 120% at 50% 50%, rgba(212,175,55,0.16), rgba(212,175,55,0) 70%),
+    radial-gradient(100% 220% at 50% 100%, rgba(255,215,0,0.08), rgba(0,0,0,0) 60%);
   filter: blur(18px);
   pointer-events: none;
+  position: relative;
+  overflow: visible;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -12%;
+    border-radius: inherit;
+    background: conic-gradient(from 0deg,
+      rgba(212,175,55,0.08) 0deg,
+      rgba(212,175,55,0.0) 45deg,
+      rgba(212,175,55,0.10) 180deg,
+      rgba(212,175,55,0.0) 315deg,
+      rgba(212,175,55,0.08) 360deg
+    );
+    filter: blur(24px);
+    animation: ${slowSpin} 30s linear infinite;
+    will-change: transform, opacity, filter;
+  }
 `;
 
 const TitleWordmark = styled.h1`
   font-family: var(--font-display);
   font-size: clamp(3rem, 9vw, 6rem);
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   line-height: 1.05;
   margin: 0;
-  background: linear-gradient(180deg, #fff4b0 0%, #ffd700 30%, #d4af37 60%, #9b7b19 100%);
+  background: linear-gradient(180deg, rgba(255,244,176,0.95) 0%, var(--gold) 35%, var(--faded-gold) 65%, var(--copper) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: ${breath} 4.2s ease-in-out infinite; position: relative;
+  animation: ${breath} 4.2s ease-in-out infinite;
+  position: relative;
+  will-change: transform, opacity, filter;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    background: radial-gradient(circle at 50% 55%, rgba(212,175,55,0.16), rgba(212,175,55,0) 60%);
+    filter: blur(14px);
+    z-index: -1;
+    pointer-events: none;
+  }
 `;
 
 const Whisper = styled.p`
@@ -130,16 +184,18 @@ const ActionButton = styled(motion.button)`
   cursor: pointer;
   transition: background 0.25s ease, transform 0.18s ease, color 0.25s ease, border-color 0.25s ease;
   backdrop-filter: blur(8px);
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
 
   &:hover {
     color: #000;
-    background: linear-gradient(145deg, #ffd95e, #ffc82e);
-    border-color: #ffd95e;
+    background: linear-gradient(145deg, var(--gold), var(--faded-gold));
+    border-color: var(--gold);
     transform: translateY(-2px);
   }
 `;
 
-export default function TitleScreen() {
+function TitleScreen() {
   const { dispatch } = useGame();
   const [openSettings, setOpenSettings] = useState(false);
   const rootRef = useRef(null);
@@ -184,10 +240,10 @@ export default function TitleScreen() {
     <ScreenRoot ref={rootRef}>
       <ParallaxLayer aria-hidden="true">
         {particles.map((p, i) => (
-          <Particle key={i} style={{ left: `${p.x}%`, top: `${p.y}%`, opacity: 0.6 }} />
+          <Particle key={i} style={{ '--x': `${p.x}%`, '--y': `${p.y}%` }} />
         ))}
         {glyphs.map((s, i) => (
-          <Sanskrit key={i} style={{ left: `${s.x}%`, top: `${s.y}%` }}>{s.g}</Sanskrit>
+          <Sanskrit key={i} style={{ '--x': `${s.x}%`, '--y': `${s.y}%` }}>{s.g}</Sanskrit>
         ))}
       </ParallaxLayer>
       <CenterStack>
@@ -210,3 +266,4 @@ export default function TitleScreen() {
     </ScreenRoot>
   );
 }
+export default React.memo(TitleScreen);

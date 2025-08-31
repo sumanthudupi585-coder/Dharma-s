@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import GlossaryTerm from '../GlossaryTerm';
-import { useGame } from '../../context/GameContext';
+import { useGame, ACTIONS, SCENES } from '../../context/GameContext';
 import ProgressiveNarrative from '../ProgressiveNarrative';
 import useNyayaPuzzle from '../hooks/useNyayaPuzzle';
 
@@ -282,9 +282,15 @@ const AlcoveGlow = styled.div`
 `;
 
 export default function Scene3NyayaTrial() {
-  useGame();
+  const { dispatch } = useGame();
   const puzzle = useNyayaPuzzle();
   const [showPuzzle, setShowPuzzle] = useState(false);
+
+  useEffect(() => {
+    if (puzzle.complete) {
+      dispatch({ type: ACTIONS.COMPLETE_SCENE, payload: SCENES.NYAYA_TRIAL });
+    }
+  }, [puzzle.complete, dispatch]);
 
   return (
     <SceneContainer>

@@ -51,13 +51,9 @@ export default function ProgressiveNarrative({ blocks = [], autoAdvance = false,
   const goNext = useCallback(() => {
     setIdx(i => {
       const n = i + 1;
-      if (n >= total) {
-        onComplete && onComplete();
-        return i; // stay
-      }
-      return n;
+      return n >= total ? i : n;
     });
-  }, [total, onComplete]);
+  }, [total]);
 
   useEffect(() => {
     if (!autoAdvance) return;
@@ -66,6 +62,16 @@ export default function ProgressiveNarrative({ blocks = [], autoAdvance = false,
     timerRef.current = setTimeout(goNext, delay);
     return () => timerRef.current && clearTimeout(timerRef.current);
   }, [idx, total, autoAdvance, delay, goNext]);
+
+  // Fire onComplete after the final block is shown (post-render), once
+  const completedRef = useRef(false);
+  useEffect(() => {
+    if (!onComplete || completedRef.current) return;
+    if (total > 0 && idx >= total - 1) {
+      completedRef.current = true;
+      onComplete();
+    }
+  }, [idx, total, onComplete]);
 
   const handleKey = (e) => {
     if (e.key === 'Enter' || e.key === ' ') {

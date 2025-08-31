@@ -13,13 +13,14 @@ const pulse = keyframes`
 `;
 
 const Wrap = styled.div`
-  min-height: 100vh; display: grid; place-items: center; background: radial-gradient(ellipse at center, #070707 0%, #0a0a0a 55%, #000 100%);
+  min-height: 100vh; display: grid; place-items: center; background: radial-gradient(ellipse at center, var(--ink-black) 0%, var(--deep-blue) 55%, var(--royal-blue) 100%);
   color: #e6c76a; position: relative; overflow: hidden;
 `;
 
 const Sigil = styled.div`
   width: 120px; height: 120px; border-radius: 50%; border: 2px solid #d4af37; position: relative; animation: ${spin} 5s linear infinite;
   box-shadow: 0 0 30px rgba(212,175,55,0.25);
+  will-change: transform, opacity, filter;
   &::before, &::after { content: ''; position: absolute; inset: 10px; border-radius: 50%; border: 1px dashed rgba(212,175,55,0.5); }
   &::after { inset: 22px; border-style: solid; border-width: 1px; border-color: rgba(212,175,55,0.4); }
 `;
@@ -34,6 +35,7 @@ const Title = styled.h1`
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  will-change: opacity, transform, filter;
 `;
 
 const Tip = styled.p`
@@ -59,7 +61,7 @@ const Center = styled.div`
   place-items: center;
 `;
 
-export default function LoadingScreen() {
+function LoadingScreen() {
   const [tip, setTip] = useState(tips[0]);
   useEffect(() => {
     let i = 0;
@@ -76,3 +78,4 @@ export default function LoadingScreen() {
     </Wrap>
   );
 }
+export default React.memo(LoadingScreen);

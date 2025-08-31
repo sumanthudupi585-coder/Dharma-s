@@ -70,7 +70,7 @@ const sceneLabels = {
   [SCENES.THE_WARDEN]: 'The Warden'
 };
 
-export default function SceneProgressMap({ scenes, current, completed, onSelect }) {
+function SceneProgressMap({ scenes, current, completed, onSelect }) {
   const completedIdx = completed
     .map((s) => scenes.indexOf(s))
     .filter((i) => i >= 0);
@@ -105,3 +105,5 @@ export default function SceneProgressMap({ scenes, current, completed, onSelect 
     </Wrap>
   );
 }
+
+export default React.memo(SceneProgressMap);

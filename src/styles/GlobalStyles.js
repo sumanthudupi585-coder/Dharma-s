@@ -65,12 +65,12 @@ const GlobalStyle = createGlobalStyle`
     --font-display: 'Cinzel', serif;
     --font-devanagari: 'Noto Serif Devanagari', 'Noto Sans Devanagari', serif;
     /* Modular scale */
-    --fs-xs: 0.85rem;
-    --fs-sm: 0.95rem;
-    --fs-md: 1rem;
-    --fs-lg: 1.125rem;
-    --fs-xl: 1.5rem;
-    --fs-xxl: 2rem;
+    --fs-xs: clamp(0.8rem, 0.4vw + 0.72rem, 0.9rem);
+    --fs-sm: clamp(0.9rem, 0.6vw + 0.8rem, 1rem);
+    --fs-md: clamp(1rem, 0.6vw + 0.9rem, 1.125rem);
+    --fs-lg: clamp(1.125rem, 0.8vw + 1rem, 1.375rem);
+    --fs-xl: clamp(1.5rem, 1.2vw + 1.25rem, 2rem);
+    --fs-xxl: clamp(2rem, 2.5vw + 1.5rem, 3rem);
     --lh-tight: 1.3;
     --lh-normal: 1.6;
     --lh-loose: 1.85;
@@ -161,6 +161,13 @@ const GlobalStyle = createGlobalStyle`
     --gold: #ffff00;
     --copper: #ff8800;
     --dark-parchment: #e5e5e5;
+  }
+
+  #root {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
   }
 
   .app {

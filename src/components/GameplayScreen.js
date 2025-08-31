@@ -86,8 +86,8 @@ const OverlayContent = styled(motion.div)`
 const GameplayContainer = styled.div`
   min-height: 100vh;
   background:
-    radial-gradient(ellipse at center, rgba(5, 5, 5, 0.9) 0%, rgba(0, 0, 0, 1) 70%),
-    linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%);
+    radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.95) 70%),
+    linear-gradient(135deg, var(--ink-black) 0%, var(--deep-blue) 50%, var(--royal-blue) 100%);
   display: grid;
   grid-template-columns: 1.3fr 380px;
   grid-template-rows: 1fr auto;
@@ -164,6 +164,8 @@ const NarrativeContent = styled.div`
   height: 100%;
   overflow-y: auto;
   padding-bottom: calc(var(--spacing-xl) + 200px);
+  max-width: 70ch;
+  margin: 0 auto;
 
   &::-webkit-scrollbar { width: 6px; }
   &::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #d4af37, #ffd700); border-radius: 3px; }
@@ -320,6 +322,7 @@ const Fill = styled.div`
   animation: ${energyFlow} 3s linear infinite;
   border-radius: 10px;
   transition: width 500ms ease;
+  will-change: transform, opacity;
 `;
 
 const GaugeLabel = styled.span`
@@ -345,6 +348,7 @@ const ObjectivesBanner = styled(motion.div)`
   position: relative;
   backdrop-filter: blur(5px);
   animation: ${breathingGlow} 6s ease-in-out infinite;
+  will-change: transform, opacity, box-shadow;
 
   /* Objective icon with golden glow */
   &::before {
@@ -449,6 +453,9 @@ const ChoiceButton = styled(motion.button)`
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(5px);
+  will-change: transform, opacity, box-shadow;
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
 
   /* Golden energy bar on the left */
   &::before {
@@ -554,6 +561,7 @@ const JournalToggle = styled(motion.button)`
   display: none;
   backdrop-filter: blur(10px);
   animation: ${breathingGlow} 4s ease-in-out infinite;
+  will-change: transform, opacity, box-shadow;
 
   @media (max-width: 1024px) {
     display: flex;
@@ -574,6 +582,7 @@ const JournalToggle = styled(motion.button)`
 const MapToggle = styled(JournalToggle)`
   top: auto;
   bottom: var(--spacing-lg);
+  will-change: transform, opacity, box-shadow;
 `;
 
 const SkillIndicator = styled(motion.div)`
@@ -591,6 +600,7 @@ const SkillIndicator = styled(motion.div)`
     0 10px 30px rgba(0, 0, 0, 0.8),
     0 0 20px rgba(212, 175, 55, 0.3);
   animation: ${breathingGlow} 3s ease-in-out infinite;
+  will-change: transform, opacity, box-shadow;
 `;
 
 const SkillText = styled.p`
@@ -605,6 +615,26 @@ const SkillText = styled.p`
 const LazyFallback = styled.div`
   padding: var(--spacing-xl);
   color: #d4af37;
+`;
+
+const EdgeNavButton = styled(motion.button)`
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(212,175,55,0.45);
+  background: linear-gradient(145deg, rgba(0,0,0,0.6), rgba(15,15,15,0.85));
+  color: #e8c86a;
+  display: grid;
+  place-items: center;
+  z-index: 1200;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 16px rgba(212,175,55,0.2);
+  -webkit-tap-highlight-color: transparent;
+  @media (min-width: 1024px) {
+    display: none;
+  }
 `;
 
 // Scene routing component
@@ -688,16 +718,11 @@ export default function GameplayScreen() {
     const clamped = Math.max(0, Math.min(sceneOrder.length - 1, idx));
     dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: sceneOrder[clamped] });
   };
-  const goNextScene = () => {
-    const i = sceneOrder.indexOf(currentScene);
-    const isCompleted = state.gameProgress.completedScenes.includes(currentScene);
-    if (!isCompleted) return;
-    if (i < sceneOrder.length - 1) goToSceneIndex(i + 1);
-  };
-  const goPrevScene = () => {
-    const i = sceneOrder.indexOf(currentScene);
-    if (i > 0) goToSceneIndex(i - 1);
-  };
+  const i = sceneOrder.indexOf(currentScene);
+  const canPrev = i > 0;
+  const canNext = state.gameProgress.completedScenes.includes(currentScene) && i < sceneOrder.length - 1;
+  const goNextScene = () => { if (canNext) goToSceneIndex(i + 1); };
+  const goPrevScene = () => { if (canPrev) goToSceneIndex(i - 1); };
 
   return (
     <GameplayContainer>
@@ -731,6 +756,31 @@ export default function GameplayScreen() {
             <SwipeNavigator containerRef={contentRef} onPrev={goPrevScene} onNext={goNextScene} />
           </NarrativeContent>
         </NarrativeWindow>
+
+        {canPrev && (
+          <EdgeNavButton
+            className="is-interactive"
+            style={{ left: 'var(--spacing-lg)' }}
+            onTouchStart={goPrevScene}
+            onClick={goPrevScene}
+            whileTap={{ scale: 0.92 }}
+            aria-label="Previous"
+          >
+            ◀
+          </EdgeNavButton>
+        )}
+        {canNext && (
+          <EdgeNavButton
+            className="is-interactive"
+            style={{ right: 'var(--spacing-lg)' }}
+            onTouchStart={goNextScene}
+            onClick={goNextScene}
+            whileTap={{ scale: 0.92 }}
+            aria-label="Next"
+          >
+            ▶
+          </EdgeNavButton>
+        )}
 
         <HotbarContainer>
           {Array.from({ length: 6 }, (_, i) => {
