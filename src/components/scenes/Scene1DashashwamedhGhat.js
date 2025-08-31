@@ -488,7 +488,12 @@ export default function Scene1DashashwamedhGhat() {
       type: ACTIONS.COMPLETE_SCENE,
       payload: SCENES.DASHASHWAMEDH_GHAT
     });
-    
+
+    dispatch({
+      type: ACTIONS.ADD_ACHIEVEMENT,
+      payload: { id: 'first_step', title: 'First Step', description: 'Completed Dashashwamedh Ghat.' }
+    });
+
     dispatch({
       type: ACTIONS.SET_CURRENT_SCENE,
       payload: SCENES.LABYRINTH_GHATS
