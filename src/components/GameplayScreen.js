@@ -2,7 +2,7 @@ import React, { useState, useEffect, Suspense, lazy, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, SCENES, ACTIONS } from '../context/GameContext';
-import Journal from './Journal';
+const Journal = lazy(() => import('./Journal'));
 import { engine } from './AudioManager';
 import SwipeNavigator from './SwipeNavigator';
 import SceneProgressMap from './SceneProgressMap';
