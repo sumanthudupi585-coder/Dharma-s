@@ -815,6 +815,15 @@ export default function GameplayScreen() {
         📖
       </JournalToggle>
 
+      <MapToggle
+        className="is-interactive"
+        onClick={() => setMobileMapOpen(true)}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+      >
+        🗺️
+      </MapToggle>
+
       <AnimatePresence>
         {activeSkill && (
           <SkillIndicator
