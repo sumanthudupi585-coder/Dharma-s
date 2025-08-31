@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useGame } from '../context/GameContext';
+import { useIsTouchDevice } from '../hooks/useIsTouchDevice';
 
 // Simple synthesized audio engine using WebAudio. No external assets required.
 class SoundEngine {
