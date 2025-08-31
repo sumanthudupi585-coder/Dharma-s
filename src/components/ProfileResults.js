@@ -280,7 +280,9 @@ export default function ProfileResults() {
                 </Pill>
               </PillRow>
 
-              <Grid style={{ marginTop: '12px' }}>
+              {React.createElement(require('./MandalaSigil').default, { profile: playerProfile })}
+
+              <Grid className="essence-grid">
                 <Card>
                   <CardTitle>Nakshatra</CardTitle>
                   <CardSub>{playerProfile.nakshatra?.name}</CardSub>
@@ -289,7 +291,7 @@ export default function ProfileResults() {
                 <Card>
                   <CardTitle>Rāśi & Element</CardTitle>
                   <CardSub>{playerProfile.rashi} • {playerProfile.nakshatra?.element}</CardSub>
-                  <CardText>Your soul resonates with {playerProfile.nakshatra?.element.toLowerCase()} and the sign of {playerProfile.rashi}.</CardText>
+                  <CardText>Your soul resonates with {playerProfile.nakshatra?.element?.toLowerCase?.()} and the sign of {playerProfile.rashi}.</CardText>
                 </Card>
               </Grid>
             </Section>
