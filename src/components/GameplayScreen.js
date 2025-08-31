@@ -751,6 +751,31 @@ export default function GameplayScreen() {
           </NarrativeContent>
         </NarrativeWindow>
 
+        {canPrev && (
+          <EdgeNavButton
+            className="is-interactive"
+            style={{ left: 'var(--spacing-lg)' }}
+            onTouchStart={goPrevScene}
+            onClick={goPrevScene}
+            whileTap={{ scale: 0.92 }}
+            aria-label="Previous"
+          >
+            ◀
+          </EdgeNavButton>
+        )}
+        {canNext && (
+          <EdgeNavButton
+            className="is-interactive"
+            style={{ right: 'var(--spacing-lg)' }}
+            onTouchStart={goNextScene}
+            onClick={goNextScene}
+            whileTap={{ scale: 0.92 }}
+            aria-label="Next"
+          >
+            ▶
+          </EdgeNavButton>
+        )}
+
         <HotbarContainer>
           {Array.from({ length: 6 }, (_, i) => {
             const item = inventory.items[i];
