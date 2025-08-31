@@ -141,6 +141,7 @@ const TitleWordmark = styled.h1`
   -webkit-text-fill-color: transparent;
   animation: ${breath} 4.2s ease-in-out infinite;
   position: relative;
+  will-change: transform, opacity, filter;
 
   &::after {
     content: '';
