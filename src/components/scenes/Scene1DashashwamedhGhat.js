@@ -117,6 +117,7 @@ const PuzzleSection = styled(motion.div)`
   border-radius: var(--border-radius);
   padding: var(--spacing-xl);
   margin-top: var(--spacing-xl);
+  max-width: 100%;
 `;
 
 const PuzzleTitle = styled.h3`
