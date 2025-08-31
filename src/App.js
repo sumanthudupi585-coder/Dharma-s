@@ -7,6 +7,8 @@ import GlobalStyles from './styles/GlobalStyles';
 import ErrorBoundary from './components/ErrorBoundary';
 import AudioManager from './components/AudioManager';
 import LoadingScreen from './components/LoadingScreen';
+import InkDissolve from './components/InkDissolve';
+import AtmosphereMount from './components/AtmosphereMount';
 import { useIsTouchDevice } from './hooks/useIsTouchDevice';
 import OrientationNotice from './components/OrientationNotice';
 import MasterLayout from './ui/layout/MasterLayout';
@@ -84,8 +86,9 @@ function App() {
       <ErrorBoundary>
         <Suspense fallback={<LoadingScreen />}>
           <div className="app">
-            {React.createElement(require('./components/GenerativeBackground').default)}
+            <AtmosphereMount />
             <GameRouter />
+            <InkDissolve />
           </div>
           <OrientationNotice />
         </Suspense>
