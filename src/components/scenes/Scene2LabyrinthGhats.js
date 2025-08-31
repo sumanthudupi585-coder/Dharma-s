@@ -5,7 +5,6 @@ import ProgressiveNarrative from '../ProgressiveNarrative';
 import { useGame, ACTIONS, SCENES } from '../../context/GameContext';
 
 const SceneContainer = styled.div`
-  height: 100%;
   padding: var(--spacing-lg);
   position: relative;
 `;
@@ -16,7 +15,7 @@ const fogDrift = keyframes`
   100% { transform: translateX(10%) translateY(-6%); opacity: 0.12; }
 `;
 const FogLayer = styled.div`
-  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
   background:
     radial-gradient(60% 40% at 20% 80%, rgba(255,215,0,0.04), transparent 60%),
     radial-gradient(50% 35% at 70% 20%, rgba(255,165,0,0.03), transparent 60%),
@@ -32,7 +31,7 @@ const flicker = keyframes`
   60% { opacity: 0.22; }
 `;
 const TorchGlow = styled.div`
-  position: absolute; top: 10%; left: 8%; width: 180px; height: 180px; z-index: 1; pointer-events: none;
+  position: absolute; top: 10%; left: 8%; width: 180px; height: 180px; z-index: 0; pointer-events: none;
   background: radial-gradient(closest-side, rgba(255, 140, 0, 0.25), rgba(255,140,0,0.08), transparent 70%);
   filter: blur(10px);
   animation: ${flicker} 2.6s ease-in-out infinite;
@@ -40,6 +39,8 @@ const TorchGlow = styled.div`
 `;
 
 const SceneTitle = styled(motion.h1)`
+  position: relative;
+  z-index: 2;
   font-family: var(--font-display);
   color: var(--gold);
   font-size: 2rem;
@@ -51,6 +52,8 @@ const SceneTitle = styled(motion.h1)`
 `;
 
 const NarrativeText = styled(motion.div)`
+  position: relative;
+  z-index: 2;
   font-family: var(--font-primary);
   color: var(--parchment);
   font-size: 1.1rem;
