@@ -402,7 +402,7 @@ export default function Scene1DashashwamedhGhat() {
           id: 'ritual_cipher',
           title: 'The Ritual Cipher',
           description: 'Seven priestly movements observed. Flames 2, 5, and 7 are circled in red ink in Thorne\'s journal.',
-          sketch: '🕯️🕯️🔥🕯️🔥🕯️🔥',
+          sketch: '🕯️🕯️🔥🕯️🔥���️🔥',
           tags: ['ritual','observation'],
           scene: SCENES.DASHASHWAMEDH_GHAT
         }
@@ -539,7 +539,9 @@ export default function Scene1DashashwamedhGhat() {
             id: 'focus_river',
             title: 'River\'s Wisdom',
             description: 'Thorne\'s voice echoes: "The river carries everything, forgives everything. Find that stillness in yourself." You feel profound peace.',
-            sketch: '🌊🕉️🌊'
+            sketch: '🌊🕉️🌊',
+            tags: ['river','focus'],
+            scene: SCENES.DASHASHWAMEDH_GHAT
           }
         });
         break;
