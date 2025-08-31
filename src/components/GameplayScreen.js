@@ -670,6 +670,27 @@ export default function GameplayScreen() {
   };
   const hideTooltip = () => setTooltip(prev => ({ ...prev, visible: false }));
 
+  const contentRef = useRef(null);
+  const sceneOrder = [
+    SCENES.DASHASHWAMEDH_GHAT,
+    SCENES.LABYRINTH_GHATS,
+    SCENES.NYAYA_TRIAL,
+    SCENES.VAISESIKA_TRIAL,
+    SCENES.THE_WARDEN
+  ];
+  const goToSceneIndex = (idx) => {
+    const clamped = Math.max(0, Math.min(sceneOrder.length - 1, idx));
+    dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: sceneOrder[clamped] });
+  };
+  const goNextScene = () => {
+    const i = sceneOrder.indexOf(currentScene);
+    if (i < sceneOrder.length - 1) goToSceneIndex(i + 1);
+  };
+  const goPrevScene = () => {
+    const i = sceneOrder.indexOf(currentScene);
+    if (i > 0) goToSceneIndex(i - 1);
+  };
+
   return (
     <GameplayContainer>
       <MainContentArea>
