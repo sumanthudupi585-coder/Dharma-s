@@ -40,6 +40,14 @@ const PuzzleWrap = styled.div`
   box-shadow: 0 10px 26px rgba(0,0,0,0.7), 0 0 18px rgba(212,175,55,0.18);
 `;
 
+const InstructionText = styled.div`
+  margin-bottom: var(--spacing-md);
+  color: #e0c062;
+  font-size: 0.95rem;
+  font-family: var(--font-primary);
+  opacity: 0.95;
+`;
+
 const CardsRow = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -56,9 +64,27 @@ const Card = styled.button`
   min-height: 44px;
   touch-action: manipulation;
   cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.2s ease;
+  transition: transform 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   will-change: transform, opacity;
   outline-offset: 2px;
+
+  &:hover {
+    transform: translateY(-1px);
+    border-color: #ffd700;
+    box-shadow: 0 6px 18px rgba(212,175,55,0.14), inset 0 0 0 1px rgba(255,215,0,0.15);
+  }
+  &:active {
+    transform: translateY(0) scale(0.99);
+  }
+  &:focus-visible {
+    outline: 2px solid #ffd700;
+    outline-offset: 2px;
+  }
+  &[aria-pressed="true"] {
+    border-color: #ffd700;
+    background: linear-gradient(145deg, rgba(25,20,0,0.9), rgba(40,30,0,0.95));
+    box-shadow: 0 0 0 2px rgba(255,215,0,0.2), 0 10px 24px rgba(0,0,0,0.6);
+  }
 `;
 
 const Slots = styled.div`
@@ -73,6 +99,11 @@ const SlotRow = styled.div`
   grid-template-columns: 260px 1fr auto;
   gap: var(--spacing-sm);
   align-items: center;
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
 `;
 
 const SlotTitle = styled.div`
@@ -89,6 +120,14 @@ const SlotContent = styled.div`
   border-radius: 10px;
   color: #e8c86a;
   background: rgba(255,215,0,0.05);
+  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+
+  ${({ $filled }) => $filled && `
+    border-style: solid;
+    border-color: #ffd700;
+    background: linear-gradient(145deg, rgba(255,215,0,0.08), rgba(255,215,0,0.04));
+    box-shadow: inset 0 0 0 1px rgba(255,215,0,0.12);
+  `}
 `;
 
 const PlaceBtn = styled.button`
@@ -99,17 +138,44 @@ const PlaceBtn = styled.button`
   color: #e8c86a;
   min-height: 44px;
   touch-action: manipulation;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+
+  &:hover {
+    border-color: #ffd700;
+    box-shadow: 0 6px 18px rgba(212,175,55,0.14), inset 0 0 0 1px rgba(255,215,0,0.1);
+    transform: translateY(-1px);
+  }
+  &:active {
+    transform: translateY(0) scale(0.99);
+  }
+  &:focus-visible {
+    outline: 2px solid #ffd700;
+    outline-offset: 2px;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+
+const SlotActions = styled.div`
+  display: flex;
+  gap: var(--spacing-sm);
 `;
 
 const Controls = styled.div`
   margin-top: var(--spacing-md);
   display: flex;
   gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  justify-content: flex-end;
 `;
 
 const Message = styled.div`
   margin-top: var(--spacing-sm);
-  color: #b8941f;
+  color: ${({ $success }) => ($success ? '#a7e28a' : '#b8941f')};
   font-family: var(--font-primary);
 `;
 
@@ -262,6 +328,7 @@ export default function Scene3NyayaTrial() {
 
       {showPuzzle && (
       <PuzzleWrap role="region" aria-label="Nyāya syllogism puzzle">
+        <InstructionText>Select a card, then place it into the correct logical step.</InstructionText>
         <CardsRow aria-label="Premise cards">
           {puzzle.cards.map((c) => (
             <Card
@@ -283,17 +350,31 @@ export default function Scene3NyayaTrial() {
             return (
               <SlotRow key={s.id}>
                 <SlotTitle>{s.title}</SlotTitle>
-                <SlotContent aria-live="polite">
+                <SlotContent aria-live="polite" $filled={!!placedCard}>
                   {placedCard ? placedCard.text : 'Empty'}
                 </SlotContent>
-                <PlaceBtn
-                  className="is-interactive"
-                  aria-label={`Place selected card into ${s.title}`}
-                  onClick={() => puzzle.placeOnSlot(s.id)}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); puzzle.placeOnSlot(s.id); } }}
-                >
-                  Place
-                </PlaceBtn>
+                <SlotActions>
+                  <PlaceBtn
+                    className="is-interactive"
+                    aria-label={`Place selected card into ${s.title}`}
+                    disabled={!puzzle.selected}
+                    aria-disabled={!puzzle.selected}
+                    onClick={() => puzzle.placeOnSlot(s.id)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); puzzle.placeOnSlot(s.id); } }}
+                  >
+                    Place
+                  </PlaceBtn>
+                  {placedCard && (
+                    <PlaceBtn
+                      className="is-interactive"
+                      aria-label={`Remove card from ${s.title}`}
+                      onClick={() => puzzle.unplaceFromSlot(s.id)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); puzzle.unplaceFromSlot(s.id); } }}
+                    >
+                      Remove
+                    </PlaceBtn>
+                  )}
+                </SlotActions>
               </SlotRow>
             );
           })}
@@ -303,12 +384,11 @@ export default function Scene3NyayaTrial() {
           <PlaceBtn className="is-interactive" onClick={puzzle.submit} disabled={!puzzle.canSubmit} aria-disabled={!puzzle.canSubmit}>Submit</PlaceBtn>
           <PlaceBtn className="is-interactive" onClick={puzzle.reset}>Reset</PlaceBtn>
           <PlaceBtn className="is-interactive" onClick={() => {
-            // allow unplacing from focused slot using button
             const firstFilled = Object.keys(puzzle.placed)[0];
             if (firstFilled) puzzle.unplaceFromSlot(firstFilled);
           }}>Unplace</PlaceBtn>
         </Controls>
-        <Message role="status">{puzzle.message}</Message>
+        <Message role="status" $success={puzzle.complete}>{puzzle.message}</Message>
       </PuzzleWrap>
       )}
     </SceneContainer>
