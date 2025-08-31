@@ -79,5 +79,9 @@
     "trailingComma": "es5",
     "printWidth": 100,
     "arrowParens": "always"
-  }
+  },
+  "eslintIgnore": [
+    "build/",
+    "docs/"
+  ]
 }
