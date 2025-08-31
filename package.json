@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "An immersive philosophical text-based adventure game - Dharma's Cipher: Act I - The Kashi Khanda",
   "private": true,
-  "homepage": "https://sumanthudupi585-coder.github.io/Dharma-sC/",
+  "homepage": "https://sumanthudupi585-coder.github.io/Dharma-s/",
   "dependencies": {
     "@sentry/react": "^7.120.4",
     "framer-motion": "^10.16.4",
