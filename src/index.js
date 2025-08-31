@@ -14,6 +14,13 @@ if (DSN) {
     tracesSampleRate: 0.2
   });
   Sentry.setTag('app', name);
+  // Global error capture
+  window.addEventListener('error', (e) => {
+    try { Sentry.captureException(e.error || e.message || e); } catch (_) {}
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    try { Sentry.captureException(e.reason || e); } catch (_) {}
+  });
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
