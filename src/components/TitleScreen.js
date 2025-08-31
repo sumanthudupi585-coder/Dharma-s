@@ -266,3 +266,4 @@ function TitleScreen() {
     </ScreenRoot>
   );
 }
+export default React.memo(TitleScreen);
