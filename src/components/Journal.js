@@ -553,6 +553,22 @@ export default function Journal({ isVisible = true }) {
   
   const { playerProfile, gameProgress, inventory } = state;
 
+  const [search, setSearch] = useState('');
+  const [activeTags, setActiveTags] = useState(new Set());
+
+  const tagOptions = Array.from(new Set((inventory.clues || []).flatMap((c) => c.tags || []))).sort();
+  const toggleTag = (t) => setActiveTags((prev) => {
+    const next = new Set(prev);
+    if (next.has(t)) next.delete(t); else next.add(t);
+    return next;
+  });
+  const filteredClues = (inventory.clues || []).filter((c) => {
+    const text = `${c.title} ${c.description} ${c.sketch || ''}`.toLowerCase();
+    const okText = !search || text.includes(search.toLowerCase());
+    const okTags = activeTags.size === 0 || (c.tags || []).some((t) => activeTags.has(t));
+    return okText && okTags;
+  });
+
   const tabs = [
     { id: 'profile', label: 'Self', icon: '👤' },
     { id: 'objectives', label: 'Tasks', icon: '📋' },
