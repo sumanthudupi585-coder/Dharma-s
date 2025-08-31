@@ -131,6 +131,29 @@ const TitleHalo = styled.div`
   }
 `;
 
+const Mandala = styled.div`
+  position: absolute;
+  top: calc(50% + 80px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(160px, 32vw, 320px);
+  height: clamp(160px, 32vw, 320px);
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, rgba(212,175,55,0.12), rgba(0,0,0,0) 70%),
+    conic-gradient(from 0deg,
+      rgba(212,175,55,0.18) 0deg 6deg,
+      transparent 6deg 12deg,
+      rgba(212,175,55,0.14) 12deg 18deg,
+      transparent 18deg 24deg,
+      rgba(212,175,55,0.12) 24deg 30deg,
+      transparent 30deg 36deg);
+  filter: blur(0.2px);
+  opacity: 0.6;
+  pointer-events: none;
+  animation: ${slowSpin} 120s linear infinite;
+`;
+
 const TitleWordmark = styled.h1`
   font-family: var(--font-display);
   font-size: clamp(3rem, 9vw, 6rem);
