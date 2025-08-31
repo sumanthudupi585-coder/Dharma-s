@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import SettingsModal from './SettingsModal';
@@ -226,11 +226,11 @@ function TitleScreen() {
     el.addEventListener('mousemove', onMove);
     window.addEventListener('keydown', onKey);
     return () => { el.removeEventListener('mousemove', onMove); window.removeEventListener('keydown', onKey); };
-  }, []);
+  }, [handleNewGame]);
 
-  const handleNewGame = () => {
+  const handleNewGame = useCallback(() => {
     dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.PROFILE_CREATION });
-  };
+  }, [dispatch]);
 
   const handleLoadGame = () => {
     try {
