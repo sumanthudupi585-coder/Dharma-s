@@ -59,7 +59,7 @@ const Center = styled.div`
   place-items: center;
 `;
 
-export default function LoadingScreen() {
+function LoadingScreen() {
   const [tip, setTip] = useState(tips[0]);
   useEffect(() => {
     let i = 0;
