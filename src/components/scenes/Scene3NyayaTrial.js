@@ -51,6 +51,8 @@ const Card = styled.button`
   border: 1px solid #d4af37;
   background: linear-gradient(145deg, rgba(0,0,0,0.8), rgba(15,15,15,0.9));
   color: #d4af37;
+  min-height: 44px;
+  touch-action: manipulation;
   cursor: pointer;
   transition: transform 0.15s ease, border-color 0.2s ease;
   will-change: transform, opacity;
@@ -93,6 +95,8 @@ const PlaceBtn = styled.button`
   border: 1px solid #d4af37;
   background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
   color: #e8c86a;
+  min-height: 44px;
+  touch-action: manipulation;
 `;
 
 const Controls = styled.div`
