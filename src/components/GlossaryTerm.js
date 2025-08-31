@@ -16,7 +16,7 @@ const TermWrap = styled.span`
   }
 `;
 
-const Tip = styled.div`
+const Tip = styled.span`
   position: absolute;
   left: 0;
   bottom: 125%;
@@ -32,6 +32,7 @@ const Tip = styled.div`
   will-change: transform, opacity;
   transform: translateY(-6px);
   animation: tooltipIn 160ms ease-out;
+  display: block;
 
   &::after {
     content: '';
