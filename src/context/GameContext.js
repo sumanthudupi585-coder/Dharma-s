@@ -141,7 +141,10 @@ export const ACTIONS = {
 
   // Settings actions
   UPDATE_SETTINGS: 'UPDATE_SETTINGS',
-  LOAD_STATE: 'LOAD_STATE'
+  LOAD_STATE: 'LOAD_STATE',
+
+  // System
+  RESET_GAME: 'RESET_GAME'
 };
 
 // Reducer function
@@ -310,6 +313,19 @@ function gameReducer(state, action) {
 
     case ACTIONS.LOAD_STATE:
       return { ...state, ...action.payload };
+
+    case ACTIONS.RESET_GAME:
+      return {
+        ...state,
+        gameState: GAME_STATES.TITLE_SCREEN,
+        currentScene: SCENES.DASHASHWAMEDH_GHAT,
+        playerProfile: { ...initialState.playerProfile },
+        gameProgress: { ...initialState.gameProgress },
+        inventory: { ...initialState.inventory },
+        sceneData: { ...initialState.sceneData },
+        uiState: { ...initialState.uiState }
+        // keep settings as-is
+      };
       
     default:
       return state;
