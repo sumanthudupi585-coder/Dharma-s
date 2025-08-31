@@ -169,30 +169,12 @@ const Menu = styled(motion.div)`
   width: min(92vw, 520px);
 `;
 
-const ActionButton = styled(motion.button)`
-  appearance: none;
+import Button from '../ui/primitives/Button';
+const ActionButton = styled(motion(Button))`
   width: 100%;
   padding: 14px 26px;
-  border-radius: 999px;
-  border: 1px solid rgba(212,175,55,0.35);
-  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
-  color: #e8c86a;
-  font-family: var(--font-primary);
-  font-weight: 700;
   font-size: var(--fs-lg);
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  transition: background 0.25s ease, transform 0.18s ease, color 0.25s ease, border-color 0.25s ease;
-  backdrop-filter: blur(8px);
-  min-height: 48px;
-  -webkit-tap-highlight-color: transparent;
-
-  &:hover {
-    color: #000;
-    background: linear-gradient(145deg, var(--gold), var(--faded-gold));
-    border-color: var(--gold);
-    transform: translateY(-2px);
-  }
+  border-radius: 999px;
 `;
 
 function TitleScreen() {
