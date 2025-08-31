@@ -712,16 +712,11 @@ export default function GameplayScreen() {
     const clamped = Math.max(0, Math.min(sceneOrder.length - 1, idx));
     dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: sceneOrder[clamped] });
   };
-  const goNextScene = () => {
-    const i = sceneOrder.indexOf(currentScene);
-    const isCompleted = state.gameProgress.completedScenes.includes(currentScene);
-    if (!isCompleted) return;
-    if (i < sceneOrder.length - 1) goToSceneIndex(i + 1);
-  };
-  const goPrevScene = () => {
-    const i = sceneOrder.indexOf(currentScene);
-    if (i > 0) goToSceneIndex(i - 1);
-  };
+  const i = sceneOrder.indexOf(currentScene);
+  const canPrev = i > 0;
+  const canNext = state.gameProgress.completedScenes.includes(currentScene) && i < sceneOrder.length - 1;
+  const goNextScene = () => { if (canNext) goToSceneIndex(i + 1); };
+  const goPrevScene = () => { if (canPrev) goToSceneIndex(i - 1); };
 
   return (
     <GameplayContainer>
