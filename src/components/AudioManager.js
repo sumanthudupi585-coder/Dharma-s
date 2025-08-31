@@ -354,6 +354,49 @@ class SoundEngine {
     this.ambientNodes.push({ stop: () => clearInterval(id) });
   }
 
+  _sparkleGlisten() {
+    // Tiny high chimes that glisten randomly
+    const tick = () => {
+      if (!this.currentAmbient) return;
+      const o = this.ctx.createOscillator();
+      o.type = 'sine';
+      const g = this.ctx.createGain(); g.gain.value = 0;
+      const t = this.ctx.currentTime;
+      const f = 1500 + Math.random() * 1200;
+      o.frequency.setValueAtTime(f, t);
+      g.gain.linearRampToValueAtTime(0.03, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+      o.connect(g).connect(this.ambientGain);
+      o.start();
+      setTimeout(() => { try { o.stop(); } catch (_) {} }, 600);
+      this.ambientNodes.push(o, g);
+    };
+    const id = setInterval(tick, 1800 + Math.random() * 1200);
+    this.ambientNodes.push({ stop: () => clearInterval(id) });
+  }
+
+  _ominousPulse() {
+    // Low percussive pulse for looming presence
+    const kick = () => {
+      if (!this.currentAmbient) return;
+      const o = this.ctx.createOscillator();
+      o.type = 'sine';
+      const g = this.ctx.createGain(); g.gain.value = 0;
+      const t = this.ctx.currentTime;
+      o.frequency.setValueAtTime(110, t);
+      o.frequency.exponentialRampToValueAtTime(55, t + 0.2);
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(0.12, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
+      o.connect(g).connect(this.ambientGain);
+      o.start();
+      setTimeout(() => { try { o.stop(); } catch (_) {} }, 600);
+      this.ambientNodes.push(o, g);
+    };
+    const id = setInterval(kick, 2200 + Math.random() * 1200);
+    this.ambientNodes.push({ stop: () => clearInterval(id) });
+  }
+
   playSfx(type = 'click') {
     if (!this.enabled) return;
     this.ensureContext();
