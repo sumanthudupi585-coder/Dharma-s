@@ -467,9 +467,12 @@ export default function AudioManager() {
   const { state } = useGame();
   const prevScene = useRef(null);
 
+  const isTouch = useIsTouchDevice();
   useEffect(() => {
-    engine.setVolumes({ master: state.settings.masterVolume, music: state.settings.musicVolume, ambient: state.settings.ambientVolume, sfx: state.settings.sfxVolume, enabled: state.settings.soundEnabled });
-  }, [state.settings.masterVolume, state.settings.musicVolume, state.settings.ambientVolume, state.settings.sfxVolume, state.settings.soundEnabled]);
+    engine.lowComplexity = !!state.settings.accessibility.reducedMotion || isTouch;
+    const ambient = engine.lowComplexity ? Math.min(state.settings.ambientVolume, 0.45) : state.settings.ambientVolume;
+    engine.setVolumes({ master: state.settings.masterVolume, music: state.settings.musicVolume, ambient, sfx: state.settings.sfxVolume, enabled: state.settings.soundEnabled });
+  }, [state.settings.masterVolume, state.settings.musicVolume, state.settings.ambientVolume, state.settings.sfxVolume, state.settings.soundEnabled, state.settings.accessibility.reducedMotion, isTouch]);
 
   useEffect(() => {
     let scene = null;
