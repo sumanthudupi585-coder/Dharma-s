@@ -757,6 +757,9 @@ export default function Journal({ isVisible = true }) {
     >
       <JournalHeader>
         <JournalTitle>Sacred Journal</JournalTitle>
+        <HintCounter aria-label={`Hint points available: ${state.gameProgress.hintPoints || 0}`}>
+          💡 {state.gameProgress.hintPoints || 0}
+        </HintCounter>
         <TabsContainer role="tablist" aria-label="Journal Sections">
           {tabs.map((tab, i) => (
             <Tab
