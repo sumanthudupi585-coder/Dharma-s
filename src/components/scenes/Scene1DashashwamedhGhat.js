@@ -139,13 +139,18 @@ const PuzzleIntro = styled.p`
 
 const RitualDisplay = styled.div`
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-xl);
   padding: var(--spacing-lg);
   background: rgba(212, 175, 55, 0.05);
   border-radius: var(--border-radius);
   border: 1px dashed var(--copper);
+  max-width: 100%;
+  overflow: visible;
+  @media (max-width: 520px) {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
 `;
 
 const RitualMovement = styled(motion.div)`
@@ -157,6 +162,7 @@ const RitualMovement = styled(motion.div)`
   position: relative;
   cursor: pointer;
   transition: all 0.3s ease;
+  min-width: 0;
 
   &:hover {
     border-color: var(--gold);
