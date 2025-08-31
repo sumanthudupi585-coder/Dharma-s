@@ -129,7 +129,7 @@ const MainContentArea = styled.div`
   flex-direction: column;
   gap: var(--spacing-lg);
   position: relative;
-  z-index: 10;
+  z-index: 20;
   max-width: 980px;
   width: 100%;
 
