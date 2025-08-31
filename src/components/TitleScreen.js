@@ -221,12 +221,14 @@ function TitleScreen() {
       el.style.setProperty('--my', String(my));
     };
     const onKey = (e) => {
-      if (e.key === 'Enter') handleNewGame();
+      if (e.key === 'Enter') {
+        dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.PROFILE_CREATION });
+      }
     };
     el.addEventListener('mousemove', onMove);
     window.addEventListener('keydown', onKey);
     return () => { el.removeEventListener('mousemove', onMove); window.removeEventListener('keydown', onKey); };
-  }, [handleNewGame]);
+  }, [dispatch]);
 
   const handleNewGame = useCallback(() => {
     dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.PROFILE_CREATION });
