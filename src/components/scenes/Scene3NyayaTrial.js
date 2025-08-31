@@ -282,9 +282,15 @@ const AlcoveGlow = styled.div`
 `;
 
 export default function Scene3NyayaTrial() {
-  useGame();
+  const { dispatch } = useGame();
   const puzzle = useNyayaPuzzle();
   const [showPuzzle, setShowPuzzle] = useState(false);
+
+  useEffect(() => {
+    if (puzzle.complete) {
+      dispatch({ type: ACTIONS.COMPLETE_SCENE, payload: SCENES.NYAYA_TRIAL });
+    }
+  }, [puzzle.complete, dispatch]);
 
   return (
     <SceneContainer>
