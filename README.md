@@ -10,7 +10,7 @@ An immersive philosophical text-based adventure game built with React 18, styled
 
 ## Deployment (GitHub Pages via docs/)
 
-1. Ensure package.json has the correct `homepage`: https://sumanthudupi585-coder.github.io/Dharma-sCiph
+1. Ensure package.json has the correct `homepage`: https://sumanthudupi585-coder.github.io/Dharma-sCi/
 2. Build: `npm run build` (postbuild copies build/ to docs/)
 3. Commit and push docs/ to your default branch
 4. In GitHub repo settings → Pages, select source: `Deploy from a branch`, branch: `main`, folder: `/docs`
