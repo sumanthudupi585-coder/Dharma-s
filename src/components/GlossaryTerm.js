@@ -96,7 +96,7 @@ export default function GlossaryTerm({ term, className }) {
     <TermWrap
       className={`is-interactive ${className || ''}`}
       role="button"
-      aria-haspopup="tooltip"
+      aria-haspopup="true"
       aria-expanded={open}
       aria-describedby={open ? `${id}-desc` : undefined}
       aria-controls={open ? `${id}-tip` : undefined}
