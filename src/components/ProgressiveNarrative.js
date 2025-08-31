@@ -44,10 +44,15 @@ const variants = {
 };
 
 export default function ProgressiveNarrative({ blocks = [], autoAdvance = false, delay = 1200, onComplete }) {
+  const { state } = useGame();
   const [idx, setIdx] = useState(0);
   const total = blocks.length;
   const pct = useMemo(() => (total ? ((idx + 1) / total) * 100 : 0), [idx, total]);
   const timerRef = useRef(null);
+
+  const speed = state.settings?.textSpeed || 'normal';
+  const speedFactor = speed === 'fast' ? 0.7 : speed === 'slow' ? 1.6 : 1;
+  const effectiveDelay = Math.max(200, Math.round(delay * speedFactor));
 
   const goNext = useCallback(() => {
     setIdx(i => {
@@ -60,9 +65,9 @@ export default function ProgressiveNarrative({ blocks = [], autoAdvance = false,
     if (!autoAdvance) return;
     if (idx >= total - 1) return;
     timerRef.current && clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(goNext, delay);
+    timerRef.current = setTimeout(goNext, effectiveDelay);
     return () => timerRef.current && clearTimeout(timerRef.current);
-  }, [idx, total, autoAdvance, delay, goNext]);
+  }, [idx, total, autoAdvance, effectiveDelay, goNext]);
 
   // Fire onComplete after the final block is shown (post-render), once
   const completedRef = useRef(false);
