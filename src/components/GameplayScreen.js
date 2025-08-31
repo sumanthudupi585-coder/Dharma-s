@@ -2,10 +2,10 @@ import React, { useState, useEffect, Suspense, lazy, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, SCENES, ACTIONS } from '../context/GameContext';
-const Journal = lazy(() => import('./Journal'));
 import { engine } from './AudioManager';
 import SwipeNavigator from './SwipeNavigator';
 import SceneProgressMap from './SceneProgressMap';
+const Journal = lazy(() => import('./Journal'));
 
 const Scene1DashashwamedhGhat = lazy(() => import('./scenes/Scene1DashashwamedhGhat'));
 const Scene2LabyrinthGhats = lazy(() => import('./scenes/Scene2LabyrinthGhats'));

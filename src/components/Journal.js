@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGame } from '../context/GameContext';
+import { useGame, ACTIONS } from '../context/GameContext';
 
 // Breathing glow effect for golden elements
 const breathingGlow = keyframes`
@@ -547,7 +547,7 @@ const EmptyText = styled.p`
 `;
 
 export default function Journal({ isVisible = true }) {
-  const { state } = useGame();
+  const { state, dispatch } = useGame();
   const [activeTab, setActiveTab] = useState('profile');
   const [selectedItem, setSelectedItem] = useState(null);
   

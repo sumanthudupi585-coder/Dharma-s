@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
+import Button from '../ui/primitives/Button';
 
 const Screen = styled.div`
   min-height: 100vh;
@@ -215,7 +216,6 @@ const SutraEn = styled.div`
 `;
 
 
-import Button from '../ui/primitives/Button';
 const CTA = styled(motion(Button))`
   padding: 14px 22px;
   border-radius: 12px;
