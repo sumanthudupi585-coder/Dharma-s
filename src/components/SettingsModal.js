@@ -90,6 +90,14 @@ export default function SettingsModal({ open, onClose }) {
   const onReduced = (e) => { setBodyClass('force-reduced-motion', e.target.checked); dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { accessibility: { ...state.settings.accessibility, reducedMotion: e.target.checked } } }); };
   const onHigh = (e) => { setBodyClass('high-contrast', e.target.checked); dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { accessibility: { ...state.settings.accessibility, highContrast: e.target.checked } } }); };
   const onCursorTrail = (e) => dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { effects: { ...(state.settings.effects || {}), cursorTrail: e.target.checked } } });
+  const onSoundEnabled = (e) => dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { soundEnabled: e.target.checked } });
+  const onTextSpeed = (e) => dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { textSpeed: e.target.value } });
+  const onReset = () => {
+    if (window.confirm('Reset progress and return to Title? Settings will be kept.')) {
+      dispatch({ type: ACTIONS.RESET_GAME });
+      onClose();
+    }
+  };
 
   // Focus trap and Escape handling
   useEffect(() => {
