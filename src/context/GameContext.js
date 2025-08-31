@@ -51,7 +51,8 @@ const initialState = {
     completedScenes: [],
     currentObjectives: [],
     solvedPuzzles: [],
-    unlockedAreas: []
+    unlockedAreas: [],
+    hintPoints: 0
   },
 
   // Inventory & Journal
@@ -111,6 +112,7 @@ export const ACTIONS = {
   ADD_OBJECTIVE: 'ADD_OBJECTIVE',
   COMPLETE_OBJECTIVE: 'COMPLETE_OBJECTIVE',
   SOLVE_PUZZLE: 'SOLVE_PUZZLE',
+  ADD_HINT_POINTS: 'ADD_HINT_POINTS',
 
   // Inventory actions
   ADD_ITEM: 'ADD_ITEM',
@@ -166,6 +168,15 @@ function gameReducer(state, action) {
         gameProgress: {
           ...state.gameProgress,
           completedScenes: [...state.gameProgress.completedScenes, action.payload]
+        }
+      };
+
+    case ACTIONS.ADD_HINT_POINTS:
+      return {
+        ...state,
+        gameProgress: {
+          ...state.gameProgress,
+          hintPoints: Math.max(0, (state.gameProgress.hintPoints || 0) + (action.payload || 0))
         }
       };
       
