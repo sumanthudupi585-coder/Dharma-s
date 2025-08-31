@@ -86,8 +86,8 @@ const OverlayContent = styled(motion.div)`
 const GameplayContainer = styled.div`
   min-height: 100vh;
   background:
-    radial-gradient(ellipse at center, rgba(5, 5, 5, 0.9) 0%, rgba(0, 0, 0, 1) 70%),
-    linear-gradient(135deg, #000000 0%, #0a0a0a 50%, #000000 100%);
+    radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.95) 70%),
+    linear-gradient(135deg, var(--ink-black) 0%, var(--deep-blue) 50%, var(--royal-blue) 100%);
   display: grid;
   grid-template-columns: 1.3fr 380px;
   grid-template-rows: 1fr auto;
