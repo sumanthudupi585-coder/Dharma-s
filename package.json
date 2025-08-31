@@ -5,6 +5,7 @@
   "private": true,
   "homepage": "https://sumanthudupi585-coder.github.io/Dharma-sC/",
   "dependencies": {
+    "@sentry/react": "^7.120.4",
     "framer-motion": "^10.16.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
