@@ -571,6 +571,11 @@ const JournalToggle = styled(motion.button)`
   }
 `;
 
+const MapToggle = styled(JournalToggle)`
+  top: auto;
+  bottom: var(--spacing-lg);
+`;
+
 const SkillIndicator = styled(motion.div)`
   position: fixed;
   bottom: var(--spacing-lg);
