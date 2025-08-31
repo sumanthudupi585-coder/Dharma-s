@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "An immersive philosophical text-based adventure game - Dharma's Cipher: Act I - The Kashi Khanda",
   "private": true,
-  "homepage": "https://sumanthudupi585-coder.github.io/Dharma-s/",
+  "homepage": ".",
   "dependencies": {
     "@sentry/react": "^7.120.4",
     "framer-motion": "^10.16.4",
@@ -16,8 +16,6 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "prebuild": "npm run lint && npm test -- --watchAll=false",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
     "postbuild": "rm -rf docs && cp -r build docs",
     "test": "react-scripts test",
     "test:ci": "react-scripts test --watchAll=false",
@@ -58,7 +56,6 @@
   ],
   "author": "Fusion AI",
   "devDependencies": {
-    "gh-pages": "^6.3.0",
     "prettier": "^3.3.3",
     "eslint-config-prettier": "^9.1.0",
     "lint-staged": "^15.2.0",
