@@ -621,7 +621,7 @@ function SceneRenderer({ currentScene }) {
 }
 
 export default function GameplayScreen() {
-  const { state } = useGame();
+  const { state, dispatch } = useGame();
   const [mobileJournalOpen, setMobileJournalOpen] = useState(false);
   const [activeSkill, setActiveSkill] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, text: '', x: 0, y: 0 });
