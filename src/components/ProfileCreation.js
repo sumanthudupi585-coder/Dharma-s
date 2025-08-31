@@ -226,7 +226,7 @@ export default function ProfileCreation() {
   const avatar = useMemo(() => {
     // Simple thematic mapping
     if (provisionalGana === 'DEVA') return { icon: '🐘', name: 'The Elephant', hint: 'Wisdom and compassion' };
-    if (provisionalGana === 'RAKSHASA') return { icon: '���', name: 'The Lion', hint: 'Courage and power' };
+    if (provisionalGana === 'RAKSHASA') return { icon: '🦁', name: 'The Lion', hint: 'Courage and power' };
     // MANUSHYA
     return provisionalGuna === 'SATTVA' ? { icon: '🦚', name: 'The Peacock', hint: 'Beauty and grace' } : provisionalGuna === 'RAJAS' ? { icon: '🦅', name: 'The Garuda', hint: 'Ambition and swiftness' } : { icon: '🐍', name: 'The Serpent', hint: 'Patience and depth' };
   }, [provisionalGana, provisionalGuna]);
@@ -315,6 +315,11 @@ export default function ProfileCreation() {
             <Progress role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} aria-label={`Progress ${progress}%`}>
               <ProgressFill $value={progress} />
             </Progress>
+            <div aria-live="polite" style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: '2rem', lineHeight: 1 }}>{avatar.icon}</div>
+              <div style={{ color: '#d4af37', fontFamily: 'var(--font-display)' }}>{avatar.name}</div>
+              <div style={{ color: '#b8941f', fontFamily: 'var(--font-primary)', fontSize: '0.85rem' }}>{avatar.hint}</div>
+            </div>
           </Header>
 
           <QuestionCard
