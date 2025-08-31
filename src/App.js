@@ -90,6 +90,9 @@ function App() {
         </Suspense>
       </ErrorBoundary>
       <EffectsMount />
+      {/* Global achievement toasts */}
+      {/**/}
+      {React.createElement(require('./components/AchievementsToast').default)}
     </GameProvider>
   );
 }
