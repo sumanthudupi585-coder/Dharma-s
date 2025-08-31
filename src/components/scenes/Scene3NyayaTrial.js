@@ -7,7 +7,6 @@ import ProgressiveNarrative from '../ProgressiveNarrative';
 import useNyayaPuzzle from '../hooks/useNyayaPuzzle';
 
 const SceneContainer = styled.div`
-  height: 100%;
   padding: var(--spacing-lg);
 `;
 
