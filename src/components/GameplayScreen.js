@@ -93,7 +93,7 @@ const GameplayContainer = styled.div`
   grid-template-rows: 1fr auto;
   gap: var(--spacing-xl);
   padding: var(--spacing-lg);
-  padding-bottom: calc(var(--spacing-lg) + 160px); /* safe area for hotbar */
+  padding-bottom: calc(var(--spacing-lg) + 280px); /* safe area for fixed hotbar */
   position: relative;
   overflow: visible;
   max-width: 1280px;
