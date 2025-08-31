@@ -449,6 +449,8 @@ const ChoiceButton = styled(motion.button)`
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(5px);
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
 
   /* Golden energy bar on the left */
   &::before {

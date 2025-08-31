@@ -182,6 +182,8 @@ const ActionButton = styled(motion.button)`
   cursor: pointer;
   transition: background 0.25s ease, transform 0.18s ease, color 0.25s ease, border-color 0.25s ease;
   backdrop-filter: blur(8px);
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
 
   &:hover {
     color: #000;

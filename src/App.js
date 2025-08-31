@@ -8,6 +8,8 @@ import ErrorBoundary from './components/ErrorBoundary';
 import AudioManager from './components/AudioManager';
 import LoadingScreen from './components/LoadingScreen';
 import CornerMenu from './components/CornerMenu';
+import { useIsTouchDevice } from './hooks/useIsTouchDevice';
+import OrientationNotice from './components/OrientationNotice';
 
 const TitleScreen = lazy(() => import('./components/TitleScreen'));
 const ProfileCreation = lazy(() => import('./components/ProfileCreation'));
@@ -49,11 +51,12 @@ function ClassSync() {
 
 function EffectsMount() {
   const { state } = useGame();
-  const allowTrail = (state.settings.effects?.cursorTrail !== false) && !state.settings.accessibility.reducedMotion;
+  const isTouch = useIsTouchDevice ? useIsTouchDevice() : false;
+  const allowTrail = (state.settings.effects?.cursorTrail !== false) && !state.settings.accessibility.reducedMotion && !isTouch;
   return (
     <>
       {allowTrail && <CursorTrail />}
-      <NavigatorSigilCursor />
+      {!isTouch && <NavigatorSigilCursor />}
       <AudioManager />
     </>
   );
@@ -70,6 +73,7 @@ function App() {
             <GameRouter />
             <CornerMenu />
           </div>
+          <OrientationNotice />
         </Suspense>
       </ErrorBoundary>
       <EffectsMount />
