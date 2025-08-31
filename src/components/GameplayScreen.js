@@ -164,6 +164,8 @@ const NarrativeContent = styled.div`
   height: 100%;
   overflow-y: auto;
   padding-bottom: calc(var(--spacing-xl) + 200px);
+  max-width: 70ch;
+  margin: 0 auto;
 
   &::-webkit-scrollbar { width: 6px; }
   &::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #d4af37, #ffd700); border-radius: 3px; }
