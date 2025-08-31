@@ -734,7 +734,10 @@ export default function GameplayScreen() {
     }
   }, [currentScene, playerProfile.skills]);
 
+  const [inkingId, setInkingId] = useState(null);
   const handleChoiceSelect = (choice) => {
+    setInkingId(choice.id);
+    setTimeout(() => setInkingId(null), 800);
   };
 
   const toggleMobileJournal = () => {
