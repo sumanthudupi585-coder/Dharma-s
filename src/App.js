@@ -7,6 +7,7 @@ import GlobalStyles from './styles/GlobalStyles';
 import ErrorBoundary from './components/ErrorBoundary';
 import AudioManager from './components/AudioManager';
 import LoadingScreen from './components/LoadingScreen';
+import CornerMenu from './components/CornerMenu';
 
 const TitleScreen = lazy(() => import('./components/TitleScreen'));
 const ProfileCreation = lazy(() => import('./components/ProfileCreation'));
