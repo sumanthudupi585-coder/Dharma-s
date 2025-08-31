@@ -162,7 +162,7 @@ const NarrativeContent = styled.div`
   z-index: 10;
   max-width: 70ch;
   margin: 0 auto;
-  padding-bottom: calc(var(--spacing-xl) + 200px);
+  padding-bottom: calc(var(--spacing-xl) + 320px);
 `;
 
 // Mini-map panel
