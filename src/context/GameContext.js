@@ -372,6 +372,13 @@ export function GameProvider({ children }) {
     }
   }, [state]);
 
+  useEffect(() => {
+    try {
+      const S = require('@sentry/react');
+      S.addBreadcrumb({ category: 'game', message: `state:${state.gameState} scene:${state.currentScene}`, level: 'info' });
+    } catch (_) {}
+  }, [state.gameState, state.currentScene, state.gameProgress.currentObjectives.length, state.inventory.items.length]);
+
   return (
     <GameContext.Provider value={{ state, dispatch }}>
       {children}
