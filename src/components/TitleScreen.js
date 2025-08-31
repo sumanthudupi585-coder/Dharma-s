@@ -125,6 +125,7 @@ const TitleHalo = styled.div`
     );
     filter: blur(24px);
     animation: ${slowSpin} 30s linear infinite;
+    will-change: transform, opacity, filter;
   }
 `;
 
