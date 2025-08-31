@@ -38,12 +38,13 @@ export default function GenerativeBackground() {
         vy: (Math.random() - 0.5) * 0.08,
         life: 0.5 + Math.random() * 0.5,
         hue: 45 + Math.random() * 20,
-        alpha: 0.2 + Math.random() * 0.35
+        alpha: 0.2 + Math.random() * 0.35,
       };
     });
 
     const draw = (now) => {
-      const w = canvas.width; const h = canvas.height;
+      const w = canvas.width;
+      const h = canvas.height;
       ctx.clearRect(0, 0, w, h);
       const toMouse = 0.0008;
 
@@ -61,11 +62,14 @@ export default function GenerativeBackground() {
         p.vx = vx * 0.995;
         p.vy = vy * 0.995;
 
-        p.x += p.vx; p.y += p.vy;
+        p.x += p.vx;
+        p.y += p.vy;
 
         // Wrap at edges to avoid hard bounces
-        if (p.x < -20) p.x = w + 20; else if (p.x > w + 20) p.x = -20;
-        if (p.y < -20) p.y = h + 20; else if (p.y > h + 20) p.y = -20;
+        if (p.x < -20) p.x = w + 20;
+        else if (p.x > w + 20) p.x = -20;
+        if (p.y < -20) p.y = h + 20;
+        else if (p.y > h + 20) p.y = -20;
 
         const size = 0.8 + p.life * 2.2;
         const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, size * 10);

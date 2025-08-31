@@ -11,15 +11,19 @@ if (DSN) {
     release: `${pkg.name}@${pkg.version}`,
     environment: process.env.REACT_APP_ENV || process.env.NODE_ENV,
     integrations: [Sentry.browserTracingIntegration()],
-    tracesSampleRate: 0.2
+    tracesSampleRate: 0.2,
   });
   Sentry.setTag('app', pkg.name);
   // Global error capture
   window.addEventListener('error', (e) => {
-    try { Sentry.captureException(e.error || e.message || e); } catch (_) {}
+    try {
+      Sentry.captureException(e.error || e.message || e);
+    } catch (_) {}
   });
   window.addEventListener('unhandledrejection', (e) => {
-    try { Sentry.captureException(e.reason || e); } catch (_) {}
+    try {
+      Sentry.captureException(e.reason || e);
+    } catch (_) {}
   });
 }
 

@@ -8,20 +8,23 @@ const Frame = styled.div`
   margin: 0 auto;
   border-radius: 50%;
   border: 2px solid #d4af37;
-  box-shadow: 0 18px 60px rgba(0,0,0,0.55), 0 0 28px rgba(212,175,55,0.25);
-  background: radial-gradient(circle at 50% 50%, rgba(212,175,55,0.1), rgba(0,0,0,0) 65%);
+  box-shadow:
+    0 18px 60px rgba(0, 0, 0, 0.55),
+    0 0 28px rgba(212, 175, 55, 0.25);
+  background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.1), rgba(0, 0, 0, 0) 65%);
   overflow: hidden;
 `;
 
 const Canvas = styled.canvas`
   position: absolute;
   inset: 0;
-  width: 100%; height: 100%;
+  width: 100%;
+  height: 100%;
 `;
 
 // Deterministic PRNG
 function mulberry32(a) {
-  return function() {
+  return function () {
     let t = (a += 0x6d2b79f5);
     t = Math.imul(t ^ (t >>> 15), t | 1);
     t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
@@ -38,7 +41,13 @@ function hashStr(str = '') {
 export default function MandalaSigil({ profile }) {
   const ref = useRef(null);
   const seed = useMemo(() => {
-    const key = [profile?.primaryGuna, profile?.primaryGana, profile?.rashi, profile?.nakshatra?.name, (profile?.skills || []).map(s => s.name).join('-')].join('|');
+    const key = [
+      profile?.primaryGuna,
+      profile?.primaryGana,
+      profile?.rashi,
+      profile?.nakshatra?.name,
+      (profile?.skills || []).map((s) => s.name).join('-'),
+    ].join('|');
     return hashStr(key);
   }, [profile]);
 
@@ -74,9 +83,9 @@ export default function MandalaSigil({ profile }) {
         ctx.fillStyle = color;
         ctx.globalAlpha = 0.6 + 0.4 * rnd();
         ctx.beginPath();
-        ctx.moveTo(-w/2, -h/2);
-        ctx.lineTo(w/2, -h/2);
-        ctx.lineTo(0, h/2);
+        ctx.moveTo(-w / 2, -h / 2);
+        ctx.lineTo(w / 2, -h / 2);
+        ctx.lineTo(0, h / 2);
         ctx.closePath();
         ctx.fill();
         ctx.restore();
@@ -102,14 +111,18 @@ export default function MandalaSigil({ profile }) {
     }
 
     function draw() {
-      const w = canvas.clientWidth; const h = canvas.clientHeight;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
       ctx.clearRect(0, 0, w, h);
-      const cx = w / 2; const cy = h / 2;
+      const cx = w / 2;
+      const cy = h / 2;
       const base = Math.min(w, h) / 2 - 16;
 
       // Color mapping by profile
-      const gunaHue = profile?.primaryGuna === 'SATTVA' ? 48 : profile?.primaryGuna === 'RAJAS' ? 30 : 12;
-      const ganaHue = profile?.primaryGana === 'DEVA' ? 50 : profile?.primaryGana === 'MANUSHYA' ? 42 : 20;
+      const gunaHue =
+        profile?.primaryGuna === 'SATTVA' ? 48 : profile?.primaryGuna === 'RAJAS' ? 30 : 12;
+      const ganaHue =
+        profile?.primaryGana === 'DEVA' ? 50 : profile?.primaryGana === 'MANUSHYA' ? 42 : 20;
       const gold = `hsla(${gunaHue}, 78%, 62%, 0.85)`;
       const copper = `hsla(${ganaHue}, 64%, 55%, 0.65)`;
 
@@ -131,7 +144,14 @@ export default function MandalaSigil({ profile }) {
 
       rings.forEach((ring, i) => {
         drawRing(cx, cy, ring.r, ring.n, ring.rot, ring.col);
-        drawGlyph(cx, cy, ring.r * (0.84 + 0.08 * rnd()), Math.max(4, Math.floor(ring.n / 2)), ring.rot * -1.2, ring.col);
+        drawGlyph(
+          cx,
+          cy,
+          ring.r * (0.84 + 0.08 * rnd()),
+          Math.max(4, Math.floor(ring.n / 2)),
+          ring.rot * -1.2,
+          ring.col
+        );
       });
 
       // Central symbol: star polygon parameterized by skills length
@@ -145,8 +165,10 @@ export default function MandalaSigil({ profile }) {
       for (let i = 0; i <= k; i++) {
         const a = (i / k) * Math.PI * 2;
         const rr = base * 0.18 * (1 + 0.05 * Math.sin(i));
-        const x = Math.cos(a) * rr; const y = Math.sin(a) * rr;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        const x = Math.cos(a) * rr;
+        const y = Math.sin(a) * rr;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       }
       ctx.closePath();
       ctx.stroke();

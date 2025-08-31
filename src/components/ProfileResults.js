@@ -17,8 +17,9 @@ const Screen = styled.div`
     content: '';
     position: absolute;
     inset: -20%;
-    background: radial-gradient(60% 60% at 35% 40%, rgba(212,175,55,0.10) 0%, rgba(0,0,0,0) 60%),
-                radial-gradient(45% 45% at 70% 65%, rgba(255,215,0,0.08) 0%, rgba(0,0,0,0) 70%);
+    background:
+      radial-gradient(60% 60% at 35% 40%, rgba(212, 175, 55, 0.1) 0%, rgba(0, 0, 0, 0) 60%),
+      radial-gradient(45% 45% at 70% 65%, rgba(255, 215, 0, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
     filter: blur(28px);
     pointer-events: none;
   }
@@ -26,10 +27,10 @@ const Screen = styled.div`
 
 const Shell = styled(motion.div)`
   width: min(96vw, 1100px);
-  border: 1px solid rgba(212,175,55,0.28);
-  background: linear-gradient(145deg, rgba(0,0,0,0.9), rgba(10,10,10,0.96));
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.9), rgba(10, 10, 10, 0.96));
   border-radius: 24px;
-  box-shadow: 0 26px 80px rgba(0,0,0,0.75);
+  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.75);
   overflow: hidden;
   display: grid;
   grid-template-rows: auto 1fr auto;
@@ -40,7 +41,7 @@ const Header = styled.div`
   grid-template-columns: 1fr auto;
   gap: var(--spacing-lg);
   padding: var(--spacing-xl);
-  border-bottom: 1px solid rgba(212,175,55,0.25);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
 `;
 
 const TitleWrap = styled.div`
@@ -69,10 +70,10 @@ const SutraBanner = styled.div`
   align-self: center;
   justify-self: end;
   max-width: min(48vw, 520px);
-  border: 1px solid rgba(212,175,55,0.28);
+  border: 1px solid rgba(212, 175, 55, 0.28);
   border-radius: 999px;
   padding: 10px 14px;
-  background: linear-gradient(145deg, rgba(212,175,55,0.10), rgba(255,215,0,0.08));
+  background: linear-gradient(145deg, rgba(212, 175, 55, 0.1), rgba(255, 215, 0, 0.08));
   text-align: center;
 `;
 
@@ -114,11 +115,11 @@ const Body = styled.div`
 `;
 
 const Section = styled(motion.section)`
-  border: 1px solid rgba(212,175,55,0.22);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: 16px;
-  background: linear-gradient(145deg, rgba(0,0,0,0.88), rgba(12,12,12,0.96));
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.88), rgba(12, 12, 12, 0.96));
   padding: var(--spacing-lg);
-  grid-area: ${p => p.$area || 'auto'};
+  grid-area: ${(p) => p.$area || 'auto'};
 `;
 
 const SectionTitle = styled.h2`
@@ -141,8 +142,8 @@ const Pill = styled.span`
   gap: 8px;
   padding: 8px 12px;
   border-radius: 999px;
-  border: 1px solid rgba(212,175,55,0.35);
-  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.82), rgba(18, 18, 18, 0.95));
   color: #e8c86a;
   font-family: var(--font-primary);
   font-weight: 700;
@@ -161,9 +162,9 @@ const Grid = styled.div`
 `;
 
 const Card = styled.div`
-  border: 1px solid rgba(212,175,55,0.22);
+  border: 1px solid rgba(212, 175, 55, 0.22);
   border-radius: 14px;
-  background: linear-gradient(145deg, rgba(0,0,0,0.88), rgba(12,12,12,0.96));
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.88), rgba(12, 12, 12, 0.96));
   padding: var(--spacing-lg);
 `;
 
@@ -196,9 +197,9 @@ const SutrasWrap = styled.div`
 `;
 
 const SutraChip = styled.div`
-  border: 1px solid rgba(212,175,55,0.28);
+  border: 1px solid rgba(212, 175, 55, 0.28);
   border-radius: 12px;
-  background: linear-gradient(145deg, rgba(20,20,20,0.88), rgba(14,14,14,0.96));
+  background: linear-gradient(145deg, rgba(20, 20, 20, 0.88), rgba(14, 14, 14, 0.96));
   padding: 10px 12px;
 `;
 
@@ -214,7 +215,6 @@ const SutraEn = styled.div`
   font-size: var(--fs-sm);
   font-style: italic;
 `;
-
 
 const CTA = styled(motion(Button))`
   padding: 14px 22px;
@@ -235,12 +235,32 @@ export default function ProfileResults() {
     return null;
   }
 
-  const romanVakya = (playerProfile.atmanVakya || []).map(s => s.transliteration).join(' · ');
+  const romanVakya = (playerProfile.atmanVakya || []).map((s) => s.transliteration).join(' · ');
 
-  const gunaName = playerProfile.primaryGuna === 'SATTVA' ? 'Sattva' : playerProfile.primaryGuna === 'RAJAS' ? 'Rajas' : 'Tamas';
-  const gunaArchetype = playerProfile.primaryGuna === 'SATTVA' ? 'The Sage' : playerProfile.primaryGuna === 'RAJAS' ? 'The Scion' : 'The Shadow';
-  const ganaName = playerProfile.primaryGana === 'DEVA' ? 'Deva' : playerProfile.primaryGana === 'MANUSHYA' ? 'Manushya' : 'Rakshasa';
-  const ganaArchetype = playerProfile.primaryGana === 'DEVA' ? 'The Divine' : playerProfile.primaryGana === 'MANUSHYA' ? 'The Human' : 'The Fierce';
+  const gunaName =
+    playerProfile.primaryGuna === 'SATTVA'
+      ? 'Sattva'
+      : playerProfile.primaryGuna === 'RAJAS'
+        ? 'Rajas'
+        : 'Tamas';
+  const gunaArchetype =
+    playerProfile.primaryGuna === 'SATTVA'
+      ? 'The Sage'
+      : playerProfile.primaryGuna === 'RAJAS'
+        ? 'The Scion'
+        : 'The Shadow';
+  const ganaName =
+    playerProfile.primaryGana === 'DEVA'
+      ? 'Deva'
+      : playerProfile.primaryGana === 'MANUSHYA'
+        ? 'Manushya'
+        : 'Rakshasa';
+  const ganaArchetype =
+    playerProfile.primaryGana === 'DEVA'
+      ? 'The Divine'
+      : playerProfile.primaryGana === 'MANUSHYA'
+        ? 'The Human'
+        : 'The Fierce';
 
   const handleContinue = () => {
     dispatch({ type: ACTIONS.SET_GAME_STATE, payload: GAME_STATES.GAMEPLAY });
@@ -248,17 +268,31 @@ export default function ProfileResults() {
 
   return (
     <Screen>
-      <Shell initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+      <Shell
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
         <Header>
           <TitleWrap>
             <Title>Ātman Spanda</Title>
             <Subtitle>Revelation of your inner vibration</Subtitle>
-            <CTA className="is-interactive" type="button" aria-label="Begin Your Sacred Journey" onClick={handleContinue} whileTap={{ scale: 0.98 }}>Begin Your Sacred Journey</CTA>
+            <CTA
+              className="is-interactive"
+              type="button"
+              aria-label="Begin Your Sacred Journey"
+              onClick={handleContinue}
+              whileTap={{ scale: 0.98 }}
+            >
+              Begin Your Sacred Journey
+            </CTA>
           </TitleWrap>
           <HeaderActions>
             {(playerProfile.atmanVakyaText || romanVakya) && (
               <SutraBanner>
-                {playerProfile.atmanVakyaText && <SutraPrimary>{playerProfile.atmanVakyaText}</SutraPrimary>}
+                {playerProfile.atmanVakyaText && (
+                  <SutraPrimary>{playerProfile.atmanVakyaText}</SutraPrimary>
+                )}
                 {romanVakya && <SutraSecondary>{romanVakya}</SutraSecondary>}
               </SutraBanner>
             )}
@@ -267,7 +301,12 @@ export default function ProfileResults() {
 
         {show && (
           <Body>
-            <Section $area="essence" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <Section
+              $area="essence"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
               <SectionTitle>Your Essence</SectionTitle>
               <PillRow>
                 <Pill title="Primary Guna">
@@ -290,13 +329,23 @@ export default function ProfileResults() {
                 </Card>
                 <Card>
                   <CardTitle>Rāśi & Element</CardTitle>
-                  <CardSub>{playerProfile.rashi} • {playerProfile.nakshatra?.element}</CardSub>
-                  <CardText>Your soul resonates with {playerProfile.nakshatra?.element?.toLowerCase?.()} and the sign of {playerProfile.rashi}.</CardText>
+                  <CardSub>
+                    {playerProfile.rashi} • {playerProfile.nakshatra?.element}
+                  </CardSub>
+                  <CardText>
+                    Your soul resonates with {playerProfile.nakshatra?.element?.toLowerCase?.()} and
+                    the sign of {playerProfile.rashi}.
+                  </CardText>
                 </Card>
               </Grid>
             </Section>
 
-            <Section $area="gifts" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.05 }}>
+            <Section
+              $area="gifts"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.05 }}
+            >
               <SectionTitle>Innate Gifts</SectionTitle>
               <Grid>
                 <Card>
@@ -311,7 +360,12 @@ export default function ProfileResults() {
             </Section>
 
             {(playerProfile.atmanVakya || []).length > 0 && (
-              <Section $area="sutras" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+              <Section
+                $area="sutras"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
                 <SectionTitle>Tattva Sūtras Discovered</SectionTitle>
                 <SutrasWrap>
                   {(playerProfile.atmanVakya || []).map((s, i) => (
@@ -325,7 +379,6 @@ export default function ProfileResults() {
             )}
           </Body>
         )}
-
       </Shell>
     </Screen>
   );

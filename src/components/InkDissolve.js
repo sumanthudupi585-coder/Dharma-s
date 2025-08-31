@@ -9,11 +9,11 @@ const Overlay = styled(motion.div)`
   pointer-events: none;
   z-index: 2000;
   background:
-    radial-gradient(120px 80px at 20% 20%, rgba(0,0,0,0.85), transparent 70%),
-    radial-gradient(160px 120px at 70% 30%, rgba(0,0,0,0.75), transparent 70%),
-    radial-gradient(180px 140px at 40% 70%, rgba(0,0,0,0.8), transparent 70%),
-    radial-gradient(120px 100px at 80% 80%, rgba(0,0,0,0.7), transparent 70%),
-    radial-gradient(220px 160px at 30% 50%, rgba(0,0,0,0.9), transparent 70%);
+    radial-gradient(120px 80px at 20% 20%, rgba(0, 0, 0, 0.85), transparent 70%),
+    radial-gradient(160px 120px at 70% 30%, rgba(0, 0, 0, 0.75), transparent 70%),
+    radial-gradient(180px 140px at 40% 70%, rgba(0, 0, 0, 0.8), transparent 70%),
+    radial-gradient(120px 100px at 80% 80%, rgba(0, 0, 0, 0.7), transparent 70%),
+    radial-gradient(220px 160px at 30% 50%, rgba(0, 0, 0, 0.9), transparent 70%);
   mix-blend-mode: multiply;
 `;
 
