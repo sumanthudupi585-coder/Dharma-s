@@ -18,7 +18,8 @@ const Controls = styled.div`
 `;
 
 const NextBtn = styled.button`
-  composes: btn-manuscript;
+  min-height: 44px;
+  touch-action: manipulation;
 `;
 
 const Progress = styled.div`
