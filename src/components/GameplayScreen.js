@@ -632,6 +632,7 @@ export default function GameplayScreen() {
   const [tooltip, setTooltip] = useState({ visible: false, text: '', x: 0, y: 0 });
 
   const { currentScene, sceneData, playerProfile, inventory } = state;
+  const [mobileMapOpen, setMobileMapOpen] = useState(false);
 
   const prevClues = React.useRef(inventory.clues.length);
   const prevObjectives = React.useRef(state.gameProgress.currentObjectives.length);
