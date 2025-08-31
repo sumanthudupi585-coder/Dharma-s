@@ -509,6 +509,25 @@ const ChoiceButton = styled(motion.button)`
     transition: left 0.5s ease;
   }
 
+  .choice-text {
+    background: linear-gradient(180deg, #d4af37, #ffd700);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+  }
+  &.inking .choice-text::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 0%;
+    background: linear-gradient(90deg, rgba(0,0,0,0), rgba(212,175,55,0.35), rgba(0,0,0,0));
+    animation: inking 700ms ease forwards;
+  }
+  @keyframes inking {
+    to { width: 100%; }
+  }
+
   &:hover {
     background:
       linear-gradient(145deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 215, 0, 0.2) 100%);
