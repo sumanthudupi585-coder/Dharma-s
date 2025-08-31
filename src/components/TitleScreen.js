@@ -195,7 +195,7 @@ const ActionButton = styled(motion.button)`
   }
 `;
 
-export default function TitleScreen() {
+function TitleScreen() {
   const { dispatch } = useGame();
   const [openSettings, setOpenSettings] = useState(false);
   const rootRef = useRef(null);
