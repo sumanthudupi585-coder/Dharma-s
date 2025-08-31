@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, SCENES, ACTIONS } from '../context/GameContext';
 import Journal from './Journal';
 import { engine } from './AudioManager';
+import SwipeNavigator from './SwipeNavigator';
+import SceneProgressMap from './SceneProgressMap';
 
 const Scene1DashashwamedhGhat = lazy(() => import('./scenes/Scene1DashashwamedhGhat'));
 const Scene2LabyrinthGhats = lazy(() => import('./scenes/Scene2LabyrinthGhats'));
