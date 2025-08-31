@@ -56,6 +56,16 @@ const CloseBtn = styled(motion.button)`
   font-weight: 700;
 `;
 
+const DangerBtn = styled(motion.button)`
+  margin-top: 14px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(139,0,0,0.6);
+  background: linear-gradient(145deg, rgba(20,0,0,0.82), rgba(40,0,0,0.95));
+  color: #ffb3b3;
+  font-weight: 700;
+`;
+
 const Value = styled.span`
   font-family: var(--font-primary);
   color: #d4af37;
