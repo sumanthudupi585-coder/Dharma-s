@@ -127,9 +127,9 @@ const JournalHeader = styled.div`
   border-bottom: 2px solid #d4af37;
   margin-bottom: var(--spacing-md);
   position: relative;
-  background: 
+  background:
     linear-gradient(145deg, rgba(15, 15, 15, 0.9) 0%, rgba(5, 5, 5, 0.95) 100%);
-  
+
   /* Decorative corner flourishes */
   &::before, &::after {
     content: '❦';
@@ -140,16 +140,29 @@ const JournalHeader = styled.div`
     opacity: 0.7;
     animation: ${breathingGlow} 6s ease-in-out infinite;
   }
-  
+
   &::before {
     left: var(--spacing-md);
     animation-delay: 0s;
   }
-  
+
   &::after {
     right: var(--spacing-md);
     animation-delay: 3s;
   }
+`;
+
+const HintCounter = styled.span`
+  position: absolute;
+  right: var(--spacing-lg);
+  top: var(--spacing-lg);
+  border: 1px solid rgba(212,175,55,0.45);
+  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
+  color: #e8c86a;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-family: var(--font-primary);
+  font-size: var(--fs-xs);
 `;
 
 const JournalTitle = styled.h2`
