@@ -32,7 +32,10 @@ export default class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, info) {
-    // Intentionally silent in production; hook logging service here if desired
+    try {
+      const dsn = process.env.REACT_APP_SENTRY_DSN;
+      if (dsn) Sentry.captureException(error, { extra: { componentStack: info?.componentStack } });
+    } catch {}
   }
 
   render() {
