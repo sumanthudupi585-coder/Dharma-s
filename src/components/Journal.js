@@ -647,17 +647,55 @@ export default function Journal({ isVisible = true }) {
       case 'clues':
         return (
           <ContentWrapper>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '12px' }}>
+              <input
+                type="search"
+                placeholder="Search clues"
+                aria-label="Search clues"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{ flex: 1, padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(212,175,55,0.35)', background: 'transparent', color: '#e8c86a' }}
+              />
+            </div>
+            {tagOptions.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '10px' }}>
+                {tagOptions.map((t) => (
+                  <button
+                    key={t}
+                    className="is-interactive"
+                    onClick={() => toggleTag(t)}
+                    aria-pressed={activeTags.has(t)}
+                    style={{ padding: '6px 10px', borderRadius: 999, border: activeTags.has(t) ? '1px solid #ffd700' : '1px solid rgba(212,175,55,0.35)', background: activeTags.has(t) ? 'linear-gradient(145deg, #d4af37, #ffd700)' : 'transparent', color: activeTags.has(t) ? '#000' : '#e8c86a' }}
+                  >
+                    #{t}
+                  </button>
+                ))}
+              </div>
+            )}
             <CluesList>
-              {inventory.clues.length > 0 ? (
-                inventory.clues.map((clue, index) => (
+              {filteredClues.length > 0 ? (
+                filteredClues.map((clue, index) => (
                   <ClueItem
                     key={clue.id}
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    transition={{ duration: 0.5, delay: index * 0.06 }}
+                    onClick={() => {
+                      if (clue.scene) dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: clue.scene });
+                    }}
+                    role={clue.scene ? 'button' : undefined}
+                    tabIndex={clue.scene ? 0 : -1}
+                    aria-label={clue.scene ? `Go to ${clue.scene}` : undefined}
                   >
                     <ClueTitle>{clue.title}</ClueTitle>
                     <ClueDescription>{clue.description}</ClueDescription>
+                    {clue.tags && clue.tags.length > 0 && (
+                      <div style={{ marginTop: 6, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                        {clue.tags.map((tg) => (
+                          <span key={tg} style={{ border: '1px solid rgba(212,175,55,0.35)', borderRadius: 999, padding: '2px 8px', color: '#b8941f', fontSize: '0.8rem' }}>#{tg}</span>
+                        ))}
+                      </div>
+                    )}
                     {clue.sketch && (
                       <ClueSketch>{clue.sketch}</ClueSketch>
                     )}
@@ -665,7 +703,7 @@ export default function Journal({ isVisible = true }) {
                 ))
               ) : (
                 <EmptyState>
-                  <EmptyText>The mysteries await your discovery...</EmptyText>
+                  <EmptyText>No clues match your filters...</EmptyText>
                 </EmptyState>
               )}
             </CluesList>
