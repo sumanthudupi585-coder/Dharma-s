@@ -20,6 +20,7 @@ class SoundEngine {
     this.lastHoverAt = 0;
     this.hoverCooldownMs = 140;
     this.sceneFadeMs = 0.35;
+    this.lowComplexity = false;
   }
 
   ensureContext() {
