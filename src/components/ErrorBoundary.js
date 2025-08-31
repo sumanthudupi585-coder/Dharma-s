@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import * as Sentry from '@sentry/react';
 
 const ErrorWrap = styled.div`
   min-height: 100vh;
