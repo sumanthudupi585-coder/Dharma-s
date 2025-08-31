@@ -199,8 +199,10 @@ const MiniMapPanel = styled.div`
 
 // Hotbar / quick slots
 const HotbarContainer = styled.div`
-  position: sticky;
-  bottom: 0;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: var(--spacing-lg);
   display: grid;
   grid-template-columns: repeat(6, 56px);
   gap: 10px;
@@ -209,8 +211,8 @@ const HotbarContainer = styled.div`
   border-radius: 14px;
   padding: 10px 12px;
   box-shadow: 0 10px 28px rgba(0,0,0,0.7), 0 0 20px rgba(212,175,55,0.25);
-  z-index: 20;
-  margin: var(--spacing-lg) auto 0;
+  z-index: 120;
+  margin: 0 auto;
 `;
 
 const HotbarSlot = styled.div`
