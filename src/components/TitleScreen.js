@@ -204,11 +204,13 @@ const ActionButton = styled(motion(Button))`
 function TitleScreen() {
   const { dispatch } = useGame();
   const [openSettings, setOpenSettings] = useState(false);
+  const [hasSave, setHasSave] = useState(false);
   const rootRef = useRef(null);
   const particles = useMemo(() => Array.from({ length: 36 }, () => ({ x: Math.random() * 100, y: Math.random() * 100 })), []);
   const glyphs = useMemo(() => ['ॐ','अ','इ','उ','क','थ','ध','ज्ञ','श','ष','ह','ग','य','र','ल','व'].map((g) => ({ g, x: Math.random()*100, y: Math.random()*100 })), []);
 
   useEffect(() => {
+    try { setHasSave(!!localStorage.getItem('dharmas-cipher-state-v1')); } catch (_) {}
     const el = rootRef.current;
     if (!el) return;
     const onMove = (e) => {
@@ -218,8 +220,12 @@ function TitleScreen() {
       el.style.setProperty('--mx', String(mx));
       el.style.setProperty('--my', String(my));
     };
+    const onKey = (e) => {
+      if (e.key === 'Enter') handleNewGame();
+    };
     el.addEventListener('mousemove', onMove);
-    return () => el.removeEventListener('mousemove', onMove);
+    window.addEventListener('keydown', onKey);
+    return () => { el.removeEventListener('mousemove', onMove); window.removeEventListener('keydown', onKey); };
   }, []);
 
   const handleNewGame = () => {
