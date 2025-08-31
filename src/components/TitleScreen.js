@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import SettingsModal from './SettingsModal';
+import DailyRiddle from './DailyRiddle';
 import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
 import Button from '../ui/primitives/Button';
 
