@@ -185,6 +185,27 @@ function gameReducer(state, action) {
           hintPoints: Math.max(0, (state.gameProgress.hintPoints || 0) + (action.payload || 0))
         }
       };
+
+    case ACTIONS.ADD_ACHIEVEMENT: {
+      const exists = state.gameProgress.achievements.some(a => a.id === action.payload.id);
+      if (exists) return state;
+      return {
+        ...state,
+        gameProgress: {
+          ...state.gameProgress,
+          achievements: [...state.gameProgress.achievements, action.payload]
+        },
+        uiState: {
+          ...state.uiState,
+          recentAchievements: [...state.uiState.recentAchievements, action.payload]
+        }
+      };
+    }
+
+    case ACTIONS.CONSUME_RECENT_ACHIEVEMENT: {
+      const [, ...rest] = state.uiState.recentAchievements;
+      return { ...state, uiState: { ...state.uiState, recentAchievements: rest } };
+    }
       
     case ACTIONS.ADD_OBJECTIVE:
       return {
