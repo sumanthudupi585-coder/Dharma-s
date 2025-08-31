@@ -22,7 +22,7 @@ const ScreenRoot = styled.div`
   width: 100%;
   position: relative;
   overflow: hidden;
-  background: radial-gradient(ellipse at center, #070707 0%, #0a0a0a 55%, #000 100%);
+  background: radial-gradient(ellipse at center, var(--ink-black) 0%, var(--deep-blue) 55%, var(--royal-blue) 100%);
 
   &::before {
     content: '';
@@ -53,11 +53,17 @@ const ParallaxLayer = styled.div`
 const Particle = styled.div`
   position: absolute; width: 3px; height: 3px; border-radius: 50%; background: rgba(212,175,55,0.6);
   filter: blur(0.3px);
+  left: var(--x);
+  top: var(--y);
+  opacity: var(--o, 0.6);
 `;
 
 const Sanskrit = styled.span`
   position: absolute; font-family: var(--font-devanagari); font-size: 18px; color: rgba(230, 199, 106, 0.6);
   opacity: 0.8;
+  left: var(--x);
+  top: var(--y);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
 `;
 
 const CenterStack = styled.div`
@@ -184,10 +190,10 @@ export default function TitleScreen() {
     <ScreenRoot ref={rootRef}>
       <ParallaxLayer aria-hidden="true">
         {particles.map((p, i) => (
-          <Particle key={i} style={{ left: `${p.x}%`, top: `${p.y}%`, opacity: 0.6 }} />
+          <Particle key={i} style={{ '--x': `${p.x}%`, '--y': `${p.y}%` }} />
         ))}
         {glyphs.map((s, i) => (
-          <Sanskrit key={i} style={{ left: `${s.x}%`, top: `${s.y}%` }}>{s.g}</Sanskrit>
+          <Sanskrit key={i} style={{ '--x': `${s.x}%`, '--y': `${s.y}%` }}>{s.g}</Sanskrit>
         ))}
       </ParallaxLayer>
       <CenterStack>
