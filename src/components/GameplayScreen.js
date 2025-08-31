@@ -568,7 +568,7 @@ const JournalSidebar = styled(motion.div)`
   position: sticky;
   top: var(--spacing-lg);
   align-self: start;
-  z-index: 10;
+  z-index: 5;
   height: calc(100vh - 2 * var(--spacing-lg));
   max-width: 380px;
   width: 100%;
