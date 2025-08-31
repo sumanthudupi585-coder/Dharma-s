@@ -526,7 +526,9 @@ export default function Scene1DashashwamedhGhat() {
             id: 'focus_crowd',
             title: 'Crowd Wisdom',
             description: 'You overhear whispers about "men in grey suits" who have been asking questions near the temples. A dangerous, modern tension coiled beneath ancient faith.',
-            sketch: '👥💭👥'
+            sketch: '👥💭👥',
+            tags: ['crowd','intel'],
+            scene: SCENES.DASHASHWAMEDH_GHAT
           }
         });
         break;
