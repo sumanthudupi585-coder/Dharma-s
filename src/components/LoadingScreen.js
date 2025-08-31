@@ -13,7 +13,7 @@ const pulse = keyframes`
 `;
 
 const Wrap = styled.div`
-  min-height: 100vh; display: grid; place-items: center; background: radial-gradient(ellipse at center, #070707 0%, #0a0a0a 55%, #000 100%);
+  min-height: 100vh; display: grid; place-items: center; background: radial-gradient(ellipse at center, var(--ink-black) 0%, var(--deep-blue) 55%, var(--royal-blue) 100%);
   color: #e6c76a; position: relative; overflow: hidden;
 `;
 
