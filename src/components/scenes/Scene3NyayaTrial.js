@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import GlossaryTerm from '../GlossaryTerm';
-import { useGame } from '../../context/GameContext';
+import { useGame, ACTIONS, SCENES } from '../../context/GameContext';
 import ProgressiveNarrative from '../ProgressiveNarrative';
 import useNyayaPuzzle from '../hooks/useNyayaPuzzle';
 
