@@ -27,6 +27,8 @@ const NarrativeText = styled(motion.div)`
   color: var(--parchment);
   font-size: 1.1rem;
   line-height: 1.8;
+  position: relative;
+  z-index: 2;
 `;
 
 const PuzzleWrap = styled.div`
@@ -117,10 +119,10 @@ const chamberPulse = keyframes`
   50% { opacity: 0.28; }
 `;
 const ChamberVignette = styled.div`
-  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
   background:
-    radial-gradient(60% 60% at 50% 50%, rgba(212, 175, 55, 0.04), transparent 60%),
-    radial-gradient(80% 80% at 50% 50%, rgba(0, 0, 0, 0.6), rgba(0,0,0,0.9));
+    radial-gradient(60% 60% at 50% 50%, rgba(212, 175, 55, 0.03), transparent 60%),
+    radial-gradient(80% 80% at 50% 50%, rgba(0, 0, 0, 0.4), rgba(0,0,0,0.6));
   mix-blend-mode: soft-light;
   animation: ${chamberPulse} 16s ease-in-out infinite;
 `;
@@ -132,10 +134,11 @@ const sweepAnim = keyframes`
   100% { transform: translateX(60%) rotate(12deg); opacity: 0.04; }
 `;
 const LightSweep = styled.div`
-  position: absolute; top: 15%; left: -30%; width: 160%; height: 70%; z-index: 1; pointer-events: none;
-  background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.06) 50%, transparent 100%);
+  position: absolute; top: 15%; left: -30%; width: 160%; height: 70%; z-index: 0; pointer-events: none;
+  background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.05) 50%, transparent 100%);
   filter: blur(12px);
   animation: ${sweepAnim} 22s linear infinite;
+  @media (max-width: 768px) { display: none; }
 `;
 
 // Central iris-like mechanism with ultra-slow rotation
@@ -144,10 +147,10 @@ const irisRotate = keyframes`
   100% { transform: translate(-50%, -50%) rotate(360deg); }
 `;
 const IrisDoor = styled.div`
-  position: absolute; top: 50%; left: 50%; width: 220px; height: 220px; z-index: 1; pointer-events: none;
+  position: absolute; top: 50%; left: 50%; width: 220px; height: 220px; z-index: 0; pointer-events: none;
   border-radius: 50%;
   background:
-    radial-gradient(closest-side, rgba(212,175,55,0.08), rgba(0,0,0,0.85) 70%),
+    radial-gradient(closest-side, rgba(212,175,55,0.06), rgba(0,0,0,0.6) 70%),
     conic-gradient(from 0deg,
       rgba(212,175,55,0.1) 0deg 6deg,
       transparent 6deg 18deg,
@@ -190,9 +193,10 @@ const IrisDoor = styled.div`
       rgba(212,175,55,0.06) 342deg 348deg,
       transparent 348deg 360deg
     );
-  box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 40px rgba(212,175,55,0.08);
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.55), 0 0 40px rgba(212,175,55,0.06);
   transform: translate(-50%, -50%);
   animation: ${irisRotate} 180s linear infinite;
+  @media (max-width: 768px) { display: none; }
 `;
 
 // Alcove glows at cardinal points
@@ -201,9 +205,10 @@ const shimmer = keyframes`
   50% { opacity: 0.26; filter: blur(8px); }
 `;
 const AlcoveGlow = styled.div`
-  position: absolute; width: 110px; height: 110px; border-radius: 50%; pointer-events: none; z-index: 1;
-  background: radial-gradient(closest-side, rgba(212,175,55,0.18), rgba(212,175,55,0.06), transparent 70%);
+  position: absolute; width: 110px; height: 110px; border-radius: 50%; pointer-events: none; z-index: 0;
+  background: radial-gradient(closest-side, rgba(212,175,55,0.16), rgba(212,175,55,0.05), transparent 70%);
   animation: ${shimmer} 7s ease-in-out infinite;
+  @media (max-width: 768px) { display: none; }
   ${({ $position }) => $position === 'north' && 'top: 8%; left: 50%; transform: translateX(-50%);'}
   ${({ $position }) => $position === 'east' && 'right: 8%; top: 50%; transform: translateY(-50%);'}
   ${({ $position }) => $position === 'south' && 'bottom: 8%; left: 50%; transform: translateX(-50%);'}
@@ -235,8 +240,8 @@ export default function Scene3NyayaTrial() {
 
       <NarrativeText initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.2 }}>
         <ProgressiveNarrative
-          autoAdvance={!reduced}
-          delay={1200}
+          autoAdvance={false}
+          delay={2400}
           onComplete={() => setShowPuzzle(true)}
           blocks={[
             (<div>Silent, circular chamber of obsidian. Reason over ritual.</div>),
