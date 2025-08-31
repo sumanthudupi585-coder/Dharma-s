@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://sumanthudupi585-coder.github.io/Dharma-sCiph/sitemap.xml

@@ -654,7 +654,6 @@ export default function GameplayScreen() {
   }, [currentScene, playerProfile.skills]);
 
   const handleChoiceSelect = (choice) => {
-    console.log('Choice selected:', choice);
   };
 
   const toggleMobileJournal = () => {
