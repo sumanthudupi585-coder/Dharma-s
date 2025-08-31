@@ -52,7 +52,8 @@ const initialState = {
     currentObjectives: [],
     solvedPuzzles: [],
     unlockedAreas: [],
-    hintPoints: 0
+    hintPoints: 0,
+    achievements: []
   },
 
   // Inventory & Journal
