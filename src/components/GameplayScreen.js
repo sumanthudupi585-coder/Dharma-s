@@ -611,6 +611,26 @@ const LazyFallback = styled.div`
   color: #d4af37;
 `;
 
+const EdgeNavButton = styled(motion.button)`
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(212,175,55,0.45);
+  background: linear-gradient(145deg, rgba(0,0,0,0.6), rgba(15,15,15,0.85));
+  color: #e8c86a;
+  display: grid;
+  place-items: center;
+  z-index: 1200;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 16px rgba(212,175,55,0.2);
+  -webkit-tap-highlight-color: transparent;
+  @media (min-width: 1024px) {
+    display: none;
+  }
+`;
+
 // Scene routing component
 function SceneRenderer({ currentScene }) {
   switch (currentScene) {
