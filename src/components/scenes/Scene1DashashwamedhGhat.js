@@ -513,7 +513,9 @@ export default function Scene1DashashwamedhGhat() {
             id: 'focus_ritual',
             title: 'Ritual Focus',
             description: 'Your analytical mind takes over. The spectacle resolves into data points and repeating variables. The dance is a pattern, a complex algorithm of faith.',
-            sketch: '🔄📊🔄'
+            sketch: '🔄📊🔄',
+            tags: ['ritual','pattern'],
+            scene: SCENES.DASHASHWAMEDH_GHAT
           }
         });
         break;
