@@ -169,7 +169,6 @@ const Menu = styled(motion.div)`
   width: min(92vw, 520px);
 `;
 
-import Button from '../ui/primitives/Button';
 const ActionButton = styled(motion(Button))`
   width: 100%;
   padding: 14px 26px;
