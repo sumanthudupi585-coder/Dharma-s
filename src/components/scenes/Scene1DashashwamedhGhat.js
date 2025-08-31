@@ -356,6 +356,11 @@ const HintText = styled.p`
   text-align: center;
 `;
 
+const CenteredBlock = styled(motion.div)`
+  text-align: center;
+  margin-top: var(--spacing-xl);
+`;
+
 // Ritual movements data
 const RITUAL_MOVEMENTS = [
   { id: 1, icon: '🔺', label: 'Raise Upwards', description: 'Towards the sky' },
@@ -749,7 +754,7 @@ export default function Scene1DashashwamedhGhat() {
           </OfferingBowl>
           
           <HintText>
-            Click on the offering bowl to trace the pattern: Lower ��� Towards Crowd → Center
+            Click on the offering bowl to trace the pattern: Lower → Towards Crowd → Center
           </HintText>
         </CenteredBlock>
       )}
