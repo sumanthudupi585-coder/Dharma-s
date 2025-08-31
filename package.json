@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "An immersive philosophical text-based adventure game - Dharma's Cipher: Act I - The Kashi Khanda",
   "private": true,
-  "homepage": "https://sumanthudupi585-coder.github.io/qwertyuiop/",
   "dependencies": {
     "@sentry/react": "^7.120.4",
     "framer-motion": "^10.16.4",
@@ -15,16 +14,23 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "prebuild": "npm run lint && npm test -- --watchAll=false",
     "postbuild": "rm -rf docs && cp -r build docs",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test:ci": "react-scripts test --watchAll=false",
+    "eject": "react-scripts eject",
+    "lint": "eslint \"src/**/*.{js,jsx}\"",
+    "lint:fix": "eslint --fix \"src/**/*.{js,jsx}\"",
+    "format": "prettier --write \"**/*.{js,jsx,css,md,json}\"",
+    "format:check": "prettier --check \"**/*.{js,jsx,css,md,json}\"",
+    "precommit": "lint-staged",
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "prettier"
     ]
   },
   "browserslist": {
@@ -49,6 +55,29 @@
   ],
   "author": "Fusion AI",
   "devDependencies": {
-    "gh-pages": "^6.3.0"
-  }
+    "prettier": "^3.3.3",
+    "eslint-config-prettier": "^9.1.0",
+    "lint-staged": "^15.2.0",
+    "husky": "^9.0.11"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,css}": [
+      "prettier --write"
+    ]
+  },
+  "prettier": {
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "printWidth": 100,
+    "arrowParens": "always"
+  },
+  "eslintIgnore": [
+    "build/",
+    "docs/"
+  ]
 }

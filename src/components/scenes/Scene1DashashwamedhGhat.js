@@ -402,7 +402,9 @@ export default function Scene1DashashwamedhGhat() {
           id: 'ritual_cipher',
           title: 'The Ritual Cipher',
           description: 'Seven priestly movements observed. Flames 2, 5, and 7 are circled in red ink in Thorne\'s journal.',
-          sketch: '🕯️🕯️🔥🕯️🔥🕯️🔥'
+          sketch: '🕯️🕯️🔥🕯️🔥���️🔥',
+          tags: ['ritual','observation'],
+          scene: SCENES.DASHASHWAMEDH_GHAT
         }
       });
     }, 3000);
@@ -488,7 +490,12 @@ export default function Scene1DashashwamedhGhat() {
       type: ACTIONS.COMPLETE_SCENE,
       payload: SCENES.DASHASHWAMEDH_GHAT
     });
-    
+
+    dispatch({
+      type: ACTIONS.ADD_ACHIEVEMENT,
+      payload: { id: 'first_step', title: 'First Step', description: 'Completed Dashashwamedh Ghat.' }
+    });
+
     dispatch({
       type: ACTIONS.SET_CURRENT_SCENE,
       payload: SCENES.LABYRINTH_GHATS
@@ -506,7 +513,9 @@ export default function Scene1DashashwamedhGhat() {
             id: 'focus_ritual',
             title: 'Ritual Focus',
             description: 'Your analytical mind takes over. The spectacle resolves into data points and repeating variables. The dance is a pattern, a complex algorithm of faith.',
-            sketch: '🔄📊🔄'
+            sketch: '🔄📊🔄',
+            tags: ['ritual','pattern'],
+            scene: SCENES.DASHASHWAMEDH_GHAT
           }
         });
         break;
@@ -517,7 +526,9 @@ export default function Scene1DashashwamedhGhat() {
             id: 'focus_crowd',
             title: 'Crowd Wisdom',
             description: 'You overhear whispers about "men in grey suits" who have been asking questions near the temples. A dangerous, modern tension coiled beneath ancient faith.',
-            sketch: '👥💭👥'
+            sketch: '👥💭👥',
+            tags: ['crowd','intel'],
+            scene: SCENES.DASHASHWAMEDH_GHAT
           }
         });
         break;
@@ -528,7 +539,9 @@ export default function Scene1DashashwamedhGhat() {
             id: 'focus_river',
             title: 'River\'s Wisdom',
             description: 'Thorne\'s voice echoes: "The river carries everything, forgives everything. Find that stillness in yourself." You feel profound peace.',
-            sketch: '🌊🕉️🌊'
+            sketch: '🌊🕉️🌊',
+            tags: ['river','focus'],
+            scene: SCENES.DASHASHWAMEDH_GHAT
           }
         });
         break;

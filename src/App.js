@@ -7,9 +7,10 @@ import GlobalStyles from './styles/GlobalStyles';
 import ErrorBoundary from './components/ErrorBoundary';
 import AudioManager from './components/AudioManager';
 import LoadingScreen from './components/LoadingScreen';
-import CornerMenu from './components/CornerMenu';
 import { useIsTouchDevice } from './hooks/useIsTouchDevice';
 import OrientationNotice from './components/OrientationNotice';
+import MasterLayout from './ui/layout/MasterLayout';
+import CornerMenu from './components/CornerMenu';
 
 const TitleScreen = lazy(() => import('./components/TitleScreen'));
 const ProfileCreation = lazy(() => import('./components/ProfileCreation'));
@@ -29,9 +30,22 @@ function GameRouter() {
     <AnimatePresence mode="wait">
       <motion.div key={key} initial="initial" animate="animate" exit="exit" variants={variants} transition={{ duration: 0.4 }}>
         {state.gameState === GAME_STATES.TITLE_SCREEN && <TitleScreen />}
-        {state.gameState === GAME_STATES.PROFILE_CREATION && <ProfileCreation />}
-        {state.gameState === GAME_STATES.PROFILE_RESULTS && <ProfileResults />}
-        {state.gameState === GAME_STATES.GAMEPLAY && <GameplayScreen />}
+        {(state.gameState === GAME_STATES.PROFILE_CREATION) && (
+          <MasterLayout>
+            <ProfileCreation />
+          </MasterLayout>
+        )}
+        {(state.gameState === GAME_STATES.PROFILE_RESULTS) && (
+          <MasterLayout>
+            <ProfileResults />
+          </MasterLayout>
+        )}
+        {(state.gameState === GAME_STATES.GAMEPLAY) && (
+          <MasterLayout>
+            <GameplayScreen />
+            <CornerMenu />
+          </MasterLayout>
+        )}
       </motion.div>
     </AnimatePresence>
   );
@@ -71,12 +85,14 @@ function App() {
         <Suspense fallback={<LoadingScreen />}>
           <div className="app">
             <GameRouter />
-            <CornerMenu />
           </div>
           <OrientationNotice />
         </Suspense>
       </ErrorBoundary>
       <EffectsMount />
+      {/* Global achievement toasts */}
+      {/**/}
+      {React.createElement(require('./components/AchievementsToast').default)}
     </GameProvider>
   );
 }

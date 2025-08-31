@@ -289,6 +289,7 @@ export default function Scene3NyayaTrial() {
   useEffect(() => {
     if (puzzle.complete) {
       dispatch({ type: ACTIONS.COMPLETE_SCENE, payload: SCENES.NYAYA_TRIAL });
+      dispatch({ type: ACTIONS.ADD_ACHIEVEMENT, payload: { id: 'logician', title: 'Logician', description: 'Solved the Nyāya syllogism.' } });
     }
   }, [puzzle.complete, dispatch]);
 

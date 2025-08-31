@@ -2,7 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion } from 'framer-motion';
 import SettingsModal from './SettingsModal';
+import DailyRiddle from './DailyRiddle';
 import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
+import Button from '../ui/primitives/Button';
 
 // Subtle breathing glow for golden elements
 const breath = keyframes`
@@ -129,6 +131,29 @@ const TitleHalo = styled.div`
   }
 `;
 
+const Mandala = styled.div`
+  position: absolute;
+  top: calc(50% + 80px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: clamp(160px, 32vw, 320px);
+  height: clamp(160px, 32vw, 320px);
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, rgba(212,175,55,0.12), rgba(0,0,0,0) 70%),
+    conic-gradient(from 0deg,
+      rgba(212,175,55,0.18) 0deg 6deg,
+      transparent 6deg 12deg,
+      rgba(212,175,55,0.14) 12deg 18deg,
+      transparent 18deg 24deg,
+      rgba(212,175,55,0.12) 24deg 30deg,
+      transparent 30deg 36deg);
+  filter: blur(0.2px);
+  opacity: 0.6;
+  pointer-events: none;
+  animation: ${slowSpin} 120s linear infinite;
+`;
+
 const TitleWordmark = styled.h1`
   font-family: var(--font-display);
   font-size: clamp(3rem, 9vw, 6rem);
@@ -169,40 +194,23 @@ const Menu = styled(motion.div)`
   width: min(92vw, 520px);
 `;
 
-const ActionButton = styled(motion.button)`
-  appearance: none;
+const ActionButton = styled(motion(Button))`
   width: 100%;
   padding: 14px 26px;
-  border-radius: 999px;
-  border: 1px solid rgba(212,175,55,0.35);
-  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
-  color: #e8c86a;
-  font-family: var(--font-primary);
-  font-weight: 700;
   font-size: var(--fs-lg);
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  transition: background 0.25s ease, transform 0.18s ease, color 0.25s ease, border-color 0.25s ease;
-  backdrop-filter: blur(8px);
-  min-height: 48px;
-  -webkit-tap-highlight-color: transparent;
-
-  &:hover {
-    color: #000;
-    background: linear-gradient(145deg, var(--gold), var(--faded-gold));
-    border-color: var(--gold);
-    transform: translateY(-2px);
-  }
+  border-radius: 999px;
 `;
 
 function TitleScreen() {
   const { dispatch } = useGame();
   const [openSettings, setOpenSettings] = useState(false);
+  const [hasSave, setHasSave] = useState(false);
   const rootRef = useRef(null);
   const particles = useMemo(() => Array.from({ length: 36 }, () => ({ x: Math.random() * 100, y: Math.random() * 100 })), []);
   const glyphs = useMemo(() => ['ॐ','अ','इ','उ','क','थ','ध','ज्ञ','श','ष','ह','ग','य','र','ल','व'].map((g) => ({ g, x: Math.random()*100, y: Math.random()*100 })), []);
 
   useEffect(() => {
+    try { setHasSave(!!localStorage.getItem('dharmas-cipher-state-v1')); } catch (_) {}
     const el = rootRef.current;
     if (!el) return;
     const onMove = (e) => {
@@ -212,8 +220,12 @@ function TitleScreen() {
       el.style.setProperty('--mx', String(mx));
       el.style.setProperty('--my', String(my));
     };
+    const onKey = (e) => {
+      if (e.key === 'Enter') handleNewGame();
+    };
     el.addEventListener('mousemove', onMove);
-    return () => el.removeEventListener('mousemove', onMove);
+    window.addEventListener('keydown', onKey);
+    return () => { el.removeEventListener('mousemove', onMove); window.removeEventListener('keydown', onKey); };
   }, []);
 
   const handleNewGame = () => {
@@ -248,19 +260,24 @@ function TitleScreen() {
       </ParallaxLayer>
       <CenterStack>
         <TitleHalo />
+        <Mandala aria-hidden />
         <TitleWordmark className="shimmer">Dharma's Cipher</TitleWordmark>
-        <Whisper>Whisper the first vow.</Whisper>
+        <Whisper>Press Enter to begin.</Whisper>
         <Menu initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
           <ActionButton className="is-interactive" type="button" aria-label="Start New Journey" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleNewGame}>
             Start New Journey
           </ActionButton>
-          <ActionButton className="is-interactive" type="button" aria-label="Continue Path" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleLoadGame}>
+          <ActionButton className="is-interactive" type="button" aria-label="Continue Path" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleLoadGame} disabled={!hasSave} aria-disabled={!hasSave}>
             Continue Path
           </ActionButton>
           <ActionButton className="is-interactive" type="button" aria-label="Open Sacred Settings" whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleSettings}>
             Sacred Settings
           </ActionButton>
         </Menu>
+        <div style={{ height: '8px' }} />
+        <React.Suspense fallback={null}>
+          <DailyRiddle />
+        </React.Suspense>
       </CenterStack>
       <SettingsModal open={openSettings} onClose={() => setOpenSettings(false)} />
     </ScreenRoot>

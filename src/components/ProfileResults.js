@@ -215,25 +215,10 @@ const SutraEn = styled.div`
 `;
 
 
-const CTA = styled(motion.button)`
-  appearance: none;
+import Button from '../ui/primitives/Button';
+const CTA = styled(motion(Button))`
   padding: 14px 22px;
   border-radius: 12px;
-  border: 1px solid rgba(212,175,55,0.35);
-  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
-  color: #e8c86a;
-  font-family: var(--font-primary);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  cursor: pointer;
-  transition: background 0.25s ease, transform 0.18s ease, color 0.25s ease, border-color 0.25s ease;
-
-  &:hover {
-    color: #000;
-    background: linear-gradient(145deg, #ffd95e, #ffc82e);
-    border-color: #ffd95e;
-    transform: translateY(-1px);
-  }
 `;
 
 export default function ProfileResults() {

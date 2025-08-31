@@ -51,7 +51,9 @@ const initialState = {
     completedScenes: [],
     currentObjectives: [],
     solvedPuzzles: [],
-    unlockedAreas: []
+    unlockedAreas: [],
+    hintPoints: 0,
+    achievements: []
   },
 
   // Inventory & Journal
@@ -75,7 +77,8 @@ const initialState = {
     journalOpen: false,
     activeJournalTab: 'profile',
     showObjectives: false,
-    dialogueVisible: false
+    dialogueVisible: false,
+    recentAchievements: []
   },
 
   // Audio/Visual Settings
@@ -111,6 +114,7 @@ export const ACTIONS = {
   ADD_OBJECTIVE: 'ADD_OBJECTIVE',
   COMPLETE_OBJECTIVE: 'COMPLETE_OBJECTIVE',
   SOLVE_PUZZLE: 'SOLVE_PUZZLE',
+  ADD_HINT_POINTS: 'ADD_HINT_POINTS',
 
   // Inventory actions
   ADD_ITEM: 'ADD_ITEM',
@@ -131,9 +135,16 @@ export const ACTIONS = {
   SET_JOURNAL_TAB: 'SET_JOURNAL_TAB',
   TOGGLE_OBJECTIVES: 'TOGGLE_OBJECTIVES',
 
+  // Achievements
+  ADD_ACHIEVEMENT: 'ADD_ACHIEVEMENT',
+  CONSUME_RECENT_ACHIEVEMENT: 'CONSUME_RECENT_ACHIEVEMENT',
+
   // Settings actions
   UPDATE_SETTINGS: 'UPDATE_SETTINGS',
-  LOAD_STATE: 'LOAD_STATE'
+  LOAD_STATE: 'LOAD_STATE',
+
+  // System
+  RESET_GAME: 'RESET_GAME'
 };
 
 // Reducer function
@@ -168,6 +179,36 @@ function gameReducer(state, action) {
           completedScenes: [...state.gameProgress.completedScenes, action.payload]
         }
       };
+
+    case ACTIONS.ADD_HINT_POINTS:
+      return {
+        ...state,
+        gameProgress: {
+          ...state.gameProgress,
+          hintPoints: Math.max(0, (state.gameProgress.hintPoints || 0) + (action.payload || 0))
+        }
+      };
+
+    case ACTIONS.ADD_ACHIEVEMENT: {
+      const exists = state.gameProgress.achievements.some(a => a.id === action.payload.id);
+      if (exists) return state;
+      return {
+        ...state,
+        gameProgress: {
+          ...state.gameProgress,
+          achievements: [...state.gameProgress.achievements, action.payload]
+        },
+        uiState: {
+          ...state.uiState,
+          recentAchievements: [...state.uiState.recentAchievements, action.payload]
+        }
+      };
+    }
+
+    case ACTIONS.CONSUME_RECENT_ACHIEVEMENT: {
+      const [, ...rest] = state.uiState.recentAchievements;
+      return { ...state, uiState: { ...state.uiState, recentAchievements: rest } };
+    }
       
     case ACTIONS.ADD_OBJECTIVE:
       return {
@@ -272,6 +313,19 @@ function gameReducer(state, action) {
 
     case ACTIONS.LOAD_STATE:
       return { ...state, ...action.payload };
+
+    case ACTIONS.RESET_GAME:
+      return {
+        ...state,
+        gameState: GAME_STATES.TITLE_SCREEN,
+        currentScene: SCENES.DASHASHWAMEDH_GHAT,
+        playerProfile: { ...initialState.playerProfile },
+        gameProgress: { ...initialState.gameProgress },
+        inventory: { ...initialState.inventory },
+        sceneData: { ...initialState.sceneData },
+        uiState: { ...initialState.uiState }
+        // keep settings as-is
+      };
       
     default:
       return state;
@@ -317,6 +371,13 @@ export function GameProvider({ children }) {
       // ignore persistence errors
     }
   }, [state]);
+
+  useEffect(() => {
+    try {
+      const S = require('@sentry/react');
+      S.addBreadcrumb({ category: 'game', message: `state:${state.gameState} scene:${state.currentScene}`, level: 'info' });
+    } catch (_) {}
+  }, [state.gameState, state.currentScene, state.gameProgress.currentObjectives.length, state.inventory.items.length]);
 
   return (
     <GameContext.Provider value={{ state, dispatch }}>

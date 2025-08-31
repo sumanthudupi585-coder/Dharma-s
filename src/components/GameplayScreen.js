@@ -2,7 +2,7 @@ import React, { useState, useEffect, Suspense, lazy, useRef } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, SCENES, ACTIONS } from '../context/GameContext';
-import Journal from './Journal';
+const Journal = lazy(() => import('./Journal'));
 import { engine } from './AudioManager';
 import SwipeNavigator from './SwipeNavigator';
 import SceneProgressMap from './SceneProgressMap';
@@ -292,6 +292,29 @@ const DecoHUD = styled.div`
     grid-auto-flow: row;
     justify-content: stretch;
   }
+`;
+
+const HintButton = styled(motion.button)`
+  appearance: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(212,175,55,0.45);
+  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
+  color: #e8c86a;
+  font-family: var(--font-primary);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+  &:hover { border-color: #ffd700; background: linear-gradient(145deg, #ffd95e, #ffc82e); color: #000; transform: translateY(-1px); }
+`;
+
+const HintBanner = styled(motion.div)`
+  background: linear-gradient(145deg, rgba(212, 175, 55, 0.12), rgba(255, 215, 0, 0.08));
+  border: 1px solid #d4af37;
+  border-radius: 10px;
+  padding: var(--spacing-md);
+  color: #e8c86a;
+  margin-top: var(--spacing-sm);
 `;
 
 const Gauge = styled.div`
@@ -660,6 +683,7 @@ export default function GameplayScreen() {
   const [mobileJournalOpen, setMobileJournalOpen] = useState(false);
   const [activeSkill, setActiveSkill] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, text: '', x: 0, y: 0 });
+  const [hintText, setHintText] = useState('');
 
   const { currentScene, sceneData, playerProfile, inventory } = state;
   const [mobileMapOpen, setMobileMapOpen] = useState(false);
@@ -724,6 +748,22 @@ export default function GameplayScreen() {
   const goNextScene = () => { if (canNext) goToSceneIndex(i + 1); };
   const goPrevScene = () => { if (canPrev) goToSceneIndex(i - 1); };
 
+  const HINTS = {
+    [SCENES.DASHASHWAMEDH_GHAT]: 'Observe the seven movements; the circled flames are 2, 5, and 7 in order.',
+    [SCENES.LABYRINTH_GHATS]: 'Solemn landmarks guide you; after reading, the path leads onward.',
+    [SCENES.NYAYA_TRIAL]: 'Nyāya’s five: Pratijñā → Hetu → Udāharaṇa → Upanaya → Nigamana. Smoke → Fire (kitchen).',
+    [SCENES.VAISESIKA_TRIAL]: 'Nine dravyas: Earth, Water, Fire, Air, Ether, Time, Direction, Soul, Mind.',
+    [SCENES.THE_WARDEN]: 'Heed warnings; prepare before advancing.'
+  };
+  const useHint = () => {
+    const n = state.gameProgress.hintPoints || 0;
+    if (n <= 0) return;
+    const msg = HINTS[state.currentScene] || 'Trust the journal: your last clue points the way.';
+    dispatch({ type: ACTIONS.ADD_HINT_POINTS, payload: -1 });
+    setHintText(msg);
+    engine.playSfx('objective');
+  };
+
   return (
     <GameplayContainer>
       <MainContentArea>
@@ -731,6 +771,9 @@ export default function GameplayScreen() {
           {state.gameProgress?.currentObjectives && state.gameProgress.currentObjectives[0] && (
             <ObjectivesBanner role="status" aria-live="polite" initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
               <ObjectiveText>{state.gameProgress.currentObjectives[0].text}</ObjectiveText>
+              {hintText && (
+                <HintBanner initial={{ opacity: 0 }} animate={{ opacity: 1 }}>Hint: {hintText}</HintBanner>
+              )}
             </ObjectivesBanner>
           )}
           <DecoHUD>
@@ -742,6 +785,9 @@ export default function GameplayScreen() {
               <Fill $value={65} />
               <GaugeLabel>AETHER</GaugeLabel>
             </Gauge>
+            <HintButton className="is-interactive" onClick={useHint} whileTap={{ scale: 0.96 }} aria-label={`Use hint. ${state.gameProgress.hintPoints || 0} remaining`} disabled={(state.gameProgress.hintPoints || 0) <= 0}>
+              💡 Hint × {(state.gameProgress.hintPoints || 0)}
+            </HintButton>
           </DecoHUD>
         </HeaderBar>
         <NarrativeWindow

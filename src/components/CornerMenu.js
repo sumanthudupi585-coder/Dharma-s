@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, ACTIONS } from '../context/GameContext';
 import SettingsModal from './SettingsModal';
-import Journal from './Journal';
+const Journal = lazy(() => import('./Journal'));
 
 const breathe = keyframes`
   0%,100% { box-shadow: 0 0 12px rgba(212,175,55,0.35), 0 0 24px rgba(212,175,55,0.2); }

@@ -215,6 +215,22 @@ export default function ProfileCreation() {
   const total = SURVEY_QUESTIONS.length;
   const progress = useMemo(() => Math.round(((index) / total) * 100), [index, total]);
 
+  // Provisional path/avatars based on current answers
+  const tally = useMemo(() => {
+    const t = { guna: { SATTVA: 0, RAJAS: 0, TAMAS: 0 }, gana: { DEVA: 0, MANUSHYA: 0, RAKSHASA: 0 } };
+    for (const a of answers) { if (a.guna) t.guna[a.guna] += a.points; if (a.gana) t.gana[a.gana] += a.points; }
+    return t;
+  }, [answers]);
+  const provisionalGuna = useMemo(() => Object.keys(tally.guna).reduce((a,b)=> tally.guna[a] >= tally.guna[b] ? a : b), [tally]);
+  const provisionalGana = useMemo(() => Object.keys(tally.gana).reduce((a,b)=> tally.gana[a] >= tally.gana[b] ? a : b), [tally]);
+  const avatar = useMemo(() => {
+    // Simple thematic mapping
+    if (provisionalGana === 'DEVA') return { icon: '🐘', name: 'The Elephant', hint: 'Wisdom and compassion' };
+    if (provisionalGana === 'RAKSHASA') return { icon: '🦁', name: 'The Lion', hint: 'Courage and power' };
+    // MANUSHYA
+    return provisionalGuna === 'SATTVA' ? { icon: '🦚', name: 'The Peacock', hint: 'Beauty and grace' } : provisionalGuna === 'RAJAS' ? { icon: '🦅', name: 'The Garuda', hint: 'Ambition and swiftness' } : { icon: '🐍', name: 'The Serpent', hint: 'Patience and depth' };
+  }, [provisionalGana, provisionalGuna]);
+
   const current = SURVEY_QUESTIONS[index];
   const listRef = useRef(null);
 
@@ -299,6 +315,11 @@ export default function ProfileCreation() {
             <Progress role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} aria-label={`Progress ${progress}%`}>
               <ProgressFill $value={progress} />
             </Progress>
+            <div aria-live="polite" style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: '2rem', lineHeight: 1 }}>{avatar.icon}</div>
+              <div style={{ color: '#d4af37', fontFamily: 'var(--font-display)' }}>{avatar.name}</div>
+              <div style={{ color: '#b8941f', fontFamily: 'var(--font-primary)', fontSize: '0.85rem' }}>{avatar.hint}</div>
+            </div>
           </Header>
 
           <QuestionCard

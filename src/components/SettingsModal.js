@@ -56,6 +56,16 @@ const CloseBtn = styled(motion.button)`
   font-weight: 700;
 `;
 
+const DangerBtn = styled(motion.button)`
+  margin-top: 14px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(139,0,0,0.6);
+  background: linear-gradient(145deg, rgba(20,0,0,0.82), rgba(40,0,0,0.95));
+  color: #ffb3b3;
+  font-weight: 700;
+`;
+
 const Value = styled.span`
   font-family: var(--font-primary);
   color: #d4af37;
@@ -80,6 +90,14 @@ export default function SettingsModal({ open, onClose }) {
   const onReduced = (e) => { setBodyClass('force-reduced-motion', e.target.checked); dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { accessibility: { ...state.settings.accessibility, reducedMotion: e.target.checked } } }); };
   const onHigh = (e) => { setBodyClass('high-contrast', e.target.checked); dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { accessibility: { ...state.settings.accessibility, highContrast: e.target.checked } } }); };
   const onCursorTrail = (e) => dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { effects: { ...(state.settings.effects || {}), cursorTrail: e.target.checked } } });
+  const onSoundEnabled = (e) => dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { soundEnabled: e.target.checked } });
+  const onTextSpeed = (e) => dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { textSpeed: e.target.value } });
+  const onReset = () => {
+    if (window.confirm('Reset progress and return to Title? Settings will be kept.')) {
+      dispatch({ type: ACTIONS.RESET_GAME });
+      onClose();
+    }
+  };
 
   // Focus trap and Escape handling
   useEffect(() => {
@@ -146,6 +164,10 @@ export default function SettingsModal({ open, onClose }) {
               </div>
             </Row>
             <Row>
+              <Label htmlFor="soundEnabled">Enable Sound</Label>
+              <Toggle id="soundEnabled" type="checkbox" checked={state.settings.soundEnabled} onChange={onSoundEnabled} />
+            </Row>
+            <Row>
               <Label htmlFor="largeText">Large Text</Label>
               <Toggle id="largeText" type="checkbox" checked={state.settings.accessibility.largeText} onChange={onLarge} />
             </Row>
@@ -157,11 +179,28 @@ export default function SettingsModal({ open, onClose }) {
               <Label htmlFor="cursorTrail">Cursor Trail</Label>
               <Toggle id="cursorTrail" type="checkbox" checked={state.settings.effects?.cursorTrail !== false} onChange={onCursorTrail} />
             </Row>
+            <Row>
+              <Label htmlFor="textSpeed">Text Speed</Label>
+              <select id="textSpeed" value={state.settings.textSpeed} onChange={onTextSpeed} style={{ padding: '8px 10px', background: 'transparent', color: '#e8c86a', border: '1px solid rgba(212,175,55,0.35)', borderRadius: 8 }}>
+                <option value="slow">Slow</option>
+                <option value="normal">Normal</option>
+                <option value="fast">Fast</option>
+              </select>
+            </Row>
+            <Row>
+              <Label>Stats</Label>
+              <div aria-live="polite">
+                <Value title="Hint Points">💡 {state.gameProgress.hintPoints || 0}</Value>
+                <span style={{ margin: '0 8px' }} />
+                <Value title="Achievements">✦ {(state.gameProgress.achievements || []).length}</Value>
+              </div>
+            </Row>
             <Row style={{ borderBottom: 'none' }}>
               <Label htmlFor="highContrast">High Contrast</Label>
               <Toggle id="highContrast" type="checkbox" checked={state.settings.accessibility.highContrast} onChange={onHigh} />
             </Row>
 
+            <DangerBtn className="is-interactive" type="button" aria-label="Reset Progress" whileTap={{ scale: 0.98 }} onClick={onReset}>Reset Progress</DangerBtn>
             <CloseBtn className="is-interactive" type="button" aria-label="Close Settings" whileTap={{ scale: 0.98 }} onClick={onClose}>Close</CloseBtn>
           </Sheet>
         </Backdrop>

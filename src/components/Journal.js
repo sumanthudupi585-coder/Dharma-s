@@ -127,9 +127,9 @@ const JournalHeader = styled.div`
   border-bottom: 2px solid #d4af37;
   margin-bottom: var(--spacing-md);
   position: relative;
-  background: 
+  background:
     linear-gradient(145deg, rgba(15, 15, 15, 0.9) 0%, rgba(5, 5, 5, 0.95) 100%);
-  
+
   /* Decorative corner flourishes */
   &::before, &::after {
     content: '❦';
@@ -140,16 +140,29 @@ const JournalHeader = styled.div`
     opacity: 0.7;
     animation: ${breathingGlow} 6s ease-in-out infinite;
   }
-  
+
   &::before {
     left: var(--spacing-md);
     animation-delay: 0s;
   }
-  
+
   &::after {
     right: var(--spacing-md);
     animation-delay: 3s;
   }
+`;
+
+const HintCounter = styled.span`
+  position: absolute;
+  right: var(--spacing-lg);
+  top: var(--spacing-lg);
+  border: 1px solid rgba(212,175,55,0.45);
+  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
+  color: #e8c86a;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-family: var(--font-primary);
+  font-size: var(--fs-xs);
 `;
 
 const JournalTitle = styled.h2`
@@ -540,6 +553,22 @@ export default function Journal({ isVisible = true }) {
   
   const { playerProfile, gameProgress, inventory } = state;
 
+  const [search, setSearch] = useState('');
+  const [activeTags, setActiveTags] = useState(new Set());
+
+  const tagOptions = Array.from(new Set((inventory.clues || []).flatMap((c) => c.tags || []))).sort();
+  const toggleTag = (t) => setActiveTags((prev) => {
+    const next = new Set(prev);
+    if (next.has(t)) next.delete(t); else next.add(t);
+    return next;
+  });
+  const filteredClues = (inventory.clues || []).filter((c) => {
+    const text = `${c.title} ${c.description} ${c.sketch || ''}`.toLowerCase();
+    const okText = !search || text.includes(search.toLowerCase());
+    const okTags = activeTags.size === 0 || (c.tags || []).some((t) => activeTags.has(t));
+    return okText && okTags;
+  });
+
   const tabs = [
     { id: 'profile', label: 'Self', icon: '👤' },
     { id: 'objectives', label: 'Tasks', icon: '📋' },
@@ -634,17 +663,55 @@ export default function Journal({ isVisible = true }) {
       case 'clues':
         return (
           <ContentWrapper>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '12px' }}>
+              <input
+                type="search"
+                placeholder="Search clues"
+                aria-label="Search clues"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{ flex: 1, padding: '8px 10px', borderRadius: 8, border: '1px solid rgba(212,175,55,0.35)', background: 'transparent', color: '#e8c86a' }}
+              />
+            </div>
+            {tagOptions.length > 0 && (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '10px' }}>
+                {tagOptions.map((t) => (
+                  <button
+                    key={t}
+                    className="is-interactive"
+                    onClick={() => toggleTag(t)}
+                    aria-pressed={activeTags.has(t)}
+                    style={{ padding: '6px 10px', borderRadius: 999, border: activeTags.has(t) ? '1px solid #ffd700' : '1px solid rgba(212,175,55,0.35)', background: activeTags.has(t) ? 'linear-gradient(145deg, #d4af37, #ffd700)' : 'transparent', color: activeTags.has(t) ? '#000' : '#e8c86a' }}
+                  >
+                    #{t}
+                  </button>
+                ))}
+              </div>
+            )}
             <CluesList>
-              {inventory.clues.length > 0 ? (
-                inventory.clues.map((clue, index) => (
+              {filteredClues.length > 0 ? (
+                filteredClues.map((clue, index) => (
                   <ClueItem
                     key={clue.id}
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    transition={{ duration: 0.5, delay: index * 0.06 }}
+                    onClick={() => {
+                      if (clue.scene) dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: clue.scene });
+                    }}
+                    role={clue.scene ? 'button' : undefined}
+                    tabIndex={clue.scene ? 0 : -1}
+                    aria-label={clue.scene ? `Go to ${clue.scene}` : undefined}
                   >
                     <ClueTitle>{clue.title}</ClueTitle>
                     <ClueDescription>{clue.description}</ClueDescription>
+                    {clue.tags && clue.tags.length > 0 && (
+                      <div style={{ marginTop: 6, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                        {clue.tags.map((tg) => (
+                          <span key={tg} style={{ border: '1px solid rgba(212,175,55,0.35)', borderRadius: 999, padding: '2px 8px', color: '#b8941f', fontSize: '0.8rem' }}>#{tg}</span>
+                        ))}
+                      </div>
+                    )}
                     {clue.sketch && (
                       <ClueSketch>{clue.sketch}</ClueSketch>
                     )}
@@ -652,7 +719,7 @@ export default function Journal({ isVisible = true }) {
                 ))
               ) : (
                 <EmptyState>
-                  <EmptyText>The mysteries await your discovery...</EmptyText>
+                  <EmptyText>No clues match your filters...</EmptyText>
                 </EmptyState>
               )}
             </CluesList>
@@ -744,6 +811,9 @@ export default function Journal({ isVisible = true }) {
     >
       <JournalHeader>
         <JournalTitle>Sacred Journal</JournalTitle>
+        <HintCounter aria-label={`Hint points available: ${state.gameProgress.hintPoints || 0}`}>
+          💡 {state.gameProgress.hintPoints || 0}
+        </HintCounter>
         <TabsContainer role="tablist" aria-label="Journal Sections">
           {tabs.map((tab, i) => (
             <Tab
