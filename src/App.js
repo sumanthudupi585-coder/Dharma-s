@@ -51,7 +51,7 @@ function ClassSync() {
 
 function EffectsMount() {
   const { state } = useGame();
-  const isTouch = useIsTouchDevice ? useIsTouchDevice() : false;
+  const isTouch = useIsTouchDevice();
   const allowTrail = (state.settings.effects?.cursorTrail !== false) && !state.settings.accessibility.reducedMotion && !isTouch;
   return (
     <>
