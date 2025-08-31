@@ -95,8 +95,7 @@ const GameplayContainer = styled.div`
   padding: var(--spacing-lg);
   padding-bottom: calc(var(--spacing-lg) + 160px); /* safe area for hotbar */
   position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: visible;
   max-width: 1280px;
   margin: 0 auto;
 
@@ -119,7 +118,7 @@ const GameplayContainer = styled.div`
 
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr auto 60px;
+    grid-auto-rows: auto;
   }
 `;
 
@@ -161,14 +160,9 @@ const NarrativeContent = styled.div`
   padding: var(--spacing-xl);
   position: relative;
   z-index: 10;
-  height: 100%;
-  overflow-y: auto;
-  padding-bottom: calc(var(--spacing-xl) + 200px);
   max-width: 70ch;
   margin: 0 auto;
-
-  &::-webkit-scrollbar { width: 6px; }
-  &::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #d4af37, #ffd700); border-radius: 3px; }
+  padding-bottom: calc(var(--spacing-xl) + 200px);
 `;
 
 // Mini-map panel
@@ -574,11 +568,13 @@ const JournalSidebar = styled(motion.div)`
   align-self: start;
   z-index: 10;
   height: calc(100vh - 2 * var(--spacing-lg));
+  max-width: 380px;
+  width: 100%;
   overflow: hidden;
 
   @media (max-width: 1024px) {
     grid-column: 1;
-    grid-row: 2;
+    grid-row: auto;
     height: 300px;
   }
 `;
@@ -874,7 +870,7 @@ export default function GameplayScreen() {
           })}
         </HotbarContainer>
 
-        {sceneData.choices.length > 0 && (
+        {(sceneData.choices && sceneData.choices.length > 0) && (
           <ChoicesPanel
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
