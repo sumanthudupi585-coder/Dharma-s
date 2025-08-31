@@ -53,7 +53,12 @@ const tips = [
   'Listen to the river; it remembers.',
   'Symbols whisper when the mind is still.',
   'Your journal preserves fragments of fate.',
-  'Aether flows where attention rests.'
+  'Aether flows where attention rests.',
+  'Where there is smoke, there is inference.',
+  'Nine dravyas bind the world; discern which is at play.',
+  'Sattva clarifies, Rajas propels, Tamas obscures.',
+  'The Ganga keeps counsel with those who linger.',
+  'Let the mind be a still page; the ink will arrange itself.'
 ];
 
 const Center = styled.div`
