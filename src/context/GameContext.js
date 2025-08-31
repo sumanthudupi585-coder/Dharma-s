@@ -77,7 +77,8 @@ const initialState = {
     journalOpen: false,
     activeJournalTab: 'profile',
     showObjectives: false,
-    dialogueVisible: false
+    dialogueVisible: false,
+    recentAchievements: []
   },
 
   // Audio/Visual Settings
