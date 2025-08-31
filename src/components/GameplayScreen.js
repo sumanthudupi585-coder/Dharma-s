@@ -322,6 +322,7 @@ const Fill = styled.div`
   animation: ${energyFlow} 3s linear infinite;
   border-radius: 10px;
   transition: width 500ms ease;
+  will-change: transform, opacity;
 `;
 
 const GaugeLabel = styled.span`
@@ -347,6 +348,7 @@ const ObjectivesBanner = styled(motion.div)`
   position: relative;
   backdrop-filter: blur(5px);
   animation: ${breathingGlow} 6s ease-in-out infinite;
+  will-change: transform, opacity, box-shadow;
 
   /* Objective icon with golden glow */
   &::before {
@@ -451,6 +453,7 @@ const ChoiceButton = styled(motion.button)`
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(5px);
+  will-change: transform, opacity, box-shadow;
   min-height: 48px;
   -webkit-tap-highlight-color: transparent;
 
@@ -558,6 +561,7 @@ const JournalToggle = styled(motion.button)`
   display: none;
   backdrop-filter: blur(10px);
   animation: ${breathingGlow} 4s ease-in-out infinite;
+  will-change: transform, opacity, box-shadow;
 
   @media (max-width: 1024px) {
     display: flex;
@@ -578,6 +582,7 @@ const JournalToggle = styled(motion.button)`
 const MapToggle = styled(JournalToggle)`
   top: auto;
   bottom: var(--spacing-lg);
+  will-change: transform, opacity, box-shadow;
 `;
 
 const SkillIndicator = styled(motion.div)`
@@ -595,6 +600,7 @@ const SkillIndicator = styled(motion.div)`
     0 10px 30px rgba(0, 0, 0, 0.8),
     0 0 20px rgba(212, 175, 55, 0.3);
   animation: ${breathingGlow} 3s ease-in-out infinite;
+  will-change: transform, opacity, box-shadow;
 `;
 
 const SkillText = styled.p`
