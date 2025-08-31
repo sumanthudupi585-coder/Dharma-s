@@ -7,6 +7,27 @@ const Shell = styled.div`
   grid-template-rows: auto 1fr auto;
 `;
 
+const SkipLink = styled.a`
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  &:focus {
+    left: var(--spacing-lg);
+    top: var(--spacing-lg);
+    width: auto;
+    height: auto;
+    z-index: 2000;
+    background: linear-gradient(145deg, rgba(0,0,0,0.92), rgba(10,10,10,0.98));
+    color: #e8c86a;
+    border: 1px solid rgba(212,175,55,0.45);
+    border-radius: 8px;
+    padding: 8px 12px;
+  }
+`;
+
 const Header = styled.header`
   position: sticky;
   top: 0;
@@ -64,6 +85,7 @@ const FooterInner = styled.div`
 export default function MasterLayout({ brand = "Dharma's Cipher", rightSlot, children, footerSlot }) {
   return (
     <Shell>
+      <SkipLink href="#main-content">Skip to content</SkipLink>
       <Header>
         <HeaderInner>
           <Brand>{brand}</Brand>
@@ -73,7 +95,7 @@ export default function MasterLayout({ brand = "Dharma's Cipher", rightSlot, chi
           </Nav>
         </HeaderInner>
       </Header>
-      <Main role="main">{children}</Main>
+      <Main id="main-content" role="main">{children}</Main>
       <Footer>
         <FooterInner>
           <span>© {new Date().getFullYear()} Dharma's Cipher</span>
