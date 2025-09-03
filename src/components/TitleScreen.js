@@ -5,23 +5,7 @@ import SettingsModal from './SettingsModal';
 import DailyRiddle from './DailyRiddle';
 import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
 import Button from '../ui/primitives/Button';
-import { useGame } from '../context/GameContext'; // Or wherever your audio function is
 
-function TitleScreen() {
-  const { dispatch, resumeAudio } = useGame(); // Assuming you add resumeAudio to your context
-
-  const handleStartClick = () => {
-    resumeAudio(); // This will be called on a user gesture
-    dispatch({ type: 'START_GAME' });
-  };
-
-  return (
-    <div>
-      <h1>Dharma's Cipher</h1>
-      <button onClick={handleStartClick}>Begin</button>
-    </div>
-  );
-}
 
 // Subtle breathing glow for golden elements
 const breath = keyframes`
