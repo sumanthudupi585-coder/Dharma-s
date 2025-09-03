@@ -78,52 +78,155 @@ const SettingsSection = styled.div`
 `;
 
 const Row = styled.div`
-  display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px dashed rgba(212,175,55,0.2);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: ${spacing['4']};
+  align-items: center;
+  padding: ${spacing['3']} 0;
+  border-bottom: 1px dashed rgba(212,175,55,0.15);
+
+  &:last-child {
+    border-bottom: none;
+  }
 `;
 
 const Label = styled.label`
   font-family: var(--font-primary);
-  color: #b8941f;
-  font-size: var(--fs-sm);
+  color: ${colors.fadedGold};
+  font-size: ${typography.fontSize.base};
+  font-weight: ${typography.fontWeight.medium};
+  line-height: ${typography.lineHeight.snug};
 `;
 
 const Slider = styled.input`
-  width: 200px;
-  accent-color: #d4af37;
+  width: 180px;
+  accent-color: ${colors.gold};
   cursor: pointer;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(212,175,55,0.2);
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: ${colors.gold};
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: transform ${timings.fast};
+  }
+
+  &::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+  }
 `;
 
 const Toggle = styled.input`
   width: 20px;
   height: 20px;
-  accent-color: #d4af37;
+  accent-color: ${colors.gold};
   cursor: pointer;
+  border-radius: 4px;
+  transition: all ${timings.fast};
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:checked {
+    box-shadow: 0 0 8px rgba(212,175,55,0.5);
+  }
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  gap: ${spacing['3']};
+  margin-top: ${spacing['6']};
+  padding-top: ${spacing['4']};
+  border-top: 1px solid rgba(212,175,55,0.2);
+  justify-content: flex-end;
 `;
 
 const CloseBtn = styled(motion.button)`
-  margin-top: 14px;
-  padding: 10px 16px;
-  border-radius: 10px;
+  padding: ${spacing['3']} ${spacing['6']};
+  border-radius: ${radius.md};
   border: 1px solid rgba(212,175,55,0.35);
   background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
   color: #e8c86a;
-  font-weight: 700;
+  font-weight: ${typography.fontWeight.semibold};
+  font-size: ${typography.fontSize.base};
+  cursor: pointer;
+  transition: all ${timings.fast};
+
+  &:hover {
+    background: linear-gradient(145deg, ${colors.gold}, ${colors.fadedGold});
+    color: #000;
+    transform: translateY(-1px);
+  }
 `;
 
 const DangerBtn = styled(motion.button)`
-  margin-top: 14px;
-  padding: 10px 16px;
-  border-radius: 10px;
-  border: 1px solid rgba(139,0,0,0.6);
-  background: linear-gradient(145deg, rgba(20,0,0,0.82), rgba(40,0,0,0.95));
-  color: #ffb3b3;
-  font-weight: 700;
+  padding: ${spacing['3']} ${spacing['6']};
+  border-radius: ${radius.md};
+  border: 1px solid ${colors.error};
+  background: linear-gradient(145deg, rgba(239,68,68,0.1), rgba(220,38,38,0.15));
+  color: ${colors.error};
+  font-weight: ${typography.fontWeight.semibold};
+  font-size: ${typography.fontSize.base};
+  cursor: pointer;
+  transition: all ${timings.fast};
+
+  &:hover {
+    background: linear-gradient(145deg, ${colors.error}, #dc2626);
+    color: white;
+    transform: translateY(-1px);
+  }
 `;
 
 const Value = styled.span`
   font-family: var(--font-primary);
-  color: #d4af37;
-  font-size: var(--fs-sm);
+  color: ${colors.gold};
+  font-size: ${typography.fontSize.sm};
+  font-weight: ${typography.fontWeight.medium};
+  min-width: 40px;
+  text-align: right;
+  margin-left: ${spacing['2']};
+`;
+
+const SelectField = styled.select`
+  padding: ${spacing['2']} ${spacing['3']};
+  border-radius: ${radius.sm};
+  border: 1px solid rgba(212,175,55,0.35);
+  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
+  color: #e8c86a;
+  font-size: ${typography.fontSize.base};
+  cursor: pointer;
+  min-width: 120px;
+
+  &:focus {
+    outline: none;
+    border-color: ${colors.gold};
+    box-shadow: 0 0 0 2px rgba(212,175,55,0.2);
+  }
+`;
+
+const StatsRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing['4']};
+  padding: ${spacing['3']};
+  background: rgba(212,175,55,0.05);
+  border-radius: ${radius.md};
+  border: 1px solid rgba(212,175,55,0.15);
+`;
+
+const StatItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${spacing['2']};
+  font-size: ${typography.fontSize.sm};
+  color: ${colors.fadedGold};
 `;
 
 export default function SettingsModal({ open, onClose }) {
