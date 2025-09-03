@@ -1,7 +1,7 @@
 {
   "name": "dharmas-cipher",
   "version": "1.0.0",
-  "description": "An immersive philosophical text-based adventure game - Dharma's Cipher: Act I - The Kashi Khanda",
+  "description": "An immersive philosophical text-based adventure game - Dharma's Cipher",
   "private": true,
   "dependencies": {
     "@sentry/react": "^7.120.4",
