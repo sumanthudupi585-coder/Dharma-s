@@ -2,50 +2,96 @@ import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { useGame, ACTIONS } from '../context/GameContext';
+import { colors, spacing, radius, typography, timings } from '../ui/tokens';
 
 const Wrap = styled(motion.div)`
   width: min(92vw, 520px);
-  border: 1px solid rgba(212,175,55,0.28);
-  border-radius: 12px;
+  border: 1px solid rgba(212,175,55,0.3);
+  border-radius: ${radius.lg};
   background: linear-gradient(145deg, rgba(0,0,0,0.85), rgba(12,12,12,0.95));
-  padding: var(--spacing-lg);
+  padding: ${spacing.lg};
   color: #e8c86a;
-  box-shadow: 0 18px 48px rgba(0,0,0,0.6);
+  box-shadow: 0 18px 48px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+  backdrop-filter: blur(8px);
 `;
 
 const Title = styled.h3`
-  margin: 0 0 var(--spacing-sm);
+  margin: 0 0 ${spacing.sm};
   font-family: var(--font-display);
-  color: var(--gold);
-  font-size: var(--fs-lg);
+  color: ${colors.gold};
+  font-size: ${typography.fontSize.lg};
+  font-weight: ${typography.fontWeight.semibold};
 `;
 
 const Text = styled.p`
-  margin: 0 0 var(--spacing-md);
+  margin: 0 0 ${spacing.md};
   font-family: var(--font-primary);
-  color: #b8941f;
+  color: ${colors.fadedGold};
+  line-height: ${typography.lineHeight.relaxed};
 `;
 
 const Row = styled.div`
-  display: grid; grid-template-columns: 1fr auto; gap: var(--spacing-sm);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: ${spacing.sm};
+  align-items: center;
 `;
 
 const Input = styled.input`
-  width: 100%; min-height: 44px; padding: 10px 12px; border-radius: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: ${spacing['3']} ${spacing['4']};
+  border-radius: ${radius.md};
   border: 1px solid rgba(212,175,55,0.35);
   background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
   color: #e8c86a;
+  font-size: ${typography.fontSize.base};
+  transition: all ${timings.fast};
+
+  &:focus {
+    outline: none;
+    border-color: ${colors.gold};
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+  }
+
+  &::placeholder {
+    color: ${colors.fadedGold};
+    opacity: 0.6;
+  }
 `;
 
 const Button = styled(motion.button)`
-  appearance: none; padding: 10px 16px; border-radius: 10px; border: 1px solid rgba(212,175,55,0.35);
-  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95)); color: #e8c86a; font-weight: 700;
+  appearance: none;
+  padding: ${spacing['3']} ${spacing['4']};
+  border-radius: ${radius.md};
+  border: 1px solid rgba(212,175,55,0.35);
+  background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
+  color: #e8c86a;
+  font-weight: ${typography.fontWeight.semibold};
+  font-size: ${typography.fontSize.base};
   cursor: pointer;
-  &:hover { color: #000; background: linear-gradient(145deg, var(--gold), var(--faded-gold)); border-color: var(--gold); }
+  transition: all ${timings.fast};
+  min-height: 44px;
+
+  &:hover {
+    color: #000;
+    background: linear-gradient(145deg, ${colors.gold}, ${colors.fadedGold});
+    border-color: ${colors.gold};
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 `;
 
 const Hint = styled.p`
-  margin: var(--spacing-sm) 0 0; color: #d4af37; font-family: var(--font-primary); font-size: var(--fs-sm);
+  margin: ${spacing.sm} 0 0;
+  color: ${colors.gold};
+  font-family: var(--font-primary);
+  font-size: ${typography.fontSize.sm};
+  line-height: ${typography.lineHeight.relaxed};
+  opacity: 0.9;
 `;
 
 function normalize(s) {
