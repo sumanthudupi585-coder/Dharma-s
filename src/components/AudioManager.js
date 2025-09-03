@@ -22,8 +22,18 @@ class SoundEngine {
     this.hoverCooldownMs = 140;
     this.sceneFadeMs = 0.35;
     this.lowComplexity = false;
+    this.resume = this.resume.bind(this);
   }
 
+  // ADD THIS METHOD HERE
+  resume() {
+    if (this.ctx && this.ctx.state !== 'running') {
+      this.ctx.resume();
+    }
+    // Clean up the event listeners after the first interaction
+    window.removeEventListener('pointerdown', this.resume);
+    window.removeEventListener('keydown', this.resume);
+  }
   ensureContext() {
     if (this.ctx) return;
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -52,13 +62,8 @@ class SoundEngine {
     this.sfxGain.connect(this.master);
 
     // Resume on first gesture (autoplay policies)
-    const resume = () => {
-      if (this.ctx && this.ctx.state !== 'running') this.ctx.resume();
-      window.removeEventListener('pointerdown', resume);
-      window.removeEventListener('keydown', resume);
-    };
-    window.addEventListener('pointerdown', resume);
-    window.addEventListener('keydown', resume);
+    window.addEventListener('pointerdown', this.resume);
+    window.addEventListener('keydown', this.resume);
   }
 
   setVolumes({ master, music, ambient, sfx, enabled }) {
