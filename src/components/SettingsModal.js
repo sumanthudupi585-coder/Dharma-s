@@ -293,73 +293,112 @@ export default function SettingsModal({ open, onClose }) {
           >
             <Title id="settings-title">Sacred Settings</Title>
 
-            <Row>
-              <Label htmlFor="master">Master Volume</Label>
-              <div>
-                <Slider id="master" type="range" min="0" max="1" step="0.01" value={state.settings.masterVolume ?? 0.9} onChange={onMaster} aria-valuemin={0} aria-valuemax={1} aria-valuenow={state.settings.masterVolume ?? 0.9} />
-                <Value>{Math.round((state.settings.masterVolume ?? 0.9) * 100)}%</Value>
-              </div>
-            </Row>
-            <Row>
-              <Label htmlFor="music">Music Volume</Label>
-              <div>
-                <Slider id="music" type="range" min="0" max="1" step="0.01" value={state.settings.musicVolume} onChange={onMusic} aria-valuemin={0} aria-valuemax={1} aria-valuenow={state.settings.musicVolume} />
-                <Value>{Math.round((state.settings.musicVolume ?? 0) * 100)}%</Value>
-              </div>
-            </Row>
-            <Row>
-              <Label htmlFor="ambient">Ambient Volume</Label>
-              <div>
-                <Slider id="ambient" type="range" min="0" max="1" step="0.01" value={state.settings.ambientVolume ?? 0.6} onChange={onAmbient} aria-valuemin={0} aria-valuemax={1} aria-valuenow={state.settings.ambientVolume ?? 0.6} />
-                <Value>{Math.round((state.settings.ambientVolume ?? 0.6) * 100)}%</Value>
-              </div>
-            </Row>
-            <Row>
-              <Label htmlFor="sfx">UI SFX Volume</Label>
-              <div>
-                <Slider id="sfx" type="range" min="0" max="1" step="0.01" value={state.settings.sfxVolume} onChange={onSfx} aria-valuemin={0} aria-valuemax={1} aria-valuenow={state.settings.sfxVolume} />
-                <Value>{Math.round((state.settings.sfxVolume ?? 0) * 100)}%</Value>
-              </div>
-            </Row>
-            <Row>
-              <Label htmlFor="soundEnabled">Enable Sound</Label>
-              <Toggle id="soundEnabled" type="checkbox" checked={state.settings.soundEnabled} onChange={onSoundEnabled} />
-            </Row>
-            <Row>
-              <Label htmlFor="largeText">Large Text</Label>
-              <Toggle id="largeText" type="checkbox" checked={state.settings.accessibility.largeText} onChange={onLarge} />
-            </Row>
-            <Row>
-              <Label htmlFor="reducedMotion">Reduced Motion</Label>
-              <Toggle id="reducedMotion" type="checkbox" checked={state.settings.accessibility.reducedMotion} onChange={onReduced} />
-            </Row>
-            <Row>
-              <Label htmlFor="cursorTrail">Cursor Trail</Label>
-              <Toggle id="cursorTrail" type="checkbox" checked={state.settings.effects?.cursorTrail !== false} onChange={onCursorTrail} />
-            </Row>
-            <Row>
-              <Label htmlFor="textSpeed">Text Speed</Label>
-              <select id="textSpeed" value={state.settings.textSpeed} onChange={onTextSpeed} style={{ padding: '8px 10px', background: 'transparent', color: '#e8c86a', border: '1px solid rgba(212,175,55,0.35)', borderRadius: 8 }}>
-                <option value="slow">Slow</option>
-                <option value="normal">Normal</option>
-                <option value="fast">Fast</option>
-              </select>
-            </Row>
-            <Row>
-              <Label>Stats</Label>
-              <div aria-live="polite">
-                <Value title="Hint Points">💡 {state.gameProgress.hintPoints || 0}</Value>
-                <span style={{ margin: '0 8px' }} />
-                <Value title="Achievements">✦ {(state.gameProgress.achievements || []).length}</Value>
-              </div>
-            </Row>
-            <Row style={{ borderBottom: 'none' }}>
-              <Label htmlFor="highContrast">High Contrast</Label>
-              <Toggle id="highContrast" type="checkbox" checked={state.settings.accessibility.highContrast} onChange={onHigh} />
-            </Row>
+            <SettingsGrid>
+              <SettingsSection>
+                <SectionTitle>🔊 Audio Settings</SectionTitle>
+                <Row>
+                  <Label htmlFor="soundEnabled">Enable Sound</Label>
+                  <Toggle id="soundEnabled" type="checkbox" checked={state.settings.soundEnabled} onChange={onSoundEnabled} />
+                </Row>
+                <Row>
+                  <Label htmlFor="master">Master Volume</Label>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Slider id="master" type="range" min="0" max="1" step="0.01" value={state.settings.masterVolume ?? 0.9} onChange={onMaster} />
+                    <Value>{Math.round((state.settings.masterVolume ?? 0.9) * 100)}%</Value>
+                  </div>
+                </Row>
+                <Row>
+                  <Label htmlFor="music">Music Volume</Label>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Slider id="music" type="range" min="0" max="1" step="0.01" value={state.settings.musicVolume} onChange={onMusic} />
+                    <Value>{Math.round((state.settings.musicVolume ?? 0) * 100)}%</Value>
+                  </div>
+                </Row>
+                <Row>
+                  <Label htmlFor="ambient">Ambient Volume</Label>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Slider id="ambient" type="range" min="0" max="1" step="0.01" value={state.settings.ambientVolume ?? 0.6} onChange={onAmbient} />
+                    <Value>{Math.round((state.settings.ambientVolume ?? 0.6) * 100)}%</Value>
+                  </div>
+                </Row>
+                <Row>
+                  <Label htmlFor="sfx">UI SFX Volume</Label>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Slider id="sfx" type="range" min="0" max="1" step="0.01" value={state.settings.sfxVolume} onChange={onSfx} />
+                    <Value>{Math.round((state.settings.sfxVolume ?? 0) * 100)}%</Value>
+                  </div>
+                </Row>
+              </SettingsSection>
 
-            <DangerBtn className="is-interactive" type="button" aria-label="Reset Progress" whileTap={{ scale: 0.98 }} onClick={onReset}>Reset Progress</DangerBtn>
-            <CloseBtn className="is-interactive" type="button" aria-label="Close Settings" whileTap={{ scale: 0.98 }} onClick={onClose}>Close</CloseBtn>
+              <SettingsSection>
+                <SectionTitle>♿ Accessibility</SectionTitle>
+                <Row>
+                  <Label htmlFor="largeText">Large Text</Label>
+                  <Toggle id="largeText" type="checkbox" checked={state.settings.accessibility.largeText} onChange={onLarge} />
+                </Row>
+                <Row>
+                  <Label htmlFor="highContrast">High Contrast</Label>
+                  <Toggle id="highContrast" type="checkbox" checked={state.settings.accessibility.highContrast} onChange={onHigh} />
+                </Row>
+                <Row>
+                  <Label htmlFor="reducedMotion">Reduced Motion</Label>
+                  <Toggle id="reducedMotion" type="checkbox" checked={state.settings.accessibility.reducedMotion} onChange={onReduced} />
+                </Row>
+              </SettingsSection>
+
+              <SettingsSection>
+                <SectionTitle>🎮 Game Experience</SectionTitle>
+                <Row>
+                  <Label htmlFor="textSpeed">Text Speed</Label>
+                  <SelectField id="textSpeed" value={state.settings.textSpeed} onChange={onTextSpeed}>
+                    <option value="slow">Slow</option>
+                    <option value="normal">Normal</option>
+                    <option value="fast">Fast</option>
+                  </SelectField>
+                </Row>
+                <Row>
+                  <Label htmlFor="cursorTrail">Cursor Trail</Label>
+                  <Toggle id="cursorTrail" type="checkbox" checked={state.settings.effects?.cursorTrail !== false} onChange={onCursorTrail} />
+                </Row>
+              </SettingsSection>
+
+              <SettingsSection>
+                <SectionTitle>📊 Progress</SectionTitle>
+                <StatsRow>
+                  <StatItem>
+                    <span>💡</span>
+                    <span>Hint Points: {state.gameProgress.hintPoints || 0}</span>
+                  </StatItem>
+                  <StatItem>
+                    <span>✦</span>
+                    <span>Achievements: {(state.gameProgress.achievements || []).length}</span>
+                  </StatItem>
+                </StatsRow>
+              </SettingsSection>
+            </SettingsGrid>
+
+            <ButtonRow>
+              <DangerBtn
+                className="is-interactive"
+                type="button"
+                aria-label="Reset Progress"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={onReset}
+              >
+                Reset Progress
+              </DangerBtn>
+              <CloseBtn
+                className="is-interactive"
+                type="button"
+                aria-label="Close Settings"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={onClose}
+              >
+                Close
+              </CloseBtn>
+            </ButtonRow>
           </Sheet>
         </Backdrop>
       )}
