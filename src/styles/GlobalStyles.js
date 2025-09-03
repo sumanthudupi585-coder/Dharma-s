@@ -59,28 +59,73 @@ const GlobalStyle = createGlobalStyle`
     --sacred-orange: #ff6b35;
     --muted-green: #6b8e23;
 
+    /* Secondary UI Colors */
+    --success-green: #22c55e;
+    --warning-amber: #f59e0b;
+    --error-red: #ef4444;
+    --info-blue: #3b82f6;
+
+    /* Neutral Grays for Better Contrast */
+    --gray-900: #111827;
+    --gray-800: #1f2937;
+    --gray-700: #374151;
+    --gray-600: #4b5563;
+    --gray-500: #6b7280;
+    --gray-400: #9ca3af;
+    --gray-300: #d1d5db;
+    --gray-200: #e5e7eb;
+    --gray-100: #f3f4f6;
+    --gray-50: #f9fafb;
+
+    /* Interactive States */
+    --hover-overlay: rgba(212, 175, 55, 0.1);
+    --focus-ring: #d4af37;
+    --active-state: rgba(212, 175, 55, 0.2);
+
     /* Typography */
     --font-primary: 'Crimson Text', serif;
     --font-display: 'Cinzel', serif;
     --font-devanagari: 'Noto Serif Devanagari', 'Noto Sans Devanagari', serif;
-    /* Modular scale */
-    --fs-xs: clamp(0.8rem, 0.4vw + 0.72rem, 0.9rem);
-    --fs-sm: clamp(0.9rem, 0.6vw + 0.8rem, 1rem);
-    --fs-md: clamp(1rem, 0.6vw + 0.9rem, 1.125rem);
-    --fs-lg: clamp(1.125rem, 0.8vw + 1rem, 1.375rem);
-    --fs-xl: clamp(1.5rem, 1.2vw + 1.25rem, 2rem);
-    --fs-xxl: clamp(2rem, 2.5vw + 1.5rem, 3rem);
-    --lh-tight: 1.3;
-    --lh-normal: 1.6;
-    --lh-loose: 1.85;
 
-    /* Spacing */
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
-    --spacing-xxl: 3rem;
+    /* Improved Modular Typography Scale */
+    --fs-xs: clamp(0.75rem, 0.5vw + 0.7rem, 0.875rem);
+    --fs-sm: clamp(0.875rem, 0.6vw + 0.8rem, 1rem);
+    --fs-base: clamp(1rem, 0.8vw + 0.9rem, 1.125rem); /* Minimum 16px */
+    --fs-md: clamp(1.125rem, 1vw + 1rem, 1.25rem);
+    --fs-lg: clamp(1.25rem, 1.2vw + 1.1rem, 1.5rem);
+    --fs-xl: clamp(1.5rem, 1.5vw + 1.25rem, 2rem);
+    --fs-2xl: clamp(1.875rem, 2vw + 1.5rem, 2.5rem);
+    --fs-3xl: clamp(2.25rem, 2.5vw + 1.75rem, 3rem);
+    --fs-4xl: clamp(2.75rem, 3vw + 2rem, 4rem);
+
+    /* Improved Line Heights */
+    --lh-tight: 1.25;
+    --lh-snug: 1.375;
+    --lh-normal: 1.5;
+    --lh-relaxed: 1.625;
+    --lh-loose: 1.75;
+
+    /* Consistent 4px-based Spacing System */
+    --spacing-1: 0.25rem; /* 4px */
+    --spacing-2: 0.5rem;  /* 8px */
+    --spacing-3: 0.75rem; /* 12px */
+    --spacing-4: 1rem;    /* 16px */
+    --spacing-5: 1.25rem; /* 20px */
+    --spacing-6: 1.5rem;  /* 24px */
+    --spacing-8: 2rem;    /* 32px */
+    --spacing-10: 2.5rem; /* 40px */
+    --spacing-12: 3rem;   /* 48px */
+    --spacing-16: 4rem;   /* 64px */
+    --spacing-20: 5rem;   /* 80px */
+    --spacing-24: 6rem;   /* 96px */
+
+    /* Legacy spacing (for backwards compatibility) */
+    --spacing-xs: var(--spacing-1);
+    --spacing-sm: var(--spacing-2);
+    --spacing-md: var(--spacing-4);
+    --spacing-lg: var(--spacing-6);
+    --spacing-xl: var(--spacing-8);
+    --spacing-xxl: var(--spacing-12);
 
     /* Borders & Shadows */
     --border-radius: 8px;
@@ -105,24 +150,51 @@ const GlobalStyle = createGlobalStyle`
   body {
     font-family: var(--font-primary);
     background: linear-gradient(135deg, var(--ink-black) 0%, var(--deep-blue) 50%, var(--royal-blue) 100%);
-    color: var(--parchment);
+    color: var(--gray-100); /* Softer than pure white for better readability */
     min-height: 100vh;
-    line-height: var(--lh-normal);
+    line-height: var(--lh-relaxed); /* Improved readability with 1.625 */
     overflow-x: hidden;
     overflow-y: auto;
-    font-size: var(--fs-md);
+    font-size: var(--fs-base); /* Ensures minimum 16px for accessibility */
   }
 
-  h1, h2, h3 {
+  /* Improved Typography Hierarchy */
+  h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     color: var(--gold);
     letter-spacing: 0.02em;
     text-shadow: 0 2px 6px rgba(0,0,0,0.35);
     line-height: var(--lh-tight);
+    font-weight: 600;
+    margin-bottom: var(--spacing-4);
   }
-  h1 { font-size: var(--fs-xxl); }
-  h2 { font-size: var(--fs-xl); }
-  h3 { font-size: var(--fs-lg); }
+
+  h1 { font-size: var(--fs-4xl); }
+  h2 { font-size: var(--fs-3xl); }
+  h3 { font-size: var(--fs-2xl); }
+  h4 { font-size: var(--fs-xl); }
+  h5 { font-size: var(--fs-lg); }
+  h6 { font-size: var(--fs-md); }
+
+  /* Improved body text readability */
+  p {
+    line-height: var(--lh-relaxed);
+    margin-bottom: var(--spacing-4);
+    max-width: 75ch; /* Optimal reading line length */
+  }
+
+  /* Better link styling */
+  a {
+    color: var(--gold);
+    text-decoration: underline;
+    text-decoration-color: rgba(212, 175, 55, 0.5);
+    transition: color var(--transition-fast), text-decoration-color var(--transition-fast);
+  }
+
+  a:hover {
+    color: var(--faded-gold);
+    text-decoration-color: var(--faded-gold);
+  }
 
   .emoji-icon { filter: drop-shadow(0 0 8px rgba(212,175,55,0.4)); }
 
@@ -148,7 +220,7 @@ const GlobalStyle = createGlobalStyle`
     cursor: var(--cursor-examine);
   }
 
-  body.large-text { font-size: 18px; }
+  body.large-text { font-size: 1.25rem; /* 20px minimum for large text */ }
   body.force-reduced-motion *, body.force-reduced-motion *::before, body.force-reduced-motion *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
@@ -160,6 +232,8 @@ const GlobalStyle = createGlobalStyle`
     --gold: #ffff00;
     --copper: #ff8800;
     --dark-parchment: #e5e5e5;
+    --gray-100: #ffffff;
+    --gray-900: #000000;
   }
 
   #root {
