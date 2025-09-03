@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://sumanthudupi585-coder.github.io/qwertyuio/sitemap.xml
+Sitemap: https://sumanthudupi585-coder.github.io/qwertyuio/public/sitemap.xml
