@@ -1,26 +1,80 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useGame, ACTIONS } from '../context/GameContext';
+import { colors, spacing, radius, typography, timings, z } from '../ui/tokens';
 
 const Backdrop = styled(motion.div)`
-  position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px); z-index: 3000;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(8px);
+  z-index: ${z.modal};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: ${spacing['4']};
 `;
 
 const Sheet = styled(motion.div)`
-  position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%);
-  width: min(92vw, 560px); border-radius: 16px; border: 1px solid rgba(212,175,55,0.35);
-  background: linear-gradient(145deg, rgba(0,0,0,0.92), rgba(10,10,10,0.98));
-  color: #e8c86a; padding: 22px; z-index: 3001; box-shadow: 0 30px 70px rgba(0,0,0,0.6);
+  width: min(90vw, 600px);
+  max-height: 85vh;
+  border-radius: ${radius.lg};
+  border: 1px solid rgba(212,175,55,0.5);
+  background: linear-gradient(145deg, rgba(0,0,0,0.95), rgba(10,10,10,1));
+  color: #e8c86a;
+  padding: ${spacing['8']};
+  box-shadow:
+    0 25px 60px rgba(0,0,0,0.8),
+    0 0 30px rgba(212,175,55,0.2),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+  backdrop-filter: blur(12px);
+  overflow-y: auto;
 `;
 
 const Title = styled.h2`
   font-family: var(--font-display);
-  color: #e6c76a;
-  margin: 0 0 8px;
+  color: ${colors.gold};
+  margin: 0 0 ${spacing['6']};
   letter-spacing: 0.06em;
-  font-size: var(--fs-xl);
+  font-size: ${typography.fontSize['2xl']};
+  text-align: center;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -${spacing['2']};
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, ${colors.gold}, transparent);
+  }
+`;
+
+const SectionTitle = styled.h3`
+  font-family: var(--font-display);
+  color: ${colors.fadedGold};
+  font-size: ${typography.fontSize.lg};
+  margin: ${spacing['6']} 0 ${spacing['4']} 0;
+  padding-bottom: ${spacing['2']};
+  border-bottom: 1px solid rgba(212,175,55,0.2);
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+`;
+
+const SettingsGrid = styled.div`
+  display: grid;
+  gap: ${spacing['6']};
+`;
+
+const SettingsSection = styled.div`
+  display: grid;
+  gap: ${spacing['4']};
 `;
 
 const Row = styled.div`
@@ -75,6 +129,7 @@ const Value = styled.span`
 export default function SettingsModal({ open, onClose }) {
   const { state, dispatch } = useGame();
   const sheetRef = useRef(null);
+  const [activeTab, setActiveTab] = useState('audio');
 
   const setBodyClass = (cls, on) => {
     const body = document.body;
