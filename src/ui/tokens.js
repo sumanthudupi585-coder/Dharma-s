@@ -137,5 +137,80 @@ export const z = {
   achievementToast: 4000
 };
 
-export const tokens = { colors, fonts, typography, spacing, radius, shadows, timings, z };
+// Responsive breakpoints following mobile-first approach
+export const breakpoints = {
+  mobile: '360px',     // Small phones
+  mobileLg: '480px',   // Large phones
+  tablet: '768px',     // Tablets
+  desktop: '1024px',   // Desktop
+  wide: '1440px',      // Wide screens
+  ultrawide: '1920px'  // Ultra-wide monitors
+};
+
+// Device media queries for styled-components
+export const devices = {
+  mobile: `(min-width: ${breakpoints.mobile})`,
+  mobileLg: `(min-width: ${breakpoints.mobileLg})`,
+  tablet: `(min-width: ${breakpoints.tablet})`,
+  desktop: `(min-width: ${breakpoints.desktop})`,
+  wide: `(min-width: ${breakpoints.wide})`,
+  ultrawide: `(min-width: ${breakpoints.ultrawide})`,
+
+  // Utility queries
+  touch: '(hover: none) and (pointer: coarse)',
+  mouse: '(hover: hover) and (pointer: fine)',
+  reducedMotion: '(prefers-reduced-motion: reduce)',
+  highContrast: '(prefers-contrast: high)',
+  darkMode: '(prefers-color-scheme: dark)'
+};
+
+// Responsive typography scale using clamp for fluid scaling
+export const fluidTypography = {
+  xs: 'clamp(0.75rem, 0.5vw + 0.7rem, 0.875rem)',
+  sm: 'clamp(0.875rem, 0.6vw + 0.8rem, 1rem)',
+  base: 'clamp(1rem, 0.8vw + 0.9rem, 1.125rem)',
+  md: 'clamp(1.125rem, 1vw + 1rem, 1.25rem)',
+  lg: 'clamp(1.25rem, 1.2vw + 1.1rem, 1.5rem)',
+  xl: 'clamp(1.5rem, 1.5vw + 1.25rem, 2rem)',
+  '2xl': 'clamp(1.875rem, 2vw + 1.5rem, 2.5rem)',
+  '3xl': 'clamp(2.25rem, 2.5vw + 1.75rem, 3rem)',
+  '4xl': 'clamp(2.75rem, 3vw + 2rem, 4rem)',
+  '5xl': 'clamp(3.25rem, 4vw + 2.5rem, 5rem)'
+};
+
+// Responsive spacing that scales with screen size
+export const fluidSpacing = {
+  xs: 'clamp(0.25rem, 0.5vw, 0.5rem)',
+  sm: 'clamp(0.5rem, 1vw, 0.75rem)',
+  md: 'clamp(1rem, 2vw, 1.5rem)',
+  lg: 'clamp(1.5rem, 3vw, 2.5rem)',
+  xl: 'clamp(2rem, 4vw, 3.5rem)',
+  xxl: 'clamp(3rem, 6vw, 5rem)'
+};
+
+// Container sizes for consistent max-widths
+export const containers = {
+  sm: '640px',
+  md: '768px',
+  lg: '1024px',
+  xl: '1280px',
+  '2xl': '1536px',
+  prose: '75ch'  // Optimal reading width
+};
+
+export const tokens = {
+  colors,
+  fonts,
+  typography,
+  spacing,
+  radius,
+  shadows,
+  timings,
+  z,
+  breakpoints,
+  devices,
+  fluidTypography,
+  fluidSpacing,
+  containers
+};
 export default tokens;
