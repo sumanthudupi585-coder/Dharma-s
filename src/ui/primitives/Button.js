@@ -1,5 +1,5 @@
 import styled, { css, keyframes } from 'styled-components';
-import { colors, fonts, radius, spacing, timings, typography } from '../tokens';
+import { colors, fonts, radius, spacing, timings, typography, devices } from '../tokens';
 
 // Loading spinner animation
 const spin = keyframes`
@@ -16,13 +16,18 @@ const ripple = keyframes`
 `;
 
 const base = css`
+  /* MOBILE-FIRST: Optimized for touch */
   appearance: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: ${spacing['2']};
-  min-height: 44px;
+
+  /* Mobile: Larger touch targets */
+  min-height: 48px;
+  min-width: 48px;
   padding: ${spacing['3']} ${spacing['4']};
+
   border-radius: ${radius.md};
   border: 1px solid rgba(212,175,55,0.35);
   background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
@@ -32,10 +37,14 @@ const base = css`
   font-size: ${typography.fontSize.base};
   letter-spacing: 0.02em;
   cursor: pointer;
+
+  /* Mobile-optimized interactions */
   transition: all ${timings.fast};
   backdrop-filter: blur(8px);
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; /* Prevents double-tap zoom */
+
   position: relative;
   overflow: hidden;
   will-change: transform;
@@ -61,21 +70,15 @@ const base = css`
     z-index: 1;
   }
 
-  &:hover {
-    color: #000;
-    background: linear-gradient(145deg, ${colors.gold}, ${colors.fadedGold});
-    border-color: ${colors.gold};
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
-  }
-
+  /* Focus styles for all devices */
   &:focus-visible {
-    outline: 2px solid ${colors.focus};
+    outline: 3px solid ${colors.focus};
     outline-offset: 2px;
   }
 
+  /* Active state - important for touch feedback */
   &:active {
-    transform: translateY(-1px);
+    transform: scale(0.98);
 
     &::before {
       width: 300px;
@@ -84,13 +87,30 @@ const base = css`
     }
   }
 
+  /* Hover only for devices that support it */
+  @media ${devices.mouse} {
+    &:hover {
+      color: #000;
+      background: linear-gradient(145deg, ${colors.gold}, ${colors.fadedGold});
+      border-color: ${colors.gold};
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+      transform: translateY(-1px);
+    }
+  }
+
+  /* Disabled state */
   &:disabled,
   &[aria-disabled='true'] {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
 
-    &:hover {
+    &:hover,
+    &:active {
       background: linear-gradient(145deg, rgba(0,0,0,0.82), rgba(18,18,18,0.95));
       color: #e8c86a;
       border-color: rgba(212,175,55,0.35);
@@ -115,11 +135,34 @@ const base = css`
       margin-left: ${spacing['2']};
     }
   }
+
+  /* Tablet: Slightly smaller touch targets */
+  @media ${devices.tablet} {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Desktop: Standard sizing */
+  @media ${devices.desktop} {
+    min-height: 40px;
+    min-width: 40px;
+    padding: ${spacing['2']} ${spacing['4']};
+  }
 `;
 
 const pill = css`
   border-radius: ${radius.pill};
-  padding: ${spacing['3']} ${spacing['6']};
+
+  /* Mobile: More padding for easier tapping */
+  padding: ${spacing['4']} ${spacing['6']};
+
+  @media ${devices.tablet} {
+    padding: ${spacing['3']} ${spacing['6']};
+  }
+
+  @media ${devices.desktop} {
+    padding: ${spacing['3']} ${spacing['5']};
+  }
 `;
 
 const ghost = css`
@@ -182,20 +225,58 @@ export const Button = styled.button`
   ${p => p.$success && success};
   ${p => p.$secondary && secondary};
   ${p => p.full && css`width: 100%;`}
+
+  /* Mobile-first size variants */
   ${p => p.size === 'lg' && css`
-    padding: ${spacing['4']} ${spacing['8']};
+    /* Mobile: Extra large for important actions */
+    padding: ${spacing['5']} ${spacing['8']};
     font-size: ${typography.fontSize.lg};
-    min-height: 52px;
+    min-height: 56px;
+
+    @media ${devices.tablet} {
+      min-height: 52px;
+      padding: ${spacing['4']} ${spacing['8']};
+    }
+
+    @media ${devices.desktop} {
+      min-height: 48px;
+      padding: ${spacing['4']} ${spacing['6']};
+    }
   `}
+
   ${p => p.size === 'sm' && css`
+    /* Mobile: Still touch-friendly */
     padding: ${spacing['2']} ${spacing['3']};
     font-size: ${typography.fontSize.sm};
-    min-height: 36px;
+    min-height: 40px;
+
+    @media ${devices.tablet} {
+      min-height: 36px;
+    }
+
+    @media ${devices.desktop} {
+      min-height: 32px;
+      padding: ${spacing['1']} ${spacing['3']};
+    }
   `}
+
   ${p => p.size === 'xs' && css`
-    padding: ${spacing['1']} ${spacing['2']};
+    /* Mobile: Minimum viable touch target */
+    padding: ${spacing['2']} ${spacing['2']};
     font-size: ${typography.fontSize.xs};
-    min-height: 28px;
+    min-height: 36px;
+    min-width: 36px;
+
+    @media ${devices.tablet} {
+      min-height: 32px;
+      min-width: 32px;
+    }
+
+    @media ${devices.desktop} {
+      min-height: 28px;
+      min-width: 28px;
+      padding: ${spacing['1']} ${spacing['2']};
+    }
   `}
 `;
 
