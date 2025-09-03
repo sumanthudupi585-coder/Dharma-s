@@ -5,6 +5,8 @@ import { useGame, SCENES, ACTIONS } from '../context/GameContext';
 import { engine } from './AudioManager';
 import SwipeNavigator from './SwipeNavigator';
 import SceneProgressMap from './SceneProgressMap';
+import { devices, spacing, radius, containers, typography } from '../ui/tokens';
+import { useIsTouchDevice } from '../hooks/useIsTouchDevice';
 const Journal = lazy(() => import('./Journal'));
 
 const Scene1DashashwamedhGhat = lazy(() => import('./scenes/Scene1DashashwamedhGhat'));
@@ -84,22 +86,55 @@ const OverlayContent = styled(motion.div)`
 `;
 
 const GameplayContainer = styled.div`
+  /* MOBILE-FIRST: Single column layout optimized for touch */
   min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
   background:
     radial-gradient(ellipse at center, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.95) 70%),
     linear-gradient(135deg, var(--ink-black) 0%, var(--deep-blue) 50%, var(--royal-blue) 100%);
+
   display: grid;
-  grid-template-columns: 1.3fr 380px;
-  grid-template-rows: 1fr auto;
-  gap: var(--spacing-xl);
-  padding: var(--spacing-lg);
-  padding-bottom: calc(var(--spacing-lg) + 280px); /* safe area for fixed hotbar */
   position: relative;
   overflow: visible;
-  max-width: 1280px;
-  margin: 0 auto;
 
-  /* Mystical background pattern */
+  /* Mobile: Single column, stacked layout */
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "header"
+    "main"
+    "controls";
+  gap: ${spacing.md};
+  padding: ${spacing.md};
+  padding-bottom: calc(${spacing.md} + 200px); /* Safe area for hotbar */
+
+  /* Tablet: Still single column but more space */
+  @media ${devices.tablet} {
+    gap: ${spacing.lg};
+    padding: ${spacing.lg};
+    padding-bottom: calc(${spacing.lg} + 240px);
+  }
+
+  /* Desktop: Two-panel layout */
+  @media ${devices.desktop} {
+    grid-template-columns: 1fr 380px;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "header sidebar"
+      "main sidebar";
+    gap: ${spacing.xl};
+    padding: ${spacing.lg};
+    padding-bottom: calc(${spacing.lg} + 280px);
+    max-width: ${containers['2xl']};
+    margin: 0 auto;
+  }
+
+  /* Wide screens: Larger sidebar */
+  @media ${devices.wide} {
+    grid-template-columns: 1fr 420px;
+  }
+
+  /* Mystical background pattern - reduced on mobile for performance */
   &::before {
     content: '';
     position: absolute;
@@ -107,36 +142,47 @@ const GameplayContainer = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background:
-      radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.03) 1px, transparent 2px),
-      radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.02) 1px, transparent 2px);
-    background-size:
-      100px 100px,
-      150px 150px;
-    animation: ${breathingGlow} 12s ease-in-out infinite;
     pointer-events: none;
     z-index: 1;
-  }
 
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    grid-auto-rows: auto;
+    /* Mobile: Simpler pattern */
+    background:
+      radial-gradient(circle at 30% 40%, rgba(212, 175, 55, 0.02) 1px, transparent 2px);
+    background-size: 80px 80px;
+
+    @media ${devices.tablet} {
+      background:
+        radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.03) 1px, transparent 2px),
+        radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.02) 1px, transparent 2px);
+      background-size: 100px 100px, 150px 150px;
+    }
+
+    /* Only animate on non-touch devices for performance */
+    @media ${devices.mouse} {
+      animation: ${breathingGlow} 12s ease-in-out infinite;
+    }
   }
 `;
 
 const MainContentArea = styled.div`
-  grid-column: 1;
-  grid-row: 1 / -1;
+  /* Mobile: Main content area */
+  grid-area: main;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: ${spacing.md};
   position: relative;
   z-index: 20;
-  max-width: 980px;
   width: 100%;
 
-  @media (max-width: 1024px) {
-    grid-row: 1;
+  /* Tablet: More spacing */
+  @media ${devices.tablet} {
+    gap: ${spacing.lg};
+  }
+
+  /* Desktop: Constrain width for optimal reading */
+  @media ${devices.desktop} {
+    max-width: 980px;
+    gap: ${spacing.xl};
   }
 `;
 
@@ -209,38 +255,84 @@ const HotbarContainer = styled.div`
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  bottom: var(--spacing-lg);
+  bottom: ${spacing.md};
   display: grid;
-  grid-template-columns: repeat(6, 56px);
-  gap: 10px;
+  gap: ${spacing['2']};
   background: linear-gradient(145deg, rgba(0, 0, 0, 0.85), rgba(15, 15, 15, 0.95));
   border: 2px solid #d4af37;
-  border-radius: 14px;
-  padding: 10px 12px;
+  border-radius: ${radius.lg};
   box-shadow:
     0 10px 28px rgba(0, 0, 0, 0.7),
     0 0 20px rgba(212, 175, 55, 0.25);
   z-index: 120;
-  margin: 0 auto;
+  backdrop-filter: blur(10px);
+
+  /* Mobile: Fewer slots, larger touch targets */
+  grid-template-columns: repeat(4, 52px);
+  padding: ${spacing['2']} ${spacing['3']};
+
+  /* Tablet: More slots */
+  @media ${devices.tablet} {
+    grid-template-columns: repeat(5, 56px);
+    padding: ${spacing['3']} ${spacing['4']};
+    bottom: ${spacing.lg};
+  }
+
+  /* Desktop: Full 6 slots */
+  @media ${devices.desktop} {
+    grid-template-columns: repeat(6, 56px);
+    padding: 10px 12px;
+  }
 `;
 
 const HotbarSlot = styled.div`
-  width: 56px;
-  height: 56px;
   border: 2px solid ${(p) => (p.$active ? '#ffd700' : 'rgba(212, 175, 55, 0.4)')};
-  border-radius: 10px;
+  border-radius: ${radius.md};
   background: linear-gradient(145deg, rgba(0, 0, 0, 0.7), rgba(10, 10, 10, 0.85));
   display: flex;
   align-items: center;
   justify-content: center;
   color: #d4af37;
-  font-size: 1.4rem;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
+
+  /* Mobile: Larger touch targets */
+  width: 52px;
+  height: 52px;
+  font-size: 1.3rem;
+
+  /* Touch-friendly interactions */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+
+  /* Active state for touch feedback */
+  &:active {
+    transform: scale(0.95);
+  }
+
+  /* Tablet: Standard size */
+  @media ${devices.tablet} {
+    width: 56px;
+    height: 56px;
+    font-size: 1.4rem;
+  }
+
+  /* Desktop: Hover effects */
+  @media ${devices.mouse} {
+    &:hover {
+      border-color: #ffd700;
+      background: linear-gradient(145deg, rgba(212, 175, 55, 0.1), rgba(255, 215, 0, 0.2));
+    }
+  }
+
   ${(p) =>
     p.$active &&
     css`
-      animation: ${breathingGlow} 6s ease-in-out infinite;
+      /* Only animate on non-touch devices for performance */
+      @media ${devices.mouse} {
+        animation: ${breathingGlow} 6s ease-in-out infinite;
+      }
     `}
 `;
 
@@ -258,17 +350,22 @@ const SlotIndex = styled.span`
 
 // Sticky page header containing objective and HUD
 const HeaderBar = styled.div`
+  /* Mobile: Single column, stacked */
+  grid-area: header;
   display: grid;
-  grid-template-columns: 1fr auto;
-  gap: var(--spacing-md);
-  align-items: center;
+  grid-template-columns: 1fr;
+  gap: ${spacing.sm};
+  align-items: start;
   position: sticky;
-  top: var(--spacing-lg);
+  top: ${spacing.md};
   z-index: 30;
 
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-sm);
+  /* Tablet: Two columns */
+  @media ${devices.tablet} {
+    grid-template-columns: 1fr auto;
+    gap: ${spacing.md};
+    align-items: center;
+    top: ${spacing.lg};
   }
 `;
 
@@ -484,20 +581,35 @@ const ChoicesContainer = styled.div`
 const ChoiceButton = styled(motion.button)`
   background: linear-gradient(145deg, rgba(0, 0, 0, 0.8) 0%, rgba(15, 15, 15, 0.9) 100%);
   border: 1px solid #d4af37;
-  border-radius: 8px;
-  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: ${radius.md};
   color: #d4af37;
   font-family: var(--font-primary);
-  font-size: 1rem;
   text-align: left;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(5px);
-  will-change: transform, opacity, box-shadow;
-  min-height: 48px;
+  touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+
+  /* Mobile: Larger touch targets and padding */
+  padding: ${spacing['4']} ${spacing['5']};
+  font-size: ${typography.fontSize.base};
+  min-height: 56px;
+
+  /* Tablet: Standard sizing */
+  @media ${devices.tablet} {
+    padding: ${spacing.md} ${spacing.lg};
+    min-height: 52px;
+  }
+
+  /* Desktop: Compact sizing */
+  @media ${devices.desktop} {
+    padding: ${spacing.md} ${spacing.lg};
+    min-height: 48px;
+    font-size: 1rem;
+  }
 
   /* Golden energy bar on the left */
   &::before {
@@ -531,6 +643,7 @@ const ChoiceButton = styled(motion.button)`
     -webkit-text-fill-color: transparent;
     position: relative;
   }
+
   &.inking .choice-text::after {
     content: '';
     position: absolute;
@@ -546,25 +659,35 @@ const ChoiceButton = styled(motion.button)`
     );
     animation: inking 700ms ease forwards;
   }
+
   @keyframes inking {
     to {
       width: 100%;
     }
   }
 
-  &:hover {
-    background: linear-gradient(145deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 215, 0, 0.2) 100%);
-    border-color: #ffd700;
-    color: #ffd700;
-    animation: ${breathingGlow} 2s infinite;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+  /* Active state for touch feedback */
+  &:active {
+    transform: scale(0.98);
+    background: linear-gradient(145deg, rgba(212, 175, 55, 0.15) 0%, rgba(255, 215, 0, 0.25) 100%);
+  }
 
-    &::before {
-      transform: scaleY(1);
-    }
+  /* Hover effects only for mouse devices */
+  @media ${devices.mouse} {
+    &:hover {
+      background: linear-gradient(145deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 215, 0, 0.2) 100%);
+      border-color: #ffd700;
+      color: #ffd700;
+      animation: ${breathingGlow} 2s infinite;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
 
-    &::after {
-      left: 100%;
+      &::before {
+        transform: scaleY(1);
+      }
+
+      &::after {
+        left: 100%;
+      }
     }
   }
 
@@ -572,11 +695,14 @@ const ChoiceButton = styled(motion.button)`
     opacity: 0.5;
     cursor: not-allowed;
 
-    &:hover {
+    &:hover,
+    &:active {
       animation: none;
       border-color: #d4af37;
       color: #d4af37;
       text-shadow: none;
+      transform: none;
+      background: linear-gradient(145deg, rgba(0, 0, 0, 0.8) 0%, rgba(15, 15, 15, 0.9) 100%);
 
       &::before {
         transform: scaleY(0);
@@ -590,57 +716,85 @@ const ChoiceButton = styled(motion.button)`
 `;
 
 const JournalSidebar = styled(motion.div)`
-  grid-column: 2;
-  grid-row: 1 / -1;
-  position: sticky;
-  top: var(--spacing-lg);
-  align-self: start;
-  z-index: 5;
-  height: calc(100vh - 2 * var(--spacing-lg));
-  max-width: 380px;
-  width: 100%;
-  overflow: hidden;
+  /* Mobile/Tablet: Hidden by default (shown via modal) */
+  display: none;
 
-  @media (max-width: 1024px) {
-    grid-column: 1;
-    grid-row: auto;
-    height: 300px;
+  /* Desktop: Sidebar visible */
+  @media ${devices.desktop} {
+    display: block;
+    grid-area: sidebar;
+    position: sticky;
+    top: ${spacing.lg};
+    align-self: start;
+    z-index: 5;
+    height: calc(100vh - 2 * ${spacing.lg});
+    max-width: 380px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  /* Wide screens: Larger sidebar */
+  @media ${devices.wide} {
+    max-width: 420px;
   }
 `;
 
 const JournalToggle = styled(motion.button)`
   position: fixed;
-  top: var(--spacing-lg);
-  right: var(--spacing-lg);
-  width: 60px;
-  height: 60px;
+  top: ${spacing.lg};
+  right: ${spacing.lg};
   background: radial-gradient(circle, #d4af37 0%, #ffd700 50%, #d4af37 100%);
   border: 2px solid #d4af37;
   border-radius: 50%;
   color: #000;
-  font-size: 1.5rem;
   cursor: pointer;
   box-shadow:
     0 6px 20px rgba(212, 175, 55, 0.4),
     0 0 30px rgba(212, 175, 55, 0.3);
   z-index: 1000;
-  display: none;
   backdrop-filter: blur(10px);
-  animation: ${breathingGlow} 4s ease-in-out infinite;
-  will-change: transform, opacity, box-shadow;
 
-  @media (max-width: 1024px) {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  /* Mobile-first: Large touch target */
+  width: 64px;
+  height: 64px;
+  font-size: 1.6rem;
+
+  /* Touch-friendly interactions */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+
+  /* Always visible on mobile/tablet, hidden on desktop */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @media ${devices.desktop} {
+    display: none;
   }
 
-  &:hover {
-    background: radial-gradient(circle, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
-    transform: scale(1.1);
-    box-shadow:
-      0 8px 25px rgba(255, 215, 0, 0.6),
-      0 0 40px rgba(255, 215, 0, 0.5);
+  /* Active state for touch feedback */
+  &:active {
+    transform: scale(0.95);
+  }
+
+  /* Tablet: Slightly smaller */
+  @media ${devices.tablet} {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+
+  /* Hover effects only for mouse devices */
+  @media ${devices.mouse} {
+    animation: ${breathingGlow} 4s ease-in-out infinite;
+
+    &:hover {
+      background: radial-gradient(circle, #ffd700 0%, #ffed4e 50%, #ffd700 100%);
+      transform: scale(1.1);
+      box-shadow:
+        0 8px 25px rgba(255, 215, 0, 0.6),
+        0 0 40px rgba(255, 215, 0, 0.5);
+    }
   }
 `;
 
@@ -727,9 +881,10 @@ export default function GameplayScreen() {
   const [activeSkill, setActiveSkill] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, text: '', x: 0, y: 0 });
   const [hintText, setHintText] = useState('');
+  const [mobileMapOpen, setMobileMapOpen] = useState(false);
+  const isTouch = useIsTouchDevice();
 
   const { currentScene, sceneData, playerProfile, inventory } = state;
-  const [mobileMapOpen, setMobileMapOpen] = useState(false);
 
   const prevClues = React.useRef(inventory.clues.length);
   const prevObjectives = React.useRef(state.gameProgress.currentObjectives.length);
