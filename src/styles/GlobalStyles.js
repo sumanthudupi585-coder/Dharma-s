@@ -250,7 +250,7 @@ const GlobalStyle = createGlobalStyle`
     overflow: visible;
   }
 
-  /* Typography Classes */
+  /* Improved Typography Classes */
   .devanagari-text {
     font-family: var(--font-devanagari);
   }
@@ -260,20 +260,40 @@ const GlobalStyle = createGlobalStyle`
     font-weight: 600;
     color: var(--gold);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    line-height: var(--lh-tight);
   }
 
   .text-body {
     font-family: var(--font-primary);
-    line-height: 1.8;
-    color: var(--parchment);
+    line-height: var(--lh-relaxed);
+    color: var(--gray-100);
+    font-size: var(--fs-base);
   }
 
   .text-manuscript {
     font-family: var(--font-primary);
     font-style: italic;
     color: var(--dark-parchment);
-    font-size: 0.9em;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-normal);
   }
+
+  /* Additional utility typography classes */
+  .text-xs { font-size: var(--fs-xs); }
+  .text-sm { font-size: var(--fs-sm); }
+  .text-base { font-size: var(--fs-base); }
+  .text-md { font-size: var(--fs-md); }
+  .text-lg { font-size: var(--fs-lg); }
+  .text-xl { font-size: var(--fs-xl); }
+  .text-2xl { font-size: var(--fs-2xl); }
+  .text-3xl { font-size: var(--fs-3xl); }
+  .text-4xl { font-size: var(--fs-4xl); }
+
+  .leading-tight { line-height: var(--lh-tight); }
+  .leading-snug { line-height: var(--lh-snug); }
+  .leading-normal { line-height: var(--lh-normal); }
+  .leading-relaxed { line-height: var(--lh-relaxed); }
+  .leading-loose { line-height: var(--lh-loose); }
 
   /* Make interactive elements intensify the cursor */
   body:not(.custom-cursor-active) .is-interactive:hover,
