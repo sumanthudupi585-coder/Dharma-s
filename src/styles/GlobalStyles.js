@@ -1,5 +1,6 @@
 import React from 'react';
 import { createGlobalStyle, keyframes } from 'styled-components';
+import { devices, fluidTypography, fluidSpacing, containers } from '../ui/tokens';
 
 // Animation keyframes
 const shimmer = keyframes`
@@ -45,6 +46,13 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
   }
 
+  /* MOBILE-FIRST: Base styles for 360px+ screens */
+  html {
+    font-size: 100%; /* 16px base - respects user's browser settings */
+    scroll-behavior: smooth;
+    text-size-adjust: 100%; /* Prevents automatic text scaling on mobile */
+  }
+
   :root {
     /* Color Palette - Manuscript/Temple Theme */
     --parchment: #f4f1de;
@@ -87,16 +95,17 @@ const GlobalStyle = createGlobalStyle`
     --font-display: 'Cinzel', serif;
     --font-devanagari: 'Noto Serif Devanagari', 'Noto Sans Devanagari', serif;
 
-    /* Improved Modular Typography Scale */
-    --fs-xs: clamp(0.75rem, 0.5vw + 0.7rem, 0.875rem);
-    --fs-sm: clamp(0.875rem, 0.6vw + 0.8rem, 1rem);
-    --fs-base: clamp(1rem, 0.8vw + 0.9rem, 1.125rem); /* Minimum 16px */
-    --fs-md: clamp(1.125rem, 1vw + 1rem, 1.25rem);
-    --fs-lg: clamp(1.25rem, 1.2vw + 1.1rem, 1.5rem);
-    --fs-xl: clamp(1.5rem, 1.5vw + 1.25rem, 2rem);
-    --fs-2xl: clamp(1.875rem, 2vw + 1.5rem, 2.5rem);
-    --fs-3xl: clamp(2.25rem, 2.5vw + 1.75rem, 3rem);
-    --fs-4xl: clamp(2.75rem, 3vw + 2rem, 4rem);
+    /* Fluid Typography Scale - Mobile First */
+    --fs-xs: ${fluidTypography.xs};
+    --fs-sm: ${fluidTypography.sm};
+    --fs-base: ${fluidTypography.base}; /* Minimum 16px for accessibility */
+    --fs-md: ${fluidTypography.md};
+    --fs-lg: ${fluidTypography.lg};
+    --fs-xl: ${fluidTypography.xl};
+    --fs-2xl: ${fluidTypography['2xl']};
+    --fs-3xl: ${fluidTypography['3xl']};
+    --fs-4xl: ${fluidTypography['4xl']};
+    --fs-5xl: ${fluidTypography['5xl']};
 
     /* Improved Line Heights */
     --lh-tight: 1.25;
@@ -105,19 +114,27 @@ const GlobalStyle = createGlobalStyle`
     --lh-relaxed: 1.625;
     --lh-loose: 1.75;
 
-    /* Consistent 4px-based Spacing System */
-    --spacing-1: 0.25rem; /* 4px */
-    --spacing-2: 0.5rem;  /* 8px */
-    --spacing-3: 0.75rem; /* 12px */
-    --spacing-4: 1rem;    /* 16px */
-    --spacing-5: 1.25rem; /* 20px */
-    --spacing-6: 1.5rem;  /* 24px */
-    --spacing-8: 2rem;    /* 32px */
-    --spacing-10: 2.5rem; /* 40px */
-    --spacing-12: 3rem;   /* 48px */
-    --spacing-16: 4rem;   /* 64px */
-    --spacing-20: 5rem;   /* 80px */
-    --spacing-24: 6rem;   /* 96px */
+    /* Fluid Spacing System - Scales with screen size */
+    --spacing-1: 0.25rem; /* 4px - Fixed for small spacing */
+    --spacing-2: 0.5rem;  /* 8px - Fixed for small spacing */
+    --spacing-3: 0.75rem; /* 12px - Fixed for small spacing */
+    --spacing-4: 1rem;    /* 16px - Fixed for medium spacing */
+    --spacing-5: 1.25rem; /* 20px - Fixed for medium spacing */
+    --spacing-6: 1.5rem;  /* 24px - Fixed for medium spacing */
+    --spacing-8: 2rem;    /* 32px - Fixed for large spacing */
+    --spacing-10: 2.5rem; /* 40px - Fixed for large spacing */
+    --spacing-12: 3rem;   /* 48px - Fixed for large spacing */
+    --spacing-16: 4rem;   /* 64px - Fixed for XL spacing */
+    --spacing-20: 5rem;   /* 80px - Fixed for XXL spacing */
+    --spacing-24: 6rem;   /* 96px - Fixed for XXL spacing */
+
+    /* Fluid spacing for responsive layouts */
+    --spacing-fluid-xs: ${fluidSpacing.xs};
+    --spacing-fluid-sm: ${fluidSpacing.sm};
+    --spacing-fluid-md: ${fluidSpacing.md};
+    --spacing-fluid-lg: ${fluidSpacing.lg};
+    --spacing-fluid-xl: ${fluidSpacing.xl};
+    --spacing-fluid-xxl: ${fluidSpacing.xxl};
 
     /* Legacy spacing (for backwards compatibility) */
     --spacing-xs: var(--spacing-1);
@@ -126,6 +143,14 @@ const GlobalStyle = createGlobalStyle`
     --spacing-lg: var(--spacing-6);
     --spacing-xl: var(--spacing-8);
     --spacing-xxl: var(--spacing-12);
+
+    /* Container widths */
+    --container-sm: ${containers.sm};
+    --container-md: ${containers.md};
+    --container-lg: ${containers.lg};
+    --container-xl: ${containers.xl};
+    --container-2xl: ${containers['2xl']};
+    --container-prose: ${containers.prose};
 
     /* Borders & Shadows */
     --border-radius: 8px;
@@ -147,18 +172,29 @@ const GlobalStyle = createGlobalStyle`
     --cursor-examine: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg stroke='%23ffd700' stroke-width='1.6' fill='none' stroke-linecap='round'%3E%3Ccircle cx='20' cy='20' r='8'/%3E%3Cpath d='M26 26 L34 34'/%3E%3C/g%3E%3C/svg%3E") 22 22, zoom-in;
   }
 
+  /* MOBILE-FIRST: Base body styles optimized for 360px+ */
   body {
     font-family: var(--font-primary);
     background: linear-gradient(135deg, var(--ink-black) 0%, var(--deep-blue) 50%, var(--royal-blue) 100%);
-    color: var(--gray-100); /* Softer than pure white for better readability */
+    color: var(--gray-100);
     min-height: 100vh;
-    line-height: var(--lh-relaxed); /* Improved readability with 1.625 */
+    min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    line-height: var(--lh-relaxed);
     overflow-x: hidden;
     overflow-y: auto;
-    font-size: var(--fs-base); /* Ensures minimum 16px for accessibility */
+    font-size: var(--fs-base); /* Fluid 16px+ base size */
+
+    /* Mobile-optimized touch */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+    /* Prevent zoom on input focus (iOS) */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
   }
 
-  /* Improved Typography Hierarchy */
+  /* MOBILE-FIRST: Typography Hierarchy optimized for small screens */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     color: var(--gold);
@@ -167,33 +203,56 @@ const GlobalStyle = createGlobalStyle`
     line-height: var(--lh-tight);
     font-weight: 600;
     margin-bottom: var(--spacing-4);
+
+    /* Prevent text from being too wide on larger screens */
+    max-width: var(--container-prose);
   }
 
-  h1 { font-size: var(--fs-4xl); }
-  h2 { font-size: var(--fs-3xl); }
-  h3 { font-size: var(--fs-2xl); }
-  h4 { font-size: var(--fs-xl); }
-  h5 { font-size: var(--fs-lg); }
-  h6 { font-size: var(--fs-md); }
+  /* Mobile-first heading sizes */
+  h1 { font-size: var(--fs-3xl); } /* Smaller on mobile */
+  h2 { font-size: var(--fs-2xl); }
+  h3 { font-size: var(--fs-xl); }
+  h4 { font-size: var(--fs-lg); }
+  h5 { font-size: var(--fs-md); }
+  h6 { font-size: var(--fs-base); }
+
+  /* Scale up headings on larger screens */
+  @media ${devices.tablet} {
+    h1 { font-size: var(--fs-4xl); }
+    h2 { font-size: var(--fs-3xl); }
+    h3 { font-size: var(--fs-2xl); }
+  }
+
+  @media ${devices.desktop} {
+    h1 { font-size: var(--fs-5xl); }
+    h2 { font-size: var(--fs-4xl); }
+    h3 { font-size: var(--fs-3xl); }
+  }
 
   /* Improved body text readability */
   p {
     line-height: var(--lh-relaxed);
     margin-bottom: var(--spacing-4);
-    max-width: 75ch; /* Optimal reading line length */
+    max-width: var(--container-prose); /* Optimal reading line length */
   }
 
-  /* Better link styling */
+  /* Touch-friendly links */
   a {
     color: var(--gold);
     text-decoration: underline;
     text-decoration-color: rgba(212, 175, 55, 0.5);
     transition: color var(--transition-fast), text-decoration-color var(--transition-fast);
+    min-height: 44px; /* Minimum touch target */
+    display: inline-block;
+    padding: 0.25rem 0;
   }
 
-  a:hover {
-    color: var(--faded-gold);
-    text-decoration-color: var(--faded-gold);
+  /* Hover only for non-touch devices */
+  @media ${devices.mouse} {
+    a:hover {
+      color: var(--faded-gold);
+      text-decoration-color: var(--faded-gold);
+    }
   }
 
   .emoji-icon { filter: drop-shadow(0 0 8px rgba(212,175,55,0.4)); }
@@ -220,7 +279,21 @@ const GlobalStyle = createGlobalStyle`
     cursor: var(--cursor-examine);
   }
 
-  body.large-text { font-size: 1.25rem; /* 20px minimum for large text */ }
+  /* Accessibility: Large text mode */
+  body.large-text {
+    font-size: 1.25rem; /* 20px minimum for large text */
+
+    /* Scale up all text proportionally */
+    --fs-xs: calc(${fluidTypography.xs} * 1.25);
+    --fs-sm: calc(${fluidTypography.sm} * 1.25);
+    --fs-base: calc(${fluidTypography.base} * 1.25);
+    --fs-md: calc(${fluidTypography.md} * 1.25);
+    --fs-lg: calc(${fluidTypography.lg} * 1.25);
+    --fs-xl: calc(${fluidTypography.xl} * 1.25);
+    --fs-2xl: calc(${fluidTypography['2xl']} * 1.25);
+    --fs-3xl: calc(${fluidTypography['3xl']} * 1.25);
+    --fs-4xl: calc(${fluidTypography['4xl']} * 1.25);
+  }
   body.force-reduced-motion *, body.force-reduced-motion *::before, body.force-reduced-motion *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
@@ -463,38 +536,139 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .manuscript-container,
-    .journal-page {
-      margin: var(--spacing-sm);
-      padding: var(--spacing-lg);
+  /* MOBILE-FIRST: Responsive Design */
+
+  /* Base styles already optimized for mobile (360px+) */
+
+  /* Tablet enhancements (768px+) */
+  @media ${devices.tablet} {
+    body {
+      font-size: calc(var(--fs-base) * 1.05); /* Slightly larger on tablets */
     }
 
-    .btn-manuscript,
-    .btn-choice {
-      padding: var(--spacing-md);
+    .manuscript-container,
+    .journal-page {
+      margin: var(--spacing-md);
+      padding: var(--spacing-xl);
+      max-width: var(--container-md);
+      margin-left: auto;
+      margin-right: auto;
     }
   }
 
-  /* Accessibility */
-  @media (prefers-reduced-motion: reduce) {
+  /* Desktop enhancements (1024px+) */
+  @media ${devices.desktop} {
+    body {
+      font-size: calc(var(--fs-base) * 1.1); /* Larger on desktop */
+    }
+
+    .manuscript-container,
+    .journal-page {
+      margin: var(--spacing-lg);
+      padding: var(--spacing-xxl);
+      max-width: var(--container-lg);
+    }
+  }
+
+  /* Wide screen optimizations (1440px+) */
+  @media ${devices.wide} {
+    .manuscript-container,
+    .journal-page {
+      max-width: var(--container-xl);
+    }
+  }
+
+  /* Enhanced Accessibility & Performance */
+  @media ${devices.reducedMotion} {
     *,
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 
-  /* High contrast mode */
-  @media (prefers-contrast: high) {
+  /* High contrast mode support */
+  @media ${devices.highContrast} {
     :root {
       --parchment: #ffffff;
       --ink-black: #000000;
       --gold: #ffff00;
       --copper: #ff8800;
+      --gray-100: #ffffff;
+      --gray-900: #000000;
+    }
+  }
+
+  /* Touch device optimizations */
+  @media ${devices.touch} {
+    /* Disable hover effects on touch devices */
+    *:hover {
+      /* Reset hover styles to prevent sticky hover states */
+    }
+
+    /* Improve touch targets */
+    button,
+    input,
+    select,
+    textarea,
+    a,
+    .is-interactive {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    /* Prevent double-tap zoom */
+    a, button {
+      touch-action: manipulation;
+    }
+  }
+
+  /* Container utilities for consistent layouts */
+  .container {
+    width: 100%;
+    max-width: var(--container-lg);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-4);
+    padding-right: var(--spacing-4);
+  }
+
+  .container-sm { max-width: var(--container-sm); }
+  .container-md { max-width: var(--container-md); }
+  .container-lg { max-width: var(--container-lg); }
+  .container-xl { max-width: var(--container-xl); }
+  .container-2xl { max-width: var(--container-2xl); }
+  .container-prose { max-width: var(--container-prose); }
+
+  /* Responsive utilities */
+  .mobile-only {
+    display: block;
+  }
+
+  .tablet-up {
+    display: none;
+  }
+
+  @media ${devices.tablet} {
+    .mobile-only {
+      display: none;
+    }
+
+    .tablet-up {
+      display: block;
+    }
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  @media ${devices.desktop} {
+    .desktop-only {
+      display: block;
     }
   }
 
