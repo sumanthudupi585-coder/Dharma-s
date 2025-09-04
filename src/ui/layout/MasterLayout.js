@@ -112,7 +112,7 @@ const Header = styled.header`
 const HeaderInner = styled.div`
   max-width: ${containers.xl};
   margin: 0 auto;
-  padding: ${spacing.md} ${spacing.lg};
+  padding: ${spacing.sm} ${spacing.md};
   display: grid;
   gap: ${spacing.md};
   align-items: center;
@@ -122,11 +122,11 @@ const HeaderInner = styled.div`
 
   @media ${devices.tablet} {
     grid-template-columns: auto 1fr auto;
-    padding: ${spacing.md} ${spacing.xl};
+    padding: ${spacing.sm} ${spacing.lg};
   }
 
   @media ${devices.desktop} {
-    padding: ${spacing.lg} ${spacing.xl};
+    padding: ${spacing.md} ${spacing.lg};
   }
 `;
 
@@ -226,20 +226,20 @@ const FooterInner = styled.div`
   min-height: 44px; /* Ensure touch targets */
 
   /* Mobile: Stack vertically or reduce padding */
-  padding: ${spacing.sm} ${spacing.md};
+  padding: ${spacing.xs} ${spacing.sm};
   flex-direction: column;
   gap: ${spacing['1']};
   text-align: center;
 
   @media ${devices.tablet} {
-    padding: ${spacing.md} ${spacing.lg};
+    padding: ${spacing.sm} ${spacing.md};
     flex-direction: row;
     justify-content: space-between;
     text-align: left;
   }
 
   @media ${devices.desktop} {
-    padding: ${spacing.md} ${spacing.xl};
+    padding: ${spacing.sm} ${spacing.lg};
   }
 `;
 
