@@ -14043,7 +14043,7 @@
         }), Object.defineProperty(e, "__esModule", {
             value: !0
         })
-    }, n.p = "/qwertyuio/", (() => {
+    }, n.p = "/qwertyui/", (() => {
         var e = {
             792: 0
         };
