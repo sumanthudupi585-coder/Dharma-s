@@ -212,9 +212,10 @@ const NarrativeContent = styled.div`
   padding: var(--spacing-lg);
   position: relative;
   z-index: 10;
-  max-width: 70ch;
-  margin: 0 auto;
-  padding-bottom: calc(var(--spacing-md) + 140px);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding-bottom: calc(var(--spacing-sm) + 120px);
 `;
 
 // Mini-map panel
