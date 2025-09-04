@@ -56,7 +56,10 @@ export default function HeaderActions() {
   const { dispatch } = useGame();
   const [settingsOpen, setSettingsOpen] = React.useState(false);
 
-  const openJournal = () => dispatch({ type: ACTIONS.TOGGLE_JOURNAL });
+  const openJournal = () => {
+    dispatch({ type: ACTIONS.SET_JOURNAL_TAB, payload: 'profile' });
+    dispatch({ type: ACTIONS.TOGGLE_JOURNAL });
+  };
   const openGlossary = () => {
     dispatch({ type: ACTIONS.SET_JOURNAL_TAB, payload: 'glossary' });
     dispatch({ type: ACTIONS.TOGGLE_JOURNAL });
