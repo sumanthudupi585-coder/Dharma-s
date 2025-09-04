@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGame, ACTIONS } from '../context/GameContext';
+import SceneProgressMap from './SceneProgressMap';
+import { useGame, ACTIONS, SCENES } from '../context/GameContext';
 import { GLOSSARY } from '../data/glossary';
 
 // Breathing glow effect for golden elements
@@ -618,6 +619,13 @@ export default function Journal({ isVisible = true }) {
   const [glossaryLetter, setGlossaryLetter] = useState('All');
 
   const { playerProfile, gameProgress, inventory } = state;
+  const sceneOrder = [
+    SCENES.DASHASHWAMEDH_GHAT,
+    SCENES.LABYRINTH_GHATS,
+    SCENES.NYAYA_TRIAL,
+    SCENES.VAISESIKA_TRIAL,
+    SCENES.THE_WARDEN,
+  ];
 
   const [search, setSearch] = useState('');
   const [activeTags, setActiveTags] = useState(new Set());
@@ -644,7 +652,7 @@ export default function Journal({ isVisible = true }) {
     { id: 'objectives', label: 'Tasks', icon: '📋' },
     { id: 'clues', label: 'Clues', icon: '🔍' },
     { id: 'glossary', label: 'Glossary', icon: '📖' },
-    { id: 'inventory', label: 'Items', icon: '🎒' },
+    { id: 'map', label: 'Journey', icon: '🗺️' },
   ];
 
   const renderTabContent = () => {
@@ -868,45 +876,15 @@ export default function Journal({ isVisible = true }) {
         );
       }
 
-      case 'inventory':
+      case 'map':
         return (
           <ContentWrapper>
-            <InventoryGrid>
-              {Array.from({ length: 12 }, (_, i) => {
-                const item = inventory.items[i];
-                return (
-                  <InventorySlot
-                    key={i}
-                    $hasItem={!!item}
-                    onClick={() => item && setSelectedItem(item)}
-                    whileHover={{ scale: item ? 1.05 : 1 }}
-                    whileTap={{ scale: item ? 0.95 : 1 }}
-                  >
-                    {item ? item.icon : '∅'}
-                  </InventorySlot>
-                );
-              })}
-            </InventoryGrid>
-
-            <AnimatePresence>
-              {selectedItem && (
-                <ItemDetail
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <ItemName>{selectedItem.name}</ItemName>
-                  <ItemLore>{selectedItem.lore}</ItemLore>
-                </ItemDetail>
-              )}
-            </AnimatePresence>
-
-            {inventory.items.length === 0 && (
-              <EmptyState>
-                <EmptyText>Sacred artifacts will manifest here...</EmptyText>
-              </EmptyState>
-            )}
+            <SceneProgressMap
+              scenes={sceneOrder}
+              current={state.currentScene}
+              completed={state.gameProgress.completedScenes}
+              onSelect={(s) => dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: s })}
+            />
           </ContentWrapper>
         );
 
