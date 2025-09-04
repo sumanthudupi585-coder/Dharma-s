@@ -38,7 +38,11 @@ function GameRouter() {
         variants={variants}
         transition={{ duration: 0.4 }}
       >
-        {state.gameState === GAME_STATES.TITLE_SCREEN && <TitleScreen />}
+        {state.gameState === GAME_STATES.TITLE_SCREEN && (
+          <MasterLayout showHeader={false} showFooter={false}>
+            <TitleScreen />
+          </MasterLayout>
+        )}
         {state.gameState === GAME_STATES.PROFILE_CREATION && (
           <MasterLayout>
             <ProfileCreation />
