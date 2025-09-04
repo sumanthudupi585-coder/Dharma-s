@@ -5,45 +5,67 @@ import SettingsModal from './SettingsModal';
 import DailyRiddle from './DailyRiddle';
 import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
 import Button from '../ui/primitives/Button';
-import { useGame } from '../context/GameContext'; // Or wherever your audio function is
+import { colors, spacing, radius, typography } from '../ui/tokens';
 
-function TitleScreen() {
-  const { dispatch, resumeAudio } = useGame(); // Assuming you add resumeAudio to your context
-
-  const handleStartClick = () => {
-    resumeAudio(); // This will be called on a user gesture
-    dispatch({ type: 'START_GAME' });
-  };
-
-  return (
-    <div>
-      <h1>Dharma's Cipher</h1>
-      <button onClick={handleStartClick}>Begin</button>
-    </div>
-  );
-}
-
-// Subtle breathing glow for golden elements
-const breath = keyframes`
-  0%, 100% {
-    text-shadow:
-      0 0 10px rgba(212,175,55,0.35),
-      0 0 20px rgba(212,175,55,0.25),
-      0 2px 0 rgba(0,0,0,0.35);
-  }
-  50% {
-    text-shadow:
-      0 0 16px rgba(255,215,0,0.65),
-      0 0 32px rgba(212,175,55,0.45),
-      0 2px 0 rgba(0,0,0,0.35);
-  }
-`;
+// Reserved breathing glow animation for future use
+// const breath = keyframes`
+//   0%, 100% {
+//     text-shadow:
+//       0 0 10px rgba(212,175,55,0.35),
+//       0 0 20px rgba(212,175,55,0.25),
+//       0 2px 0 rgba(0,0,0,0.35);
+//   }
+//   50% {
+//     text-shadow:
+//       0 0 16px rgba(255,215,0,0.65),
+//       0 0 32px rgba(212,175,55,0.45),
+//       0 2px 0 rgba(0,0,0,0.35);
+//   }
+// `;
 
 // Slow ambient motion for background aura
 const drift = keyframes`
   0%   { transform: translate(-5%, -5%) scale(1); opacity: 0.35; }
   50%  { transform: translate(5%, 5%) scale(1.05); opacity: 0.55; }
   100% { transform: translate(-5%, -5%) scale(1); opacity: 0.35; }
+`;
+
+// Floating particles animation
+const float = keyframes`
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+    opacity: 1;
+  }
+`;
+
+// Pulse animation for interactive elements
+const pulse = keyframes`
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(212, 175, 55, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.6), 0 0 40px rgba(212, 175, 55, 0.3);
+  }
+`;
+
+// Subtle text glow animation
+const textGlow = keyframes`
+  0%, 100% {
+    text-shadow:
+      0 0 10px rgba(212, 175, 55, 0.4),
+      0 0 20px rgba(212, 175, 55, 0.2),
+      0 2px 0 rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    text-shadow:
+      0 0 20px rgba(255, 215, 0, 0.7),
+      0 0 40px rgba(212, 175, 55, 0.5),
+      0 2px 0 rgba(0, 0, 0, 0.3);
+  }
 `;
 
 const slowSpin = keyframes`
@@ -99,6 +121,19 @@ const Particle = styled.div`
   left: var(--x);
   top: var(--y);
   opacity: var(--o, 0.6);
+  animation: ${float} ${(props) => 3 + Math.random() * 4}s ease-in-out infinite;
+  animation-delay: ${(props) => Math.random() * 2}s;
+`;
+
+const FloatingElement = styled(motion.div)`
+  position: absolute;
+  font-size: ${(props) => props.size || typography.fontSize.lg};
+  color: rgba(212, 175, 55, 0.3);
+  pointer-events: none;
+  left: var(--x);
+  top: var(--y);
+  animation: ${float} ${(props) => 5 + Math.random() * 5}s ease-in-out infinite;
+  animation-delay: ${(props) => Math.random() * 3}s;
 `;
 
 const Sanskrit = styled.span`
@@ -184,7 +219,7 @@ const Mandala = styled.div`
   animation: ${slowSpin} 120s linear infinite;
 `;
 
-const TitleWordmark = styled.h1`
+const TitleWordmark = styled(motion.h1)`
   font-family: var(--font-display);
   font-size: clamp(3rem, 9vw, 6rem);
   letter-spacing: 0.12em;
@@ -200,9 +235,10 @@ const TitleWordmark = styled.h1`
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: ${breath} 4.2s ease-in-out infinite;
+  animation: ${textGlow} 4.2s ease-in-out infinite;
   position: relative;
   will-change: transform, opacity, filter;
+  cursor: pointer;
 
   &::after {
     content: '';
@@ -217,15 +253,21 @@ const TitleWordmark = styled.h1`
     z-index: -1;
     pointer-events: none;
   }
+
+  &:hover {
+    animation: ${textGlow} 2s ease-in-out infinite;
+  }
 `;
 
-const Whisper = styled.p`
+const Whisper = styled(motion.p)`
   font-family: var(--font-primary);
-  color: #b8941f;
+  color: ${colors.fadedGold};
   opacity: 0.8;
   margin-top: -6px;
   text-align: center;
-  font-size: var(--fs-sm);
+  font-size: ${typography.fontSize.sm};
+  animation: ${pulse} 3s ease-in-out infinite;
+  animation-delay: 1s;
 `;
 
 const Menu = styled(motion.div)`
@@ -236,9 +278,26 @@ const Menu = styled(motion.div)`
 
 const ActionButton = styled(motion(Button))`
   width: 100%;
-  padding: 14px 26px;
-  font-size: var(--fs-lg);
-  border-radius: 999px;
+  padding: ${spacing['4']} ${spacing['6']};
+  font-size: ${typography.fontSize.lg};
+  border-radius: ${radius.pill};
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+    transition: left 0.6s ease;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
 `;
 
 function TitleScreen() {
@@ -247,7 +306,26 @@ function TitleScreen() {
   const [hasSave, setHasSave] = useState(false);
   const rootRef = useRef(null);
   const particles = useMemo(
-    () => Array.from({ length: 36 }, () => ({ x: Math.random() * 100, y: Math.random() * 100 })),
+    () =>
+      Array.from({ length: 36 }, (_, i) => ({
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        delay: Math.random() * 2,
+        duration: 3 + Math.random() * 4,
+      })),
+    []
+  );
+
+  const floatingElements = useMemo(
+    () =>
+      Array.from({ length: 8 }, (_, i) => ({
+        symbol: ['✦', '✧', '✩', '✪', '✫', '✬', '✭', '✮'][i],
+        x: 10 + Math.random() * 80,
+        y: 10 + Math.random() * 80,
+        size: `${0.8 + Math.random() * 0.6}rem`,
+        delay: Math.random() * 3,
+        duration: 8 + Math.random() * 4,
+      })),
     []
   );
   const glyphs = useMemo(
@@ -310,30 +388,70 @@ function TitleScreen() {
     <ScreenRoot ref={rootRef}>
       <ParallaxLayer aria-hidden="true">
         {particles.map((p, i) => (
-          <Particle key={i} style={{ '--x': `${p.x}%`, '--y': `${p.y}%` }} />
+          <Particle
+            key={i}
+            style={{
+              '--x': `${p.x}%`,
+              '--y': `${p.y}%`,
+              animationDelay: `${p.delay}s`,
+              animationDuration: `${p.duration}s`,
+            }}
+          />
         ))}
         {glyphs.map((s, i) => (
           <Sanskrit key={i} style={{ '--x': `${s.x}%`, '--y': `${s.y}%` }}>
             {s.g}
           </Sanskrit>
         ))}
+        {floatingElements.map((el, i) => (
+          <FloatingElement
+            key={i}
+            size={el.size}
+            style={{
+              '--x': `${el.x}%`,
+              '--y': `${el.y}%`,
+              animationDelay: `${el.delay}s`,
+              animationDuration: `${el.duration}s`,
+            }}
+          >
+            {el.symbol}
+          </FloatingElement>
+        ))}
       </ParallaxLayer>
       <CenterStack>
         <TitleHalo />
         <Mandala aria-hidden />
-        <TitleWordmark className="shimmer">Dharma's Cipher</TitleWordmark>
-        <Whisper>Press Enter to begin.</Whisper>
-        <Menu
-          initial={{ opacity: 0, y: 10 }}
+        <TitleWordmark
+          className="shimmer"
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
+          transition={{ duration: 1, delay: 0.3 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          Dharma's Cipher
+        </TitleWordmark>
+        <Whisper
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.8 }}
+          transition={{ duration: 0.8, delay: 1 }}
+        >
+          Press Enter to begin.
+        </Whisper>
+        <Menu
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 1.2, staggerChildren: 0.1 }}
         >
           <ActionButton
             className="is-interactive"
             type="button"
             aria-label="Start New Journey"
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 1.3 }}
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
             onClick={handleNewGame}
           >
             Start New Journey

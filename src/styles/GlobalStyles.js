@@ -1,5 +1,6 @@
 import React from 'react';
 import { createGlobalStyle, keyframes } from 'styled-components';
+import { devices, fluidTypography, fluidSpacing, containers } from '../ui/tokens';
 
 // Animation keyframes
 const shimmer = keyframes`
@@ -45,6 +46,13 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
   }
 
+  /* MOBILE-FIRST: Base styles for 360px+ screens */
+  html {
+    font-size: 100%; /* 16px base - respects user's browser settings */
+    scroll-behavior: smooth;
+    text-size-adjust: 100%; /* Prevents automatic text scaling on mobile */
+  }
+
   :root {
     /* Color Palette - Manuscript/Temple Theme */
     --parchment: #f4f1de;
@@ -59,28 +67,90 @@ const GlobalStyle = createGlobalStyle`
     --sacred-orange: #ff6b35;
     --muted-green: #6b8e23;
 
+    /* Secondary UI Colors */
+    --success-green: #22c55e;
+    --warning-amber: #f59e0b;
+    --error-red: #ef4444;
+    --info-blue: #3b82f6;
+
+    /* Neutral Grays for Better Contrast */
+    --gray-900: #111827;
+    --gray-800: #1f2937;
+    --gray-700: #374151;
+    --gray-600: #4b5563;
+    --gray-500: #6b7280;
+    --gray-400: #9ca3af;
+    --gray-300: #d1d5db;
+    --gray-200: #e5e7eb;
+    --gray-100: #f3f4f6;
+    --gray-50: #f9fafb;
+
+    /* Interactive States */
+    --hover-overlay: rgba(212, 175, 55, 0.1);
+    --focus-ring: #d4af37;
+    --active-state: rgba(212, 175, 55, 0.2);
+
     /* Typography */
     --font-primary: 'Crimson Text', serif;
     --font-display: 'Cinzel', serif;
     --font-devanagari: 'Noto Serif Devanagari', 'Noto Sans Devanagari', serif;
-    /* Modular scale */
-    --fs-xs: clamp(0.8rem, 0.4vw + 0.72rem, 0.9rem);
-    --fs-sm: clamp(0.9rem, 0.6vw + 0.8rem, 1rem);
-    --fs-md: clamp(1rem, 0.6vw + 0.9rem, 1.125rem);
-    --fs-lg: clamp(1.125rem, 0.8vw + 1rem, 1.375rem);
-    --fs-xl: clamp(1.5rem, 1.2vw + 1.25rem, 2rem);
-    --fs-xxl: clamp(2rem, 2.5vw + 1.5rem, 3rem);
-    --lh-tight: 1.3;
-    --lh-normal: 1.6;
-    --lh-loose: 1.85;
 
-    /* Spacing */
-    --spacing-xs: 0.25rem;
-    --spacing-sm: 0.5rem;
-    --spacing-md: 1rem;
-    --spacing-lg: 1.5rem;
-    --spacing-xl: 2rem;
-    --spacing-xxl: 3rem;
+    /* Fluid Typography Scale - Mobile First */
+    --fs-xs: ${fluidTypography.xs};
+    --fs-sm: ${fluidTypography.sm};
+    --fs-base: ${fluidTypography.base}; /* Minimum 16px for accessibility */
+    --fs-md: ${fluidTypography.md};
+    --fs-lg: ${fluidTypography.lg};
+    --fs-xl: ${fluidTypography.xl};
+    --fs-2xl: ${fluidTypography['2xl']};
+    --fs-3xl: ${fluidTypography['3xl']};
+    --fs-4xl: ${fluidTypography['4xl']};
+    --fs-5xl: ${fluidTypography['5xl']};
+
+    /* Improved Line Heights */
+    --lh-tight: 1.25;
+    --lh-snug: 1.375;
+    --lh-normal: 1.5;
+    --lh-relaxed: 1.625;
+    --lh-loose: 1.75;
+
+    /* Fluid Spacing System - Scales with screen size */
+    --spacing-1: 0.25rem; /* 4px - Fixed for small spacing */
+    --spacing-2: 0.5rem;  /* 8px - Fixed for small spacing */
+    --spacing-3: 0.75rem; /* 12px - Fixed for small spacing */
+    --spacing-4: 1rem;    /* 16px - Fixed for medium spacing */
+    --spacing-5: 1.25rem; /* 20px - Fixed for medium spacing */
+    --spacing-6: 1.5rem;  /* 24px - Fixed for medium spacing */
+    --spacing-8: 2rem;    /* 32px - Fixed for large spacing */
+    --spacing-10: 2.5rem; /* 40px - Fixed for large spacing */
+    --spacing-12: 3rem;   /* 48px - Fixed for large spacing */
+    --spacing-16: 4rem;   /* 64px - Fixed for XL spacing */
+    --spacing-20: 5rem;   /* 80px - Fixed for XXL spacing */
+    --spacing-24: 6rem;   /* 96px - Fixed for XXL spacing */
+
+    /* Fluid spacing for responsive layouts */
+    --spacing-fluid-xs: ${fluidSpacing.xs};
+    --spacing-fluid-sm: ${fluidSpacing.sm};
+    --spacing-fluid-md: ${fluidSpacing.md};
+    --spacing-fluid-lg: ${fluidSpacing.lg};
+    --spacing-fluid-xl: ${fluidSpacing.xl};
+    --spacing-fluid-xxl: ${fluidSpacing.xxl};
+
+    /* Legacy spacing (for backwards compatibility) */
+    --spacing-xs: var(--spacing-1);
+    --spacing-sm: var(--spacing-2);
+    --spacing-md: var(--spacing-4);
+    --spacing-lg: var(--spacing-6);
+    --spacing-xl: var(--spacing-8);
+    --spacing-xxl: var(--spacing-12);
+
+    /* Container widths */
+    --container-sm: ${containers.sm};
+    --container-md: ${containers.md};
+    --container-lg: ${containers.lg};
+    --container-xl: ${containers.xl};
+    --container-2xl: ${containers['2xl']};
+    --container-prose: ${containers.prose};
 
     /* Borders & Shadows */
     --border-radius: 8px;
@@ -102,27 +172,88 @@ const GlobalStyle = createGlobalStyle`
     --cursor-examine: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg stroke='%23ffd700' stroke-width='1.6' fill='none' stroke-linecap='round'%3E%3Ccircle cx='20' cy='20' r='8'/%3E%3Cpath d='M26 26 L34 34'/%3E%3C/g%3E%3C/svg%3E") 22 22, zoom-in;
   }
 
+  /* MOBILE-FIRST: Base body styles optimized for 360px+ */
   body {
     font-family: var(--font-primary);
     background: linear-gradient(135deg, var(--ink-black) 0%, var(--deep-blue) 50%, var(--royal-blue) 100%);
-    color: var(--parchment);
+    color: var(--gray-100);
     min-height: 100vh;
-    line-height: var(--lh-normal);
+    min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
+    line-height: var(--lh-relaxed);
     overflow-x: hidden;
     overflow-y: auto;
-    font-size: var(--fs-md);
+    font-size: var(--fs-base); /* Fluid 16px+ base size */
+
+    /* Mobile-optimized touch */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+    /* Prevent zoom on input focus (iOS) */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
   }
 
-  h1, h2, h3 {
+  /* MOBILE-FIRST: Typography Hierarchy optimized for small screens */
+  h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     color: var(--gold);
     letter-spacing: 0.02em;
     text-shadow: 0 2px 6px rgba(0,0,0,0.35);
     line-height: var(--lh-tight);
+    font-weight: 600;
+    margin-bottom: var(--spacing-4);
+
+    /* Prevent text from being too wide on larger screens */
+    max-width: var(--container-prose);
   }
-  h1 { font-size: var(--fs-xxl); }
-  h2 { font-size: var(--fs-xl); }
-  h3 { font-size: var(--fs-lg); }
+
+  /* Mobile-first heading sizes */
+  h1 { font-size: var(--fs-3xl); } /* Smaller on mobile */
+  h2 { font-size: var(--fs-2xl); }
+  h3 { font-size: var(--fs-xl); }
+  h4 { font-size: var(--fs-lg); }
+  h5 { font-size: var(--fs-md); }
+  h6 { font-size: var(--fs-base); }
+
+  /* Scale up headings on larger screens */
+  @media ${devices.tablet} {
+    h1 { font-size: var(--fs-4xl); }
+    h2 { font-size: var(--fs-3xl); }
+    h3 { font-size: var(--fs-2xl); }
+  }
+
+  @media ${devices.desktop} {
+    h1 { font-size: var(--fs-5xl); }
+    h2 { font-size: var(--fs-4xl); }
+    h3 { font-size: var(--fs-3xl); }
+  }
+
+  /* Improved body text readability */
+  p {
+    line-height: var(--lh-relaxed);
+    margin-bottom: var(--spacing-4);
+    max-width: var(--container-prose); /* Optimal reading line length */
+  }
+
+  /* Touch-friendly links */
+  a {
+    color: var(--gold);
+    text-decoration: underline;
+    text-decoration-color: rgba(212, 175, 55, 0.5);
+    transition: color var(--transition-fast), text-decoration-color var(--transition-fast);
+    min-height: 44px; /* Minimum touch target */
+    display: inline-block;
+    padding: 0.25rem 0;
+  }
+
+  /* Hover only for non-touch devices */
+  @media ${devices.mouse} {
+    a:hover {
+      color: var(--faded-gold);
+      text-decoration-color: var(--faded-gold);
+    }
+  }
 
   .emoji-icon { filter: drop-shadow(0 0 8px rgba(212,175,55,0.4)); }
 
@@ -148,7 +279,21 @@ const GlobalStyle = createGlobalStyle`
     cursor: var(--cursor-examine);
   }
 
-  body.large-text { font-size: 18px; }
+  /* Accessibility: Large text mode */
+  body.large-text {
+    font-size: 1.25rem; /* 20px minimum for large text */
+
+    /* Scale up all text proportionally */
+    --fs-xs: calc(${fluidTypography.xs} * 1.25);
+    --fs-sm: calc(${fluidTypography.sm} * 1.25);
+    --fs-base: calc(${fluidTypography.base} * 1.25);
+    --fs-md: calc(${fluidTypography.md} * 1.25);
+    --fs-lg: calc(${fluidTypography.lg} * 1.25);
+    --fs-xl: calc(${fluidTypography.xl} * 1.25);
+    --fs-2xl: calc(${fluidTypography['2xl']} * 1.25);
+    --fs-3xl: calc(${fluidTypography['3xl']} * 1.25);
+    --fs-4xl: calc(${fluidTypography['4xl']} * 1.25);
+  }
   body.force-reduced-motion *, body.force-reduced-motion *::before, body.force-reduced-motion *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
@@ -160,6 +305,8 @@ const GlobalStyle = createGlobalStyle`
     --gold: #ffff00;
     --copper: #ff8800;
     --dark-parchment: #e5e5e5;
+    --gray-100: #ffffff;
+    --gray-900: #000000;
   }
 
   #root {
@@ -176,7 +323,7 @@ const GlobalStyle = createGlobalStyle`
     overflow: visible;
   }
 
-  /* Typography Classes */
+  /* Improved Typography Classes */
   .devanagari-text {
     font-family: var(--font-devanagari);
   }
@@ -186,20 +333,40 @@ const GlobalStyle = createGlobalStyle`
     font-weight: 600;
     color: var(--gold);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    line-height: var(--lh-tight);
   }
 
   .text-body {
     font-family: var(--font-primary);
-    line-height: 1.8;
-    color: var(--parchment);
+    line-height: var(--lh-relaxed);
+    color: var(--gray-100);
+    font-size: var(--fs-base);
   }
 
   .text-manuscript {
     font-family: var(--font-primary);
     font-style: italic;
     color: var(--dark-parchment);
-    font-size: 0.9em;
+    font-size: var(--fs-sm);
+    line-height: var(--lh-normal);
   }
+
+  /* Additional utility typography classes */
+  .text-xs { font-size: var(--fs-xs); }
+  .text-sm { font-size: var(--fs-sm); }
+  .text-base { font-size: var(--fs-base); }
+  .text-md { font-size: var(--fs-md); }
+  .text-lg { font-size: var(--fs-lg); }
+  .text-xl { font-size: var(--fs-xl); }
+  .text-2xl { font-size: var(--fs-2xl); }
+  .text-3xl { font-size: var(--fs-3xl); }
+  .text-4xl { font-size: var(--fs-4xl); }
+
+  .leading-tight { line-height: var(--lh-tight); }
+  .leading-snug { line-height: var(--lh-snug); }
+  .leading-normal { line-height: var(--lh-normal); }
+  .leading-relaxed { line-height: var(--lh-relaxed); }
+  .leading-loose { line-height: var(--lh-loose); }
 
   /* Make interactive elements intensify the cursor */
   body:not(.custom-cursor-active) .is-interactive:hover,
@@ -369,38 +536,139 @@ const GlobalStyle = createGlobalStyle`
     }
   }
 
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .manuscript-container,
-    .journal-page {
-      margin: var(--spacing-sm);
-      padding: var(--spacing-lg);
+  /* MOBILE-FIRST: Responsive Design */
+
+  /* Base styles already optimized for mobile (360px+) */
+
+  /* Tablet enhancements (768px+) */
+  @media ${devices.tablet} {
+    body {
+      font-size: calc(var(--fs-base) * 1.05); /* Slightly larger on tablets */
     }
 
-    .btn-manuscript,
-    .btn-choice {
-      padding: var(--spacing-md);
+    .manuscript-container,
+    .journal-page {
+      margin: var(--spacing-md);
+      padding: var(--spacing-xl);
+      max-width: var(--container-md);
+      margin-left: auto;
+      margin-right: auto;
     }
   }
 
-  /* Accessibility */
-  @media (prefers-reduced-motion: reduce) {
+  /* Desktop enhancements (1024px+) */
+  @media ${devices.desktop} {
+    body {
+      font-size: calc(var(--fs-base) * 1.1); /* Larger on desktop */
+    }
+
+    .manuscript-container,
+    .journal-page {
+      margin: var(--spacing-lg);
+      padding: var(--spacing-xxl);
+      max-width: var(--container-lg);
+    }
+  }
+
+  /* Wide screen optimizations (1440px+) */
+  @media ${devices.wide} {
+    .manuscript-container,
+    .journal-page {
+      max-width: var(--container-xl);
+    }
+  }
+
+  /* Enhanced Accessibility & Performance */
+  @media ${devices.reducedMotion} {
     *,
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 
-  /* High contrast mode */
-  @media (prefers-contrast: high) {
+  /* High contrast mode support */
+  @media ${devices.highContrast} {
     :root {
       --parchment: #ffffff;
       --ink-black: #000000;
       --gold: #ffff00;
       --copper: #ff8800;
+      --gray-100: #ffffff;
+      --gray-900: #000000;
+    }
+  }
+
+  /* Touch device optimizations */
+  @media ${devices.touch} {
+    /* Disable hover effects on touch devices */
+    *:hover {
+      /* Reset hover styles to prevent sticky hover states */
+    }
+
+    /* Improve touch targets */
+    button,
+    input,
+    select,
+    textarea,
+    a,
+    .is-interactive {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    /* Prevent double-tap zoom */
+    a, button {
+      touch-action: manipulation;
+    }
+  }
+
+  /* Container utilities for consistent layouts */
+  .container {
+    width: 100%;
+    max-width: var(--container-lg);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-4);
+    padding-right: var(--spacing-4);
+  }
+
+  .container-sm { max-width: var(--container-sm); }
+  .container-md { max-width: var(--container-md); }
+  .container-lg { max-width: var(--container-lg); }
+  .container-xl { max-width: var(--container-xl); }
+  .container-2xl { max-width: var(--container-2xl); }
+  .container-prose { max-width: var(--container-prose); }
+
+  /* Responsive utilities */
+  .mobile-only {
+    display: block;
+  }
+
+  .tablet-up {
+    display: none;
+  }
+
+  @media ${devices.tablet} {
+    .mobile-only {
+      display: none;
+    }
+
+    .tablet-up {
+      display: block;
+    }
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  @media ${devices.desktop} {
+    .desktop-only {
+      display: block;
     }
   }
 
