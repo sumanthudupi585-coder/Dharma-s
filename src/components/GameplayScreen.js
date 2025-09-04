@@ -254,37 +254,7 @@ const MiniMapPanel = styled.div`
 
 // Hotbar / quick slots
 const HotbarContainer = styled.div`
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: ${spacing.md};
-  display: grid;
-  gap: ${spacing['2']};
-  background: linear-gradient(145deg, rgba(0, 0, 0, 0.85), rgba(15, 15, 15, 0.95));
-  border: 2px solid #d4af37;
-  border-radius: ${radius.lg};
-  box-shadow:
-    0 10px 28px rgba(0, 0, 0, 0.7),
-    0 0 20px rgba(212, 175, 55, 0.25);
-  z-index: 120;
-  backdrop-filter: blur(10px);
-
-  /* Mobile: Fewer slots, larger touch targets */
-  grid-template-columns: repeat(4, 52px);
-  padding: ${spacing['2']} ${spacing['3']};
-
-  /* Tablet: More slots */
-  @media ${devices.tablet} {
-    grid-template-columns: repeat(5, 56px);
-    padding: ${spacing['3']} ${spacing['4']};
-    bottom: ${spacing.lg};
-  }
-
-  /* Desktop: Full 6 slots */
-  @media ${devices.desktop} {
-    grid-template-columns: repeat(6, 56px);
-    padding: 10px 12px;
-  }
+  display: none;
 `;
 
 const HotbarSlot = styled.div`
