@@ -54,27 +54,32 @@ function IconSettings({ size = 18 }) {
 
 export default function HeaderActions() {
   const { dispatch } = useGame();
+  const [settingsOpen, setSettingsOpen] = React.useState(false);
+
   const openJournal = () => dispatch({ type: ACTIONS.TOGGLE_JOURNAL });
   const openGlossary = () => {
     dispatch({ type: ACTIONS.SET_JOURNAL_TAB, payload: 'glossary' });
     dispatch({ type: ACTIONS.TOGGLE_JOURNAL });
   };
-  const openSettings = () => dispatch({ type: ACTIONS.UPDATE_SETTINGS, payload: { /* opens SettingsModal via CornerMenu flow; kept placeholder-less */ } });
 
   return (
-    <Bar>
-      <IconBtn whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} aria-label="Open Journal" onClick={openJournal}>
-        <IconJournal />
-        <span>Journal</span>
-      </IconBtn>
-      <IconBtn whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} aria-label="Open Glossary" onClick={openGlossary}>
-        <IconGlossary />
-        <span>Glossary</span>
-      </IconBtn>
-      <IconBtn whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} aria-label="Open Settings" onClick={openSettings}>
-        <IconSettings />
-        <span>Settings</span>
-      </IconBtn>
-    </Bar>
+    <>
+      <Bar>
+        <IconBtn whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} aria-label="Open Journal" onClick={openJournal}>
+          <IconJournal />
+          <span>Journal</span>
+        </IconBtn>
+        <IconBtn whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} aria-label="Open Glossary" onClick={openGlossary}>
+          <IconGlossary />
+          <span>Glossary</span>
+        </IconBtn>
+        <IconBtn whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }} aria-label="Open Settings" onClick={() => setSettingsOpen(true)}>
+          <IconSettings />
+          <span>Settings</span>
+        </IconBtn>
+      </Bar>
+
+      <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+    </>
   );
 }
