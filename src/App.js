@@ -20,6 +20,7 @@ const ProfileResults = lazy(() => import('./components/ProfileResults'));
 const GameplayScreen = lazy(() => import('./components/GameplayScreen'));
 
 function GameRouter() {
+  const isTouch = require('./hooks/useIsTouchDevice').useIsTouchDevice();
   const variants = {
     initial: { opacity: 0, filter: 'blur(8px) contrast(0.9)' },
     animate: { opacity: 1, filter: 'blur(0px) contrast(1)' },
