@@ -652,6 +652,7 @@ export default function Journal({ isVisible = true }) {
     { id: 'objectives', label: 'Tasks', icon: '📋' },
     { id: 'clues', label: 'Clues', icon: '🔍' },
     { id: 'glossary', label: 'Glossary', icon: '📖' },
+    { id: 'inventory', label: 'Items', icon: '🎒' },
     { id: 'map', label: 'Journey', icon: '🗺️' },
   ];
 
@@ -885,6 +886,48 @@ export default function Journal({ isVisible = true }) {
               completed={state.gameProgress.completedScenes}
               onSelect={(s) => dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: s })}
             />
+          </ContentWrapper>
+        );
+
+      case 'inventory':
+        return (
+          <ContentWrapper>
+            <InventoryGrid>
+              {Array.from({ length: 12 }, (_, i) => {
+                const item = inventory.items[i];
+                return (
+                  <InventorySlot
+                    key={i}
+                    $hasItem={!!item}
+                    onClick={() => item && setSelectedItem(item)}
+                    whileHover={{ scale: item ? 1.05 : 1 }}
+                    whileTap={{ scale: item ? 0.95 : 1 }}
+                  >
+                    {item ? item.icon : '∅'}
+                  </InventorySlot>
+                );
+              })}
+            </InventoryGrid>
+
+            <AnimatePresence>
+              {selectedItem && (
+                <ItemDetail
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <ItemName>{selectedItem.name}</ItemName>
+                  <ItemLore>{selectedItem.lore}</ItemLore>
+                </ItemDetail>
+              )}
+            </AnimatePresence>
+
+            {inventory.items.length === 0 && (
+              <EmptyState>
+                <EmptyText>No items yet. Sacred artifacts will manifest here...</EmptyText>
+              </EmptyState>
+            )}
           </ContentWrapper>
         );
 
