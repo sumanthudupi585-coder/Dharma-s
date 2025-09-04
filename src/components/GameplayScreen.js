@@ -903,7 +903,12 @@ export default function GameplayScreen() {
     setTimeout(() => setInkingId(null), 800);
   };
 
-  const toggleJournal = () => dispatch({ type: ACTIONS.TOGGLE_JOURNAL });
+  const toggleJournal = () => {
+    if (!state.uiState.journalOpen) {
+      dispatch({ type: ACTIONS.SET_JOURNAL_TAB, payload: 'profile' });
+    }
+    dispatch({ type: ACTIONS.TOGGLE_JOURNAL });
+  };
 
   const showTooltip = (text, e) => {
     const pad = 16;
