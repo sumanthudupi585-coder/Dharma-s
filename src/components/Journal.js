@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useGame, ACTIONS } from '../context/GameContext';
+import { GLOSSARY } from '../data/glossary';
 
 // Breathing glow effect for golden elements
 const breathingGlow = keyframes`
@@ -812,7 +813,7 @@ export default function Journal({ isVisible = true }) {
 
       case 'glossary': {
         const letters = ['All', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
-        const items = (inventory.glossary || []).slice().sort((a, b) => a.term.localeCompare(b.term));
+        const items = Object.values(GLOSSARY).slice().sort((a, b) => a.term.localeCompare(b.term));
         const filtered = items.filter((g) => {
           const t = g.term.toLowerCase();
           const okSearch = !glossarySearch || t.includes(glossarySearch.toLowerCase());
