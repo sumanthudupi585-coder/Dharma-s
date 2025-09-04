@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGame, ACTIONS } from '../context/GameContext';
+import SceneProgressMap from './SceneProgressMap';
+import { useGame, ACTIONS, SCENES } from '../context/GameContext';
+import { GLOSSARY } from '../data/glossary';
 
 // Breathing glow effect for golden elements
 const breathingGlow = keyframes`
@@ -487,6 +489,33 @@ const InventorySlot = styled(motion.div)`
   }
 `;
 
+const EmptySigil = styled.div`
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(212, 175, 55, 0.22) 0%,
+    rgba(212, 175, 55, 0.1) 45%,
+    transparent 60%
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(212, 175, 55, 0.35),
+    0 0 10px rgba(212, 175, 55, 0.25);
+  position: relative;
+  &::after {
+    content: '✦';
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #d4af37;
+    opacity: 0.85;
+    font-size: 0.9rem;
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+  }
+`;
+
 const ItemDetail = styled(motion.div)`
   background: linear-gradient(145deg, rgba(5, 5, 5, 0.95) 0%, rgba(15, 15, 15, 0.9) 100%);
   border: 2px solid #d4af37;
@@ -531,12 +560,101 @@ const EmptyText = styled.p`
   text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
 `;
 
+// Controls and glossary-specific UI
+const ControlsRow = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+`;
+
+const SearchInput = styled.input`
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  background: transparent;
+  color: #e8c86a;
+`;
+
+const TagRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+`;
+
+const TagButton = styled.button`
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid ${(p) => (p.$active ? '#ffd700' : 'rgba(212,175,55,0.35)')};
+  background: ${(p) => (p.$active ? 'linear-gradient(145deg, #d4af37, #ffd700)' : 'transparent')};
+  color: ${(p) => (p.$active ? '#000' : '#e8c86a')};
+`;
+
+const GlossaryIndex = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: var(--spacing-sm);
+`;
+
+const IndexButton = styled.button`
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid ${(p) => (p.$active ? '#ffd700' : 'rgba(212,175,55,0.35)')};
+  background: ${(p) => (p.$active ? 'linear-gradient(145deg, #d4af37, #ffd700)' : 'transparent')};
+  color: ${(p) => (p.$active ? '#000' : '#e8c86a')};
+  font-size: 0.85rem;
+`;
+
+const GlossaryGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-sm);
+`;
+
+const GlossaryCard = styled(motion.div)`
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.9), rgba(10, 10, 10, 0.98));
+  padding: var(--spacing-md);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.6),
+    0 0 16px rgba(212, 175, 55, 0.18);
+`;
+
+const GlossaryTermTitle = styled.h4`
+  margin: 0 0 6px 0;
+  font-family: var(--font-display);
+  color: #ffd700;
+  font-size: var(--fs-md);
+`;
+
+const GlossaryBrief = styled.p`
+  margin: 0;
+  font-family: var(--font-primary);
+  color: #e8c86a;
+  font-size: var(--fs-sm);
+  opacity: 0.9;
+`;
+
 export default function Journal({ isVisible = true }) {
   const { state, dispatch } = useGame();
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState(state.uiState.activeJournalTab || 'profile');
   const [selectedItem, setSelectedItem] = useState(null);
+  const [glossarySearch, setGlossarySearch] = useState('');
+  const [glossaryLetter, setGlossaryLetter] = useState('All');
 
   const { playerProfile, gameProgress, inventory } = state;
+  const sceneOrder = [
+    SCENES.DASHASHWAMEDH_GHAT,
+    SCENES.LABYRINTH_GHATS,
+    SCENES.NYAYA_TRIAL,
+    SCENES.VAISESIKA_TRIAL,
+    SCENES.THE_WARDEN,
+  ];
 
   const [search, setSearch] = useState('');
   const [activeTags, setActiveTags] = useState(new Set());
@@ -564,6 +682,7 @@ export default function Journal({ isVisible = true }) {
     { id: 'clues', label: 'Clues', icon: '🔍' },
     { id: 'glossary', label: 'Glossary', icon: '📖' },
     { id: 'inventory', label: 'Items', icon: '🎒' },
+    { id: 'map', label: 'Journey', icon: '🗺️' },
   ];
 
   const renderTabContent = () => {
@@ -658,49 +777,29 @@ export default function Journal({ isVisible = true }) {
       case 'clues':
         return (
           <ContentWrapper>
-            <div
-              style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '12px' }}
-            >
-              <input
+            <ControlsRow>
+              <SearchInput
                 type="search"
                 placeholder="Search clues"
                 aria-label="Search clues"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                style={{
-                  flex: 1,
-                  padding: '8px 10px',
-                  borderRadius: 8,
-                  border: '1px solid rgba(212,175,55,0.35)',
-                  background: 'transparent',
-                  color: '#e8c86a',
-                }}
               />
-            </div>
+            </ControlsRow>
             {tagOptions.length > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '10px' }}>
+              <TagRow>
                 {tagOptions.map((t) => (
-                  <button
+                  <TagButton
                     key={t}
                     className="is-interactive"
                     onClick={() => toggleTag(t)}
                     aria-pressed={activeTags.has(t)}
-                    style={{
-                      padding: '6px 10px',
-                      borderRadius: 999,
-                      border: activeTags.has(t)
-                        ? '1px solid #ffd700'
-                        : '1px solid rgba(212,175,55,0.35)',
-                      background: activeTags.has(t)
-                        ? 'linear-gradient(145deg, #d4af37, #ffd700)'
-                        : 'transparent',
-                      color: activeTags.has(t) ? '#000' : '#e8c86a',
-                    }}
+                    $active={activeTags.has(t)}
                   >
                     #{t}
-                  </button>
+                  </TagButton>
                 ))}
-              </div>
+              </TagRow>
             )}
             <CluesList>
               {filteredClues.length > 0 ? (
@@ -750,31 +849,75 @@ export default function Journal({ isVisible = true }) {
           </ContentWrapper>
         );
 
-      case 'glossary':
+      case 'glossary': {
+        const letters = ['All', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
+        const items = Object.values(GLOSSARY)
+          .slice()
+          .sort((a, b) => a.term.localeCompare(b.term));
+        const filtered = items.filter((g) => {
+          const t = g.term.toLowerCase();
+          const okSearch = !glossarySearch || t.includes(glossarySearch.toLowerCase());
+          const okLetter =
+            glossaryLetter === 'All' || (g.term[0] || '').toUpperCase() === glossaryLetter;
+          return okSearch && okLetter;
+        });
         return (
           <ContentWrapper>
-            <CluesList>
-              {inventory.glossary.length > 0 ? (
-                inventory.glossary
-                  .slice()
-                  .sort((a, b) => a.term.localeCompare(b.term))
-                  .map((g, index) => (
-                    <ClueItem
-                      key={g.id}
-                      initial={{ y: 20, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      transition={{ duration: 0.5, delay: index * 0.05 }}
-                    >
-                      <ClueTitle>{g.term}</ClueTitle>
-                      <ClueDescription>{g.brief}</ClueDescription>
-                    </ClueItem>
-                  ))
-              ) : (
-                <EmptyState>
-                  <EmptyText>Explore to reveal sacred terms...</EmptyText>
-                </EmptyState>
-              )}
-            </CluesList>
+            <ControlsRow>
+              <SearchInput
+                type="search"
+                placeholder="Search glossary"
+                aria-label="Search glossary"
+                value={glossarySearch}
+                onChange={(e) => setGlossarySearch(e.target.value)}
+              />
+            </ControlsRow>
+            <GlossaryIndex role="navigation" aria-label="Glossary index">
+              {letters.map((L) => (
+                <IndexButton
+                  key={L}
+                  className="is-interactive"
+                  onClick={() => setGlossaryLetter(L)}
+                  $active={glossaryLetter === L}
+                  aria-pressed={glossaryLetter === L}
+                >
+                  {L}
+                </IndexButton>
+              ))}
+            </GlossaryIndex>
+            {filtered.length > 0 ? (
+              <GlossaryGrid role="list">
+                {filtered.map((g, index) => (
+                  <GlossaryCard
+                    key={g.id}
+                    role="listitem"
+                    initial={{ y: 12, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ duration: 0.35, delay: index * 0.02 }}
+                  >
+                    <GlossaryTermTitle>{g.term}</GlossaryTermTitle>
+                    <GlossaryBrief>{g.brief}</GlossaryBrief>
+                  </GlossaryCard>
+                ))}
+              </GlossaryGrid>
+            ) : (
+              <EmptyState>
+                <EmptyText>No terms match your query...</EmptyText>
+              </EmptyState>
+            )}
+          </ContentWrapper>
+        );
+      }
+
+      case 'map':
+        return (
+          <ContentWrapper>
+            <SceneProgressMap
+              scenes={sceneOrder}
+              current={state.currentScene}
+              completed={state.gameProgress.completedScenes}
+              onSelect={(s) => dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: s })}
+            />
           </ContentWrapper>
         );
 
@@ -792,7 +935,7 @@ export default function Journal({ isVisible = true }) {
                     whileHover={{ scale: item ? 1.05 : 1 }}
                     whileTap={{ scale: item ? 0.95 : 1 }}
                   >
-                    {item ? item.icon : '∅'}
+                    {item ? item.icon : <EmptySigil aria-hidden />}
                   </InventorySlot>
                 );
               })}
@@ -814,7 +957,7 @@ export default function Journal({ isVisible = true }) {
 
             {inventory.items.length === 0 && (
               <EmptyState>
-                <EmptyText>Sacred artifacts will manifest here...</EmptyText>
+                <EmptyText>No items yet. Sacred artifacts will manifest here...</EmptyText>
               </EmptyState>
             )}
           </ContentWrapper>
@@ -850,6 +993,7 @@ export default function Journal({ isVisible = true }) {
               $active={activeTab === tab.id}
               onClick={() => {
                 setActiveTab(tab.id);
+                dispatch({ type: ACTIONS.SET_JOURNAL_TAB, payload: tab.id });
                 setSelectedItem(null);
               }}
               onKeyDown={(e) => {

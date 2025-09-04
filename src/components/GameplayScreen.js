@@ -104,34 +104,36 @@ const GameplayContainer = styled.div`
     'header'
     'main'
     'controls';
-  gap: ${spacing.md};
-  padding: ${spacing.md};
-  padding-bottom: calc(${spacing.md} + 200px); /* Safe area for hotbar */
+  gap: ${spacing.sm};
+  padding: ${spacing.sm};
+  padding-bottom: calc(
+    ${spacing.sm} + env(safe-area-inset-bottom, 0) + 120px
+  ); /* compact hotbar area */
 
   /* Tablet: Still single column but more space */
   @media ${devices.tablet} {
-    gap: ${spacing.lg};
-    padding: ${spacing.lg};
-    padding-bottom: calc(${spacing.lg} + 240px);
+    gap: ${spacing.md};
+    padding: ${spacing.md};
+    padding-bottom: calc(${spacing.md} + env(safe-area-inset-bottom, 0) + 150px);
   }
 
   /* Desktop: Two-panel layout */
   @media ${devices.desktop} {
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
     grid-template-areas:
-      'header sidebar'
-      'main sidebar';
-    gap: ${spacing.xl};
-    padding: ${spacing.lg};
-    padding-bottom: calc(${spacing.lg} + 280px);
+      'header'
+      'main';
+    gap: ${spacing.lg};
+    padding: ${spacing.md};
+    padding-bottom: calc(${spacing.md} + env(safe-area-inset-bottom, 0) + 160px);
     max-width: ${containers['2xl']};
     margin: 0 auto;
   }
 
   /* Wide screens: Larger sidebar */
   @media ${devices.wide} {
-    grid-template-columns: 1fr 420px;
+    grid-template-columns: 1fr;
   }
 
   /* Mystical background pattern - reduced on mobile for performance */
@@ -170,20 +172,20 @@ const MainContentArea = styled.div`
   grid-area: main;
   display: flex;
   flex-direction: column;
-  gap: ${spacing.md};
+  gap: ${spacing.sm};
   position: relative;
   z-index: 20;
   width: 100%;
 
   /* Tablet: More spacing */
   @media ${devices.tablet} {
-    gap: ${spacing.lg};
+    gap: ${spacing.md};
   }
 
   /* Desktop: Constrain width for optimal reading */
   @media ${devices.desktop} {
     max-width: 980px;
-    gap: ${spacing.xl};
+    gap: ${spacing.lg};
   }
 `;
 
@@ -209,12 +211,13 @@ const NarrativeWindow = styled(motion.div)`
 `;
 
 const NarrativeContent = styled.div`
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg);
   position: relative;
   z-index: 10;
-  max-width: 70ch;
-  margin: 0 auto;
-  padding-bottom: calc(var(--spacing-xl) + 320px);
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding-bottom: calc(var(--spacing-sm) + 120px);
 `;
 
 // Mini-map panel
@@ -253,37 +256,7 @@ const MiniMapPanel = styled.div`
 
 // Hotbar / quick slots
 const HotbarContainer = styled.div`
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: ${spacing.md};
-  display: grid;
-  gap: ${spacing['2']};
-  background: linear-gradient(145deg, rgba(0, 0, 0, 0.85), rgba(15, 15, 15, 0.95));
-  border: 2px solid #d4af37;
-  border-radius: ${radius.lg};
-  box-shadow:
-    0 10px 28px rgba(0, 0, 0, 0.7),
-    0 0 20px rgba(212, 175, 55, 0.25);
-  z-index: 120;
-  backdrop-filter: blur(10px);
-
-  /* Mobile: Fewer slots, larger touch targets */
-  grid-template-columns: repeat(4, 52px);
-  padding: ${spacing['2']} ${spacing['3']};
-
-  /* Tablet: More slots */
-  @media ${devices.tablet} {
-    grid-template-columns: repeat(5, 56px);
-    padding: ${spacing['3']} ${spacing['4']};
-    bottom: ${spacing.lg};
-  }
-
-  /* Desktop: Full 6 slots */
-  @media ${devices.desktop} {
-    grid-template-columns: repeat(6, 56px);
-    padding: 10px 12px;
-  }
+  display: none;
 `;
 
 const HotbarSlot = styled.div`
@@ -364,9 +337,9 @@ const HeaderBar = styled.div`
   /* Tablet: Two columns */
   @media ${devices.tablet} {
     grid-template-columns: 1fr auto;
-    gap: ${spacing.md};
+    gap: ${spacing.sm};
     align-items: center;
-    top: ${spacing.lg};
+    top: ${spacing.md};
   }
 `;
 
@@ -488,8 +461,8 @@ const ObjectivesBanner = styled(motion.div)`
   background: linear-gradient(145deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
   border: 2px solid #d4af37;
   border-radius: 10px;
-  padding: var(--spacing-md) var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-md);
   position: relative;
   backdrop-filter: blur(5px);
   animation: ${breathingGlow} 6s ease-in-out infinite;
@@ -533,8 +506,8 @@ const ChoicesPanel = styled(motion.div)`
   background: linear-gradient(145deg, rgba(0, 0, 0, 0.92) 0%, rgba(10, 10, 10, 0.96) 100%);
   border: 2px solid #d4af37;
   border-radius: 12px;
-  padding: var(--spacing-lg);
-  min-height: 150px;
+  padding: var(--spacing-md);
+  min-height: 120px;
   backdrop-filter: blur(10px);
   box-shadow:
     0 10px 26px rgba(0, 0, 0, 0.7),
@@ -567,10 +540,10 @@ const ChoicesPanel = styled(motion.div)`
 const ChoicesTitle = styled.h3`
   font-family: var(--font-display);
   color: #d4af37;
-  font-size: var(--fs-xl);
-  margin-bottom: var(--spacing-md);
+  font-size: var(--fs-lg);
+  margin-bottom: var(--spacing-sm);
   text-align: center;
-  text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+  text-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
 `;
 
 const ChoicesContainer = styled.div`
@@ -595,21 +568,21 @@ const ChoiceButton = styled(motion.button)`
   -webkit-tap-highlight-color: transparent;
 
   /* Mobile: Larger touch targets and padding */
-  padding: ${spacing['4']} ${spacing['5']};
+  padding: ${spacing['3']} ${spacing['4']};
   font-size: ${typography.fontSize.base};
-  min-height: 56px;
+  min-height: 52px;
 
   /* Tablet: Standard sizing */
   @media ${devices.tablet} {
-    padding: ${spacing.md} ${spacing.lg};
-    min-height: 52px;
+    padding: ${spacing.sm} ${spacing.md};
+    min-height: 48px;
   }
 
   /* Desktop: Compact sizing */
   @media ${devices.desktop} {
-    padding: ${spacing.md} ${spacing.lg};
-    min-height: 48px;
-    font-size: 1rem;
+    padding: ${spacing.sm} ${spacing.md};
+    min-height: 44px;
+    font-size: 0.95rem;
   }
 
   /* Golden energy bar on the left */
@@ -717,27 +690,7 @@ const ChoiceButton = styled(motion.button)`
 `;
 
 const JournalSidebar = styled(motion.div)`
-  /* Mobile/Tablet: Hidden by default (shown via modal) */
   display: none;
-
-  /* Desktop: Sidebar visible */
-  @media ${devices.desktop} {
-    display: block;
-    grid-area: sidebar;
-    position: sticky;
-    top: ${spacing.lg};
-    align-self: start;
-    z-index: 5;
-    height: calc(100vh - 2 * ${spacing.lg});
-    max-width: 380px;
-    width: 100%;
-    overflow: hidden;
-  }
-
-  /* Wide screens: Larger sidebar */
-  @media ${devices.wide} {
-    max-width: 420px;
-  }
 `;
 
 const JournalToggle = styled(motion.button)`
@@ -803,6 +756,9 @@ const MapToggle = styled(JournalToggle)`
   top: auto;
   bottom: var(--spacing-lg);
   will-change: transform, opacity, box-shadow;
+  @media ${devices.desktop} {
+    display: flex;
+  }
 `;
 
 const SkillIndicator = styled(motion.div)`
@@ -878,11 +834,9 @@ function SceneRenderer({ currentScene }) {
 
 export default function GameplayScreen() {
   const { state, dispatch } = useGame();
-  const [mobileJournalOpen, setMobileJournalOpen] = useState(false);
   const [activeSkill, setActiveSkill] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, text: '', x: 0, y: 0 });
   const [hintText, setHintText] = useState('');
-  const [mobileMapOpen, setMobileMapOpen] = useState(false);
   // const isTouch = useIsTouchDevice(); // Reserved for future mobile optimizations
 
   const { currentScene, sceneData, playerProfile, inventory } = state;
@@ -920,8 +874,11 @@ export default function GameplayScreen() {
     setTimeout(() => setInkingId(null), 800);
   };
 
-  const toggleMobileJournal = () => {
-    setMobileJournalOpen(!mobileJournalOpen);
+  const toggleJournal = () => {
+    if (!state.uiState.journalOpen) {
+      dispatch({ type: ACTIONS.SET_JOURNAL_TAB, payload: 'profile' });
+    }
+    dispatch({ type: ACTIONS.TOGGLE_JOURNAL });
   };
 
   const showTooltip = (text, e) => {
@@ -1052,7 +1009,7 @@ export default function GameplayScreen() {
           </EdgeNavButton>
         )}
 
-        <HotbarContainer>
+        <HotbarContainer aria-label="Quick access hotbar">
           {Array.from({ length: 6 }, (_, i) => {
             const item = inventory.items[i];
             const label = item
@@ -1122,35 +1079,17 @@ export default function GameplayScreen() {
         </TooltipBubble>
       )}
 
-      <JournalSidebar>
-        <Journal isVisible={!mobileJournalOpen} />
-        <MiniMapPanel>
-          <SceneProgressMap
-            scenes={sceneOrder}
-            current={currentScene}
-            completed={state.gameProgress.completedScenes}
-            onSelect={(s) => dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: s })}
-          />
-        </MiniMapPanel>
-      </JournalSidebar>
+      <JournalSidebar />
 
       <JournalToggle
         className="is-interactive"
-        onClick={toggleMobileJournal}
+        onClick={toggleJournal}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
+        aria-label="Open Sacred Journal"
       >
         📖
       </JournalToggle>
-
-      <MapToggle
-        className="is-interactive"
-        onClick={() => setMobileMapOpen(true)}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-      >
-        🗺️
-      </MapToggle>
 
       <AnimatePresence>
         {activeSkill && (
@@ -1165,51 +1104,22 @@ export default function GameplayScreen() {
         )}
       </AnimatePresence>
 
-      {/* Mobile overlay for journal */}
+      {/* Journal overlay (all devices) */}
       <AnimatePresence>
-        {mobileJournalOpen && (
+        {state.uiState.journalOpen && (
           <Overlay
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={toggleMobileJournal}
+            onClick={toggleJournal}
           >
             <OverlayContent
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
+              exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
               <Journal isVisible={true} />
-            </OverlayContent>
-          </Overlay>
-        )}
-      </AnimatePresence>
-
-      {/* Mobile overlay for journey map */}
-      <AnimatePresence>
-        {mobileMapOpen && (
-          <Overlay
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setMobileMapOpen(false)}
-          >
-            <OverlayContent
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <SceneProgressMap
-                scenes={sceneOrder}
-                current={currentScene}
-                completed={state.gameProgress.completedScenes}
-                onSelect={(s) => {
-                  dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: s });
-                  setMobileMapOpen(false);
-                }}
-              />
             </OverlayContent>
           </Overlay>
         )}

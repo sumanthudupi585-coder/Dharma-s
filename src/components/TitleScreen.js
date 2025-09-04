@@ -156,7 +156,12 @@ const CenterStack = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-xl);
+  gap: var(--spacing-lg);
+
+  /* Utility spacing */
+  .spacer-8 {
+    height: 8px;
+  }
 `;
 
 const TitleHalo = styled.div`
@@ -479,7 +484,7 @@ function TitleScreen() {
             Sacred Settings
           </ActionButton>
         </Menu>
-        <div style={{ height: '8px' }} />
+        <div className="spacer-8" />
         <React.Suspense fallback={null}>
           <DailyRiddle />
         </React.Suspense>

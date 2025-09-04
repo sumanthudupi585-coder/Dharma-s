@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGame, ACTIONS } from '../context/GameContext';
@@ -42,8 +42,8 @@ const shimmer = keyframes`
 
 const Wrap = styled.div`
   position: fixed;
-  left: ${spacing.lg};
-  bottom: ${spacing.lg};
+  right: ${spacing.lg};
+  top: ${spacing.lg};
   z-index: ${z.toast};
   display: grid;
   gap: ${spacing.sm};
@@ -52,6 +52,7 @@ const Wrap = styled.div`
   @media (max-width: 768px) {
     left: ${spacing.md};
     right: ${spacing.md};
+    top: auto;
     bottom: ${spacing.md};
   }
 `;
@@ -135,17 +136,28 @@ const ProgressBar = styled.div`
 export default function AchievementsToast() {
   const { state, dispatch } = useGame();
   const [show, setShow] = useState(null);
+  const timerRef = useRef(null);
+  const startRef = useRef(0);
+  const remainingRef = useRef(4000);
 
   useEffect(() => {
     if (!show && state.uiState.recentAchievements.length > 0) {
       setShow(state.uiState.recentAchievements[0]);
-      const t = setTimeout(() => {
-        setShow(null);
-        dispatch({ type: ACTIONS.CONSUME_RECENT_ACHIEVEMENT });
-      }, 4000);
-      return () => clearTimeout(t);
+      remainingRef.current = 4000;
     }
-  }, [state.uiState.recentAchievements, show, dispatch]);
+  }, [state.uiState.recentAchievements, show]);
+
+  useEffect(() => {
+    if (!show) return;
+    startRef.current = Date.now();
+    timerRef.current = setTimeout(() => {
+      setShow(null);
+      dispatch({ type: ACTIONS.CONSUME_RECENT_ACHIEVEMENT });
+    }, remainingRef.current);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [show, dispatch]);
 
   // Get appropriate icon for achievement category
   const getAchievementIcon = (achievement) => {
@@ -159,33 +171,32 @@ export default function AchievementsToast() {
         {show && (
           <Toast
             key={show.id}
-            initial={{
-              opacity: 0,
-              y: 50,
-              scale: 0.8,
-              filter: 'blur(4px)',
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-              scale: 1,
-              filter: 'blur(0px)',
-            }}
-            exit={{
-              opacity: 0,
-              y: -20,
-              scale: 0.9,
-              filter: 'blur(2px)',
-            }}
-            transition={{
-              duration: 0.4,
-              ease: [0.4, 0, 0.2, 1],
-              filter: { duration: 0.3 },
-            }}
+            initial={{ opacity: 0, y: -20, scale: 0.96, filter: 'blur(4px)' }}
+            animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -10, scale: 0.98, filter: 'blur(2px)' }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1], filter: { duration: 0.25 } }}
             role="status"
             aria-live="polite"
             whileHover={{ scale: 1.02 }}
+            onMouseEnter={() => {
+              if (timerRef.current) {
+                clearTimeout(timerRef.current);
+                timerRef.current = null;
+                const elapsed = Date.now() - startRef.current;
+                remainingRef.current = Math.max(0, remainingRef.current - elapsed);
+              }
+            }}
+            onMouseLeave={() => {
+              if (!timerRef.current) {
+                startRef.current = Date.now();
+                timerRef.current = setTimeout(() => {
+                  setShow(null);
+                  dispatch({ type: ACTIONS.CONSUME_RECENT_ACHIEVEMENT });
+                }, remainingRef.current);
+              }
+            }}
             onClick={() => {
+              if (timerRef.current) clearTimeout(timerRef.current);
               setShow(null);
               dispatch({ type: ACTIONS.CONSUME_RECENT_ACHIEVEMENT });
             }}

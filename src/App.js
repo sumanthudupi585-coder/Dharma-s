@@ -18,8 +18,10 @@ const TitleScreen = lazy(() => import('./components/TitleScreen'));
 const ProfileCreation = lazy(() => import('./components/ProfileCreation'));
 const ProfileResults = lazy(() => import('./components/ProfileResults'));
 const GameplayScreen = lazy(() => import('./components/GameplayScreen'));
+const HeaderActions = lazy(() => import('./components/HeaderActions'));
 
 function GameRouter() {
+  const isTouch = require('./hooks/useIsTouchDevice').useIsTouchDevice();
   const variants = {
     initial: { opacity: 0, filter: 'blur(8px) contrast(0.9)' },
     animate: { opacity: 1, filter: 'blur(0px) contrast(1)' },
@@ -38,7 +40,11 @@ function GameRouter() {
         variants={variants}
         transition={{ duration: 0.4 }}
       >
-        {state.gameState === GAME_STATES.TITLE_SCREEN && <TitleScreen />}
+        {state.gameState === GAME_STATES.TITLE_SCREEN && (
+          <MasterLayout showHeader={false} showFooter={false}>
+            <TitleScreen />
+          </MasterLayout>
+        )}
         {state.gameState === GAME_STATES.PROFILE_CREATION && (
           <MasterLayout>
             <ProfileCreation />
@@ -50,9 +56,9 @@ function GameRouter() {
           </MasterLayout>
         )}
         {state.gameState === GAME_STATES.GAMEPLAY && (
-          <MasterLayout>
+          <MasterLayout rightSlot={!isTouch ? <HeaderActions /> : null}>
             <GameplayScreen />
-            <CornerMenu />
+            {isTouch ? <CornerMenu /> : null}
           </MasterLayout>
         )}
       </motion.div>
