@@ -156,7 +156,7 @@ const CenterStack = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-xl);
+  gap: var(--spacing-lg);
 
   /* Utility spacing */
   .spacer-8 { height: 8px; }

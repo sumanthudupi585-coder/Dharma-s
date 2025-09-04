@@ -104,15 +104,15 @@ const GameplayContainer = styled.div`
     'header'
     'main'
     'controls';
-  gap: ${spacing.md};
-  padding: ${spacing.md};
-  padding-bottom: calc(${spacing.md} + 160px); /* Safe area for hotbar (reduced) */
+  gap: ${spacing.sm};
+  padding: ${spacing.sm};
+  padding-bottom: calc(${spacing.sm} + env(safe-area-inset-bottom, 0) + 120px); /* compact hotbar area */
 
   /* Tablet: Still single column but more space */
   @media ${devices.tablet} {
-    gap: ${spacing.lg};
-    padding: ${spacing.lg};
-    padding-bottom: calc(${spacing.lg} + 180px);
+    gap: ${spacing.md};
+    padding: ${spacing.md};
+    padding-bottom: calc(${spacing.md} + env(safe-area-inset-bottom, 0) + 150px);
   }
 
   /* Desktop: Two-panel layout */
@@ -122,9 +122,9 @@ const GameplayContainer = styled.div`
     grid-template-areas:
       'header sidebar'
       'main sidebar';
-    gap: ${spacing.xl};
-    padding: ${spacing.lg};
-    padding-bottom: calc(${spacing.lg} + 200px);
+    gap: ${spacing.lg};
+    padding: ${spacing.md};
+    padding-bottom: calc(${spacing.md} + env(safe-area-inset-bottom, 0) + 160px);
     max-width: ${containers['2xl']};
     margin: 0 auto;
   }
@@ -170,20 +170,20 @@ const MainContentArea = styled.div`
   grid-area: main;
   display: flex;
   flex-direction: column;
-  gap: ${spacing.md};
+  gap: ${spacing.sm};
   position: relative;
   z-index: 20;
   width: 100%;
 
   /* Tablet: More spacing */
   @media ${devices.tablet} {
-    gap: ${spacing.lg};
+    gap: ${spacing.md};
   }
 
   /* Desktop: Constrain width for optimal reading */
   @media ${devices.desktop} {
     max-width: 980px;
-    gap: ${spacing.xl};
+    gap: ${spacing.lg};
   }
 `;
 
@@ -209,12 +209,12 @@ const NarrativeWindow = styled(motion.div)`
 `;
 
 const NarrativeContent = styled.div`
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg);
   position: relative;
   z-index: 10;
   max-width: 70ch;
   margin: 0 auto;
-  padding-bottom: calc(var(--spacing-lg) + 200px);
+  padding-bottom: calc(var(--spacing-md) + 140px);
 `;
 
 // Mini-map panel
@@ -364,9 +364,9 @@ const HeaderBar = styled.div`
   /* Tablet: Two columns */
   @media ${devices.tablet} {
     grid-template-columns: 1fr auto;
-    gap: ${spacing.md};
+    gap: ${spacing.sm};
     align-items: center;
-    top: ${spacing.lg};
+    top: ${spacing.md};
   }
 `;
 
@@ -488,8 +488,8 @@ const ObjectivesBanner = styled(motion.div)`
   background: linear-gradient(145deg, rgba(212, 175, 55, 0.1) 0%, rgba(255, 107, 53, 0.05) 100%);
   border: 2px solid #d4af37;
   border-radius: 10px;
-  padding: var(--spacing-md) var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-md);
   position: relative;
   backdrop-filter: blur(5px);
   animation: ${breathingGlow} 6s ease-in-out infinite;
@@ -533,8 +533,8 @@ const ChoicesPanel = styled(motion.div)`
   background: linear-gradient(145deg, rgba(0, 0, 0, 0.92) 0%, rgba(10, 10, 10, 0.96) 100%);
   border: 2px solid #d4af37;
   border-radius: 12px;
-  padding: var(--spacing-lg);
-  min-height: 150px;
+  padding: var(--spacing-md);
+  min-height: 120px;
   backdrop-filter: blur(10px);
   box-shadow:
     0 10px 26px rgba(0, 0, 0, 0.7),
@@ -567,10 +567,10 @@ const ChoicesPanel = styled(motion.div)`
 const ChoicesTitle = styled.h3`
   font-family: var(--font-display);
   color: #d4af37;
-  font-size: var(--fs-xl);
-  margin-bottom: var(--spacing-md);
+  font-size: var(--fs-lg);
+  margin-bottom: var(--spacing-sm);
   text-align: center;
-  text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+  text-shadow: 0 0 12px rgba(212, 175, 55, 0.5);
 `;
 
 const ChoicesContainer = styled.div`
@@ -595,21 +595,21 @@ const ChoiceButton = styled(motion.button)`
   -webkit-tap-highlight-color: transparent;
 
   /* Mobile: Larger touch targets and padding */
-  padding: ${spacing['4']} ${spacing['5']};
+  padding: ${spacing['3']} ${spacing['4']};
   font-size: ${typography.fontSize.base};
-  min-height: 56px;
+  min-height: 52px;
 
   /* Tablet: Standard sizing */
   @media ${devices.tablet} {
-    padding: ${spacing.md} ${spacing.lg};
-    min-height: 52px;
+    padding: ${spacing.sm} ${spacing.md};
+    min-height: 48px;
   }
 
   /* Desktop: Compact sizing */
   @media ${devices.desktop} {
-    padding: ${spacing.md} ${spacing.lg};
-    min-height: 48px;
-    font-size: 1rem;
+    padding: ${spacing.sm} ${spacing.md};
+    min-height: 44px;
+    font-size: 0.95rem;
   }
 
   /* Golden energy bar on the left */
