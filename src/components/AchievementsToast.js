@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useGame, ACTIONS } from '../context/GameContext';
-import { colors, spacing, radius, timings, typography, z } from '../ui/tokens';
+import { colors, spacing, radius, typography, z } from '../ui/tokens';
 
 // Achievement category icons
 const achievementIcons = {

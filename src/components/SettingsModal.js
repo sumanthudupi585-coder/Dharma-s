@@ -232,7 +232,7 @@ const StatItem = styled.div`
 export default function SettingsModal({ open, onClose }) {
   const { state, dispatch } = useGame();
   const sheetRef = useRef(null);
-  const [activeTab, setActiveTab] = useState('audio');
+  // const [activeTab, setActiveTab] = useState('audio'); // Reserved for future tab functionality
 
   const setBodyClass = (cls, on) => {
     const body = document.body;
