@@ -18,6 +18,7 @@ const TitleScreen = lazy(() => import('./components/TitleScreen'));
 const ProfileCreation = lazy(() => import('./components/ProfileCreation'));
 const ProfileResults = lazy(() => import('./components/ProfileResults'));
 const GameplayScreen = lazy(() => import('./components/GameplayScreen'));
+const HeaderActions = lazy(() => import('./components/HeaderActions'));
 
 function GameRouter() {
   const isTouch = require('./hooks/useIsTouchDevice').useIsTouchDevice();
