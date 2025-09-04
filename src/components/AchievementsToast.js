@@ -15,7 +15,7 @@ const achievementIcons = {
   knowledge: '📚',
   mystery: '🔮',
   progress: '🌟',
-  default: '✦'
+  default: '✦',
 };
 
 // Glow animation for the icon
@@ -59,14 +59,14 @@ const Wrap = styled.div`
 const Toast = styled(motion.div)`
   min-width: 280px;
   max-width: 400px;
-  border: 1px solid rgba(212,175,55,0.6);
+  border: 1px solid rgba(212, 175, 55, 0.6);
   border-radius: ${radius.lg};
-  background: linear-gradient(145deg, rgba(0,0,0,0.95), rgba(10,10,10,1));
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.95), rgba(10, 10, 10, 1));
   color: #e8c86a;
   box-shadow:
-    0 25px 60px rgba(0,0,0,0.7),
-    0 0 30px rgba(212,175,55,0.3),
-    inset 0 1px 0 rgba(255,255,255,0.1);
+    0 25px 60px rgba(0, 0, 0, 0.7),
+    0 0 30px rgba(212, 175, 55, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   padding: ${spacing.lg};
   backdrop-filter: blur(12px);
   pointer-events: auto;
@@ -81,12 +81,7 @@ const Toast = styled(motion.div)`
     left: -200px;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(212, 175, 55, 0.1),
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
     animation: ${shimmer} 2s ease-in-out;
   }
 
@@ -168,24 +163,24 @@ export default function AchievementsToast() {
               opacity: 0,
               y: 50,
               scale: 0.8,
-              filter: 'blur(4px)'
+              filter: 'blur(4px)',
             }}
             animate={{
               opacity: 1,
               y: 0,
               scale: 1,
-              filter: 'blur(0px)'
+              filter: 'blur(0px)',
             }}
             exit={{
               opacity: 0,
               y: -20,
               scale: 0.9,
-              filter: 'blur(2px)'
+              filter: 'blur(2px)',
             }}
             transition={{
               duration: 0.4,
               ease: [0.4, 0, 0.2, 1],
-              filter: { duration: 0.3 }
+              filter: { duration: 0.3 },
             }}
             role="status"
             aria-live="polite"

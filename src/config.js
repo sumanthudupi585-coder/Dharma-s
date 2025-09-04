@@ -6,24 +6,24 @@ export const publicUrl = process.env.PUBLIC_URL || '';
 
 // Global application configuration
 export const appConfig = {
-  gameTitle: 'Dharma\'s Cipher: The Kashi Khanda',
-  shortTitle: 'Dharma\'s Cipher',
+  gameTitle: "Dharma's Cipher: The Kashi Khanda",
+  shortTitle: "Dharma's Cipher",
   supportEmail: 'support@dharmascipher.com',
   version: '1.0.0',
-  
+
   // SEO and meta information
   description: 'An immersive philosophical adventure through ancient wisdom',
   themeColor: '#1a1a2e',
-  
+
   // External service configurations (add as needed)
   // apiBaseUrl: process.env.REACT_APP_API_URL || 'https://api.fallback.com',
   // sentryDsn: process.env.REACT_APP_SENTRY_DSN,
-  
+
   // Feature flags (add as needed)
   features: {
     enableAnalytics: process.env.REACT_APP_ENABLE_ANALYTICS === 'true',
     enableDebugMode: process.env.NODE_ENV === 'development',
-  }
+  },
 };
 
 // Helper functions for common path operations
@@ -51,7 +51,7 @@ const config = {
   getFontUrl,
   isDevelopment,
   isProduction,
-  isTesting
+  isTesting,
 };
 
 export default config;

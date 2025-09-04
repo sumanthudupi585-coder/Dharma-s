@@ -7,7 +7,6 @@ import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
 import Button from '../ui/primitives/Button';
 import { colors, spacing, radius, typography } from '../ui/tokens';
 
-
 // Reserved breathing glow animation for future use
 // const breath = keyframes`
 //   0%, 100% {
@@ -122,19 +121,19 @@ const Particle = styled.div`
   left: var(--x);
   top: var(--y);
   opacity: var(--o, 0.6);
-  animation: ${float} ${props => 3 + Math.random() * 4}s ease-in-out infinite;
-  animation-delay: ${props => Math.random() * 2}s;
+  animation: ${float} ${(props) => 3 + Math.random() * 4}s ease-in-out infinite;
+  animation-delay: ${(props) => Math.random() * 2}s;
 `;
 
 const FloatingElement = styled(motion.div)`
   position: absolute;
-  font-size: ${props => props.size || typography.fontSize.lg};
+  font-size: ${(props) => props.size || typography.fontSize.lg};
   color: rgba(212, 175, 55, 0.3);
   pointer-events: none;
   left: var(--x);
   top: var(--y);
-  animation: ${float} ${props => 5 + Math.random() * 5}s ease-in-out infinite;
-  animation-delay: ${props => Math.random() * 3}s;
+  animation: ${float} ${(props) => 5 + Math.random() * 5}s ease-in-out infinite;
+  animation-delay: ${(props) => Math.random() * 3}s;
 `;
 
 const Sanskrit = styled.span`
@@ -292,12 +291,7 @@ const ActionButton = styled(motion(Button))`
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(212, 175, 55, 0.1),
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
     transition: left 0.6s ease;
   }
 
@@ -312,24 +306,26 @@ function TitleScreen() {
   const [hasSave, setHasSave] = useState(false);
   const rootRef = useRef(null);
   const particles = useMemo(
-    () => Array.from({ length: 36 }, (_, i) => ({
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      delay: Math.random() * 2,
-      duration: 3 + Math.random() * 4
-    })),
+    () =>
+      Array.from({ length: 36 }, (_, i) => ({
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        delay: Math.random() * 2,
+        duration: 3 + Math.random() * 4,
+      })),
     []
   );
 
   const floatingElements = useMemo(
-    () => Array.from({ length: 8 }, (_, i) => ({
-      symbol: ['✦', '✧', '✩', '✪', '✫', '✬', '✭', '✮'][i],
-      x: 10 + Math.random() * 80,
-      y: 10 + Math.random() * 80,
-      size: `${0.8 + Math.random() * 0.6}rem`,
-      delay: Math.random() * 3,
-      duration: 8 + Math.random() * 4
-    })),
+    () =>
+      Array.from({ length: 8 }, (_, i) => ({
+        symbol: ['✦', '✧', '✩', '✪', '✫', '✬', '✭', '✮'][i],
+        x: 10 + Math.random() * 80,
+        y: 10 + Math.random() * 80,
+        size: `${0.8 + Math.random() * 0.6}rem`,
+        delay: Math.random() * 3,
+        duration: 8 + Math.random() * 4,
+      })),
     []
   );
   const glyphs = useMemo(
@@ -398,7 +394,7 @@ function TitleScreen() {
               '--x': `${p.x}%`,
               '--y': `${p.y}%`,
               animationDelay: `${p.delay}s`,
-              animationDuration: `${p.duration}s`
+              animationDuration: `${p.duration}s`,
             }}
           />
         ))}
@@ -415,7 +411,7 @@ function TitleScreen() {
               '--x': `${el.x}%`,
               '--y': `${el.y}%`,
               animationDelay: `${el.delay}s`,
-              animationDuration: `${el.duration}s`
+              animationDuration: `${el.duration}s`,
             }}
           >
             {el.symbol}

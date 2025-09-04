@@ -101,9 +101,9 @@ const GameplayContainer = styled.div`
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr auto;
   grid-template-areas:
-    "header"
-    "main"
-    "controls";
+    'header'
+    'main'
+    'controls';
   gap: ${spacing.md};
   padding: ${spacing.md};
   padding-bottom: calc(${spacing.md} + 200px); /* Safe area for hotbar */
@@ -120,8 +120,8 @@ const GameplayContainer = styled.div`
     grid-template-columns: 1fr 380px;
     grid-template-rows: auto 1fr;
     grid-template-areas:
-      "header sidebar"
-      "main sidebar";
+      'header sidebar'
+      'main sidebar';
     gap: ${spacing.xl};
     padding: ${spacing.lg};
     padding-bottom: calc(${spacing.lg} + 280px);
@@ -146,15 +146,16 @@ const GameplayContainer = styled.div`
     z-index: 1;
 
     /* Mobile: Simpler pattern */
-    background:
-      radial-gradient(circle at 30% 40%, rgba(212, 175, 55, 0.02) 1px, transparent 2px);
+    background: radial-gradient(circle at 30% 40%, rgba(212, 175, 55, 0.02) 1px, transparent 2px);
     background-size: 80px 80px;
 
     @media ${devices.tablet} {
       background:
         radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.03) 1px, transparent 2px),
         radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.02) 1px, transparent 2px);
-      background-size: 100px 100px, 150px 150px;
+      background-size:
+        100px 100px,
+        150px 150px;
     }
 
     /* Only animate on non-touch devices for performance */
