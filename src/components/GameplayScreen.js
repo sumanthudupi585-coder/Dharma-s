@@ -106,7 +106,9 @@ const GameplayContainer = styled.div`
     'controls';
   gap: ${spacing.sm};
   padding: ${spacing.sm};
-  padding-bottom: calc(${spacing.sm} + env(safe-area-inset-bottom, 0) + 120px); /* compact hotbar area */
+  padding-bottom: calc(
+    ${spacing.sm} + env(safe-area-inset-bottom, 0) + 120px
+  ); /* compact hotbar area */
 
   /* Tablet: Still single column but more space */
   @media ${devices.tablet} {
@@ -1089,7 +1091,6 @@ export default function GameplayScreen() {
         📖
       </JournalToggle>
 
-
       <AnimatePresence>
         {activeSkill && (
           <SkillIndicator
@@ -1123,7 +1124,6 @@ export default function GameplayScreen() {
           </Overlay>
         )}
       </AnimatePresence>
-
     </GameplayContainer>
   );
 }

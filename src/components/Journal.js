@@ -493,8 +493,15 @@ const EmptySigil = styled.div`
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.22) 0%, rgba(212, 175, 55, 0.1) 45%, transparent 60%);
-  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.35), 0 0 10px rgba(212, 175, 55, 0.25);
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(212, 175, 55, 0.22) 0%,
+    rgba(212, 175, 55, 0.1) 45%,
+    transparent 60%
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(212, 175, 55, 0.35),
+    0 0 10px rgba(212, 175, 55, 0.25);
   position: relative;
   &::after {
     content: '✦';
@@ -566,7 +573,7 @@ const SearchInput = styled.input`
   min-width: 0;
   padding: 8px 10px;
   border-radius: 8px;
-  border: 1px solid rgba(212,175,55,0.35);
+  border: 1px solid rgba(212, 175, 55, 0.35);
   background: transparent;
   color: #e8c86a;
 `;
@@ -609,11 +616,13 @@ const GlossaryGrid = styled.div`
 `;
 
 const GlossaryCard = styled(motion.div)`
-  border: 1px solid rgba(212,175,55,0.4);
+  border: 1px solid rgba(212, 175, 55, 0.4);
   border-radius: 10px;
-  background: linear-gradient(145deg, rgba(0,0,0,0.9), rgba(10,10,10,0.98));
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.9), rgba(10, 10, 10, 0.98));
   padding: var(--spacing-md);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.6), 0 0 16px rgba(212,175,55,0.18);
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.6),
+    0 0 16px rgba(212, 175, 55, 0.18);
 `;
 
 const GlossaryTermTitle = styled.h4`
@@ -842,11 +851,14 @@ export default function Journal({ isVisible = true }) {
 
       case 'glossary': {
         const letters = ['All', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
-        const items = Object.values(GLOSSARY).slice().sort((a, b) => a.term.localeCompare(b.term));
+        const items = Object.values(GLOSSARY)
+          .slice()
+          .sort((a, b) => a.term.localeCompare(b.term));
         const filtered = items.filter((g) => {
           const t = g.term.toLowerCase();
           const okSearch = !glossarySearch || t.includes(glossarySearch.toLowerCase());
-          const okLetter = glossaryLetter === 'All' || (g.term[0] || '').toUpperCase() === glossaryLetter;
+          const okLetter =
+            glossaryLetter === 'All' || (g.term[0] || '').toUpperCase() === glossaryLetter;
           return okSearch && okLetter;
         });
         return (

@@ -159,7 +159,9 @@ const CenterStack = styled.div`
   gap: var(--spacing-lg);
 
   /* Utility spacing */
-  .spacer-8 { height: 8px; }
+  .spacer-8 {
+    height: 8px;
+  }
 `;
 
 const TitleHalo = styled.div`

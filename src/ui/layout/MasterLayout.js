@@ -13,18 +13,18 @@ const Shell = styled.div`
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr auto;
   grid-template-areas:
-    "header"
-    "main"
-    "footer";
+    'header'
+    'main'
+    'footer';
 
   /* Tablet: Add sidebar space but keep simple */
   @media ${devices.tablet} {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr auto;
     grid-template-areas:
-      "header"
-      "main"
-      "footer";
+      'header'
+      'main'
+      'footer';
   }
 
   /* Desktop: Two-column layout with sidebar */
@@ -32,25 +32,25 @@ const Shell = styled.div`
     grid-template-columns: 280px 1fr;
     grid-template-rows: auto 1fr auto;
     grid-template-areas:
-      "header header"
-      "sidebar main"
-      "footer footer";
+      'header header'
+      'sidebar main'
+      'footer footer';
 
     /* When sidebar is present */
     &.has-sidebar {
       grid-template-areas:
-        "header header"
-        "sidebar main"
-        "footer footer";
+        'header header'
+        'sidebar main'
+        'footer footer';
     }
 
     /* When no sidebar needed */
     &.no-sidebar {
       grid-template-columns: 1fr;
       grid-template-areas:
-        "header"
-        "main"
-        "footer";
+        'header'
+        'main'
+        'footer';
     }
   }
 
@@ -76,9 +76,9 @@ const SkipLink = styled.a`
     width: auto;
     height: auto;
     z-index: 2000;
-    background: linear-gradient(145deg, rgba(0,0,0,0.92), rgba(10,10,10,0.98));
+    background: linear-gradient(145deg, rgba(0, 0, 0, 0.92), rgba(10, 10, 10, 0.98));
     color: #e8c86a;
-    border: 1px solid rgba(212,175,55,0.45);
+    border: 1px solid rgba(212, 175, 55, 0.45);
     border-radius: 8px;
     padding: ${spacing['2']} ${spacing['3']};
     text-decoration: none;
@@ -97,8 +97,8 @@ const Header = styled.header`
   position: sticky;
   top: 0;
   z-index: 100;
-  background: linear-gradient(145deg, rgba(0,0,0,0.9), rgba(10,10,10,0.98));
-  border-bottom: 1px solid rgba(212,175,55,0.25);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.9), rgba(10, 10, 10, 0.98));
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25);
   backdrop-filter: blur(8px);
 
   /* Ensure header doesn't get too tall on mobile */
@@ -189,8 +189,8 @@ const Main = styled.main`
 /* New Sidebar component for desktop layouts */
 const Sidebar = styled.aside`
   grid-area: sidebar;
-  background: linear-gradient(145deg, rgba(0,0,0,0.85), rgba(8,8,8,0.95));
-  border-right: 1px solid rgba(212,175,55,0.25);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.85), rgba(8, 8, 8, 0.95));
+  border-right: 1px solid rgba(212, 175, 55, 0.25);
   overflow-y: auto;
 
   /* Hidden on mobile */
@@ -204,8 +204,8 @@ const Sidebar = styled.aside`
 
 const Footer = styled.footer`
   grid-area: footer;
-  background: linear-gradient(145deg, rgba(0,0,0,0.92), rgba(8,8,8,0.98));
-  border-top: 1px solid rgba(212,175,55,0.2);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.92), rgba(8, 8, 8, 0.98));
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
 
   /* Ensure footer is accessible but not too prominent on mobile */
   min-height: 50px;
@@ -250,7 +250,7 @@ export default function MasterLayout({
   footerSlot,
   sidebarContent,
   showHeader = true,
-  showFooter = true
+  showFooter = true,
 }) {
   const isTouch = useIsTouchDevice();
   const hasSidebar = sidebarContent && !isTouch;
@@ -265,18 +265,12 @@ export default function MasterLayout({
             <Brand>{brand}</Brand>
             {/* Only show spacer on tablet+ */}
             <div className="tablet-up" />
-            <Nav aria-label="Primary">
-              {rightSlot}
-            </Nav>
+            <Nav aria-label="Primary">{rightSlot}</Nav>
           </HeaderInner>
         </Header>
       )}
 
-      {hasSidebar && (
-        <Sidebar aria-label="Navigation sidebar">
-          {sidebarContent}
-        </Sidebar>
-      )}
+      {hasSidebar && <Sidebar aria-label="Navigation sidebar">{sidebarContent}</Sidebar>}
 
       <Main id="main-content" role="main">
         {children}
