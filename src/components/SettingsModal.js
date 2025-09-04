@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useGame, ACTIONS } from '../context/GameContext';
 import { colors, spacing, radius, typography, timings, z } from '../ui/tokens';
 

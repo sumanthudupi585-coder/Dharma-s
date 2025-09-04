@@ -6,7 +6,7 @@ import { engine } from './AudioManager';
 import SwipeNavigator from './SwipeNavigator';
 import SceneProgressMap from './SceneProgressMap';
 import { devices, spacing, radius, containers, typography } from '../ui/tokens';
-import { useIsTouchDevice } from '../hooks/useIsTouchDevice';
+// import { useIsTouchDevice } from '../hooks/useIsTouchDevice'; // Reserved for mobile optimizations
 const Journal = lazy(() => import('./Journal'));
 
 const Scene1DashashwamedhGhat = lazy(() => import('./scenes/Scene1DashashwamedhGhat'));
