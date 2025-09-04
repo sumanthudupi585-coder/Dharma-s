@@ -157,6 +157,9 @@ const CenterStack = styled.div`
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-xl);
+
+  /* Utility spacing */
+  .spacer-8 { height: 8px; }
 `;
 
 const TitleHalo = styled.div`
