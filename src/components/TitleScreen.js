@@ -5,24 +5,24 @@ import SettingsModal from './SettingsModal';
 import DailyRiddle from './DailyRiddle';
 import { useGame, ACTIONS, GAME_STATES } from '../context/GameContext';
 import Button from '../ui/primitives/Button';
-import { colors, spacing, radius, typography, timings } from '../ui/tokens';
+import { colors, spacing, radius, typography } from '../ui/tokens';
 
 
-// Subtle breathing glow for golden elements
-const breath = keyframes`
-  0%, 100% {
-    text-shadow:
-      0 0 10px rgba(212,175,55,0.35),
-      0 0 20px rgba(212,175,55,0.25),
-      0 2px 0 rgba(0,0,0,0.35);
-  }
-  50% {
-    text-shadow:
-      0 0 16px rgba(255,215,0,0.65),
-      0 0 32px rgba(212,175,55,0.45),
-      0 2px 0 rgba(0,0,0,0.35);
-  }
-`;
+// Reserved breathing glow animation for future use
+// const breath = keyframes`
+//   0%, 100% {
+//     text-shadow:
+//       0 0 10px rgba(212,175,55,0.35),
+//       0 0 20px rgba(212,175,55,0.25),
+//       0 2px 0 rgba(0,0,0,0.35);
+//   }
+//   50% {
+//     text-shadow:
+//       0 0 16px rgba(255,215,0,0.65),
+//       0 0 32px rgba(212,175,55,0.45),
+//       0 2px 0 rgba(0,0,0,0.35);
+//   }
+// `;
 
 // Slow ambient motion for background aura
 const drift = keyframes`

@@ -882,7 +882,7 @@ export default function GameplayScreen() {
   const [tooltip, setTooltip] = useState({ visible: false, text: '', x: 0, y: 0 });
   const [hintText, setHintText] = useState('');
   const [mobileMapOpen, setMobileMapOpen] = useState(false);
-  const isTouch = useIsTouchDevice();
+  // const isTouch = useIsTouchDevice(); // Reserved for future mobile optimizations
 
   const { currentScene, sceneData, playerProfile, inventory } = state;
 
