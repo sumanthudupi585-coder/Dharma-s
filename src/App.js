@@ -56,9 +56,9 @@ function GameRouter() {
           </MasterLayout>
         )}
         {state.gameState === GAME_STATES.GAMEPLAY && (
-          <MasterLayout>
+          <MasterLayout rightSlot={!isTouch ? <HeaderActions /> : null}>
             <GameplayScreen />
-            <CornerMenu />
+            {isTouch ? <CornerMenu /> : null}
           </MasterLayout>
         )}
       </motion.div>
