@@ -117,11 +117,11 @@ const GameplayContainer = styled.div`
 
   /* Desktop: Two-panel layout */
   @media ${devices.desktop} {
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
     grid-template-areas:
-      'header sidebar'
-      'main sidebar';
+      'header'
+      'main';
     gap: ${spacing.lg};
     padding: ${spacing.md};
     padding-bottom: calc(${spacing.md} + env(safe-area-inset-bottom, 0) + 160px);
@@ -131,7 +131,7 @@ const GameplayContainer = styled.div`
 
   /* Wide screens: Larger sidebar */
   @media ${devices.wide} {
-    grid-template-columns: 1fr 420px;
+    grid-template-columns: 1fr;
   }
 
   /* Mystical background pattern - reduced on mobile for performance */
