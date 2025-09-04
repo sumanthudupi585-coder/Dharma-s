@@ -489,6 +489,26 @@ const InventorySlot = styled(motion.div)`
   }
 `;
 
+const EmptySigil = styled.div`
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.22) 0%, rgba(212, 175, 55, 0.1) 45%, transparent 60%);
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.35), 0 0 10px rgba(212, 175, 55, 0.25);
+  position: relative;
+  &::after {
+    content: '✦';
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #d4af37;
+    opacity: 0.85;
+    font-size: 0.9rem;
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+  }
+`;
+
 const ItemDetail = styled(motion.div)`
   background: linear-gradient(145deg, rgba(5, 5, 5, 0.95) 0%, rgba(15, 15, 15, 0.9) 100%);
   border: 2px solid #d4af37;
@@ -903,7 +923,7 @@ export default function Journal({ isVisible = true }) {
                     whileHover={{ scale: item ? 1.05 : 1 }}
                     whileTap={{ scale: item ? 0.95 : 1 }}
                   >
-                    {item ? item.icon : '∅'}
+                    {item ? item.icon : <EmptySigil aria-hidden />}
                   </InventorySlot>
                 );
               })}
