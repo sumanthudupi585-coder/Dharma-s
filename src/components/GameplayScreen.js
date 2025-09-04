@@ -865,7 +865,6 @@ export default function GameplayScreen() {
   const [activeSkill, setActiveSkill] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, text: '', x: 0, y: 0 });
   const [hintText, setHintText] = useState('');
-  const [mobileMapOpen, setMobileMapOpen] = useState(false);
   // const isTouch = useIsTouchDevice(); // Reserved for future mobile optimizations
 
   const { currentScene, sceneData, playerProfile, inventory } = state;
@@ -1120,16 +1119,6 @@ export default function GameplayScreen() {
         📖
       </JournalToggle>
 
-      <MapToggle
-        className="is-interactive"
-        onClick={() => setMobileMapOpen(true)}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        aria-label="Open Journey Map"
-        style={{ right: 'var(--spacing-lg)' }}
-      >
-        🗺️
-      </MapToggle>
 
       <AnimatePresence>
         {activeSkill && (
@@ -1165,34 +1154,6 @@ export default function GameplayScreen() {
         )}
       </AnimatePresence>
 
-      {/* Mobile overlay for journey map */}
-      <AnimatePresence>
-        {mobileMapOpen && (
-          <Overlay
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setMobileMapOpen(false)}
-          >
-            <OverlayContent
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <SceneProgressMap
-                scenes={sceneOrder}
-                current={currentScene}
-                completed={state.gameProgress.completedScenes}
-                onSelect={(s) => {
-                  dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: s });
-                  setMobileMapOpen(false);
-                }}
-              />
-            </OverlayContent>
-          </Overlay>
-        )}
-      </AnimatePresence>
     </GameplayContainer>
   );
 }
