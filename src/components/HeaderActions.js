@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { spacing } from '../ui/tokens';
 import { ACTIONS, useGame } from '../context/GameContext';
+import SettingsModal from './SettingsModal';
 
 const Bar = styled.div`
   display: flex;
