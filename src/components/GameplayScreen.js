@@ -106,13 +106,13 @@ const GameplayContainer = styled.div`
     'controls';
   gap: ${spacing.md};
   padding: ${spacing.md};
-  padding-bottom: calc(${spacing.md} + 200px); /* Safe area for hotbar */
+  padding-bottom: calc(${spacing.md} + 160px); /* Safe area for hotbar (reduced) */
 
   /* Tablet: Still single column but more space */
   @media ${devices.tablet} {
     gap: ${spacing.lg};
     padding: ${spacing.lg};
-    padding-bottom: calc(${spacing.lg} + 240px);
+    padding-bottom: calc(${spacing.lg} + 180px);
   }
 
   /* Desktop: Two-panel layout */
@@ -124,7 +124,7 @@ const GameplayContainer = styled.div`
       'main sidebar';
     gap: ${spacing.xl};
     padding: ${spacing.lg};
-    padding-bottom: calc(${spacing.lg} + 280px);
+    padding-bottom: calc(${spacing.lg} + 200px);
     max-width: ${containers['2xl']};
     margin: 0 auto;
   }
@@ -214,7 +214,7 @@ const NarrativeContent = styled.div`
   z-index: 10;
   max-width: 70ch;
   margin: 0 auto;
-  padding-bottom: calc(var(--spacing-xl) + 320px);
+  padding-bottom: calc(var(--spacing-lg) + 200px);
 `;
 
 // Mini-map panel
@@ -717,27 +717,7 @@ const ChoiceButton = styled(motion.button)`
 `;
 
 const JournalSidebar = styled(motion.div)`
-  /* Mobile/Tablet: Hidden by default (shown via modal) */
   display: none;
-
-  /* Desktop: Sidebar visible */
-  @media ${devices.desktop} {
-    display: block;
-    grid-area: sidebar;
-    position: sticky;
-    top: ${spacing.lg};
-    align-self: start;
-    z-index: 5;
-    height: calc(100vh - 2 * ${spacing.lg});
-    max-width: 380px;
-    width: 100%;
-    overflow: hidden;
-  }
-
-  /* Wide screens: Larger sidebar */
-  @media ${devices.wide} {
-    max-width: 420px;
-  }
 `;
 
 const JournalToggle = styled(motion.button)`
@@ -803,6 +783,9 @@ const MapToggle = styled(JournalToggle)`
   top: auto;
   bottom: var(--spacing-lg);
   will-change: transform, opacity, box-shadow;
+  @media ${devices.desktop} {
+    display: flex;
+  }
 `;
 
 const SkillIndicator = styled(motion.div)`
@@ -878,7 +861,6 @@ function SceneRenderer({ currentScene }) {
 
 export default function GameplayScreen() {
   const { state, dispatch } = useGame();
-  const [mobileJournalOpen, setMobileJournalOpen] = useState(false);
   const [activeSkill, setActiveSkill] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, text: '', x: 0, y: 0 });
   const [hintText, setHintText] = useState('');
@@ -920,9 +902,7 @@ export default function GameplayScreen() {
     setTimeout(() => setInkingId(null), 800);
   };
 
-  const toggleMobileJournal = () => {
-    setMobileJournalOpen(!mobileJournalOpen);
-  };
+  const toggleJournal = () => dispatch({ type: ACTIONS.TOGGLE_JOURNAL });
 
   const showTooltip = (text, e) => {
     const pad = 16;
@@ -1052,7 +1032,7 @@ export default function GameplayScreen() {
           </EdgeNavButton>
         )}
 
-        <HotbarContainer>
+        <HotbarContainer aria-label="Quick access hotbar">
           {Array.from({ length: 6 }, (_, i) => {
             const item = inventory.items[i];
             const label = item
@@ -1122,23 +1102,14 @@ export default function GameplayScreen() {
         </TooltipBubble>
       )}
 
-      <JournalSidebar>
-        <Journal isVisible={!mobileJournalOpen} />
-        <MiniMapPanel>
-          <SceneProgressMap
-            scenes={sceneOrder}
-            current={currentScene}
-            completed={state.gameProgress.completedScenes}
-            onSelect={(s) => dispatch({ type: ACTIONS.SET_CURRENT_SCENE, payload: s })}
-          />
-        </MiniMapPanel>
-      </JournalSidebar>
+      <JournalSidebar />
 
       <JournalToggle
         className="is-interactive"
-        onClick={toggleMobileJournal}
+        onClick={toggleJournal}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
+        aria-label="Open Sacred Journal"
       >
         📖
       </JournalToggle>
@@ -1148,6 +1119,8 @@ export default function GameplayScreen() {
         onClick={() => setMobileMapOpen(true)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
+        aria-label="Open Journey Map"
+        style={{ right: 'var(--spacing-lg)' }}
       >
         🗺️
       </MapToggle>
@@ -1165,19 +1138,19 @@ export default function GameplayScreen() {
         )}
       </AnimatePresence>
 
-      {/* Mobile overlay for journal */}
+      {/* Journal overlay (all devices) */}
       <AnimatePresence>
-        {mobileJournalOpen && (
+        {state.uiState.journalOpen && (
           <Overlay
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={toggleMobileJournal}
+            onClick={toggleJournal}
           >
             <OverlayContent
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
+              exit={{ scale: 0.9, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
               <Journal isVisible={true} />
