@@ -479,7 +479,7 @@ function TitleScreen() {
             Sacred Settings
           </ActionButton>
         </Menu>
-        <div style={{ height: '8px' }} />
+        <div className="spacer-8" />
         <React.Suspense fallback={null}>
           <DailyRiddle />
         </React.Suspense>
